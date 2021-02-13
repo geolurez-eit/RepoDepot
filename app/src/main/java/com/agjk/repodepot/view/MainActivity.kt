@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.util.DebugLogger
@@ -79,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         //repoViewModel.getNewRepos("geolurez-eit")
         //repoViewModel.getNewCommits("geolurez-eit","android-kotlin-geo-fences")
         repoViewModel.getStoredReposForUser("geolurez-eit")
-            .observe(this, { DebugLogger("Testing output for repos: $it") })
+            .observe(this, Observer{ DebugLogger("Testing output for repos: $it") })
 
         repoViewModel.getStoredCommitsForUser(
             "geolurez-eit",
