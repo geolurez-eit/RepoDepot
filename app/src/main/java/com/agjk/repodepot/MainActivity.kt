@@ -2,7 +2,10 @@ package com.agjk.repodepot
 
 import android.os.Bundle
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.agjk.repodepot.viewmodel.RepoViewModel
+import com.agjk.repodepot.viewmodel.RepoViewModelFactory
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -15,10 +18,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mainTextView: TextView
 
+    private val repoViewModel: RepoViewModel by viewModels(
+        factoryProducer = { RepoViewModelFactory }
+    )
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        DebugLogger("MainActivity onCreate")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         // Target specific email with login hint.
         provider.addCustomParameter("login", "george.perez@enhanceit.us")
@@ -28,7 +36,13 @@ class MainActivity : AppCompatActivity() {
         provider.scopes = scopes
         mainTextView = findViewById(R.id.main_textview)
 
-        checkPendingResult()
+        //Check if login is pending, sign in if not
+        //checkPendingResult()
+
+        //Testing viewmodel methods
+        DebugLogger("MainActivity onCreate - saveNewRepos")
+        repoViewModel.saveNewRepos("geolurez-eit")
+
     }
 
     private fun startSignIn() {

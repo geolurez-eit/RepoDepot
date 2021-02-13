@@ -64,4 +64,8 @@ dependencies {
     // Firebase Realtime Database
     implementation 'com.google.firebase:firebase-database-ktx'
 
+    // Activity Kotlin Extensions
+    implementation "androidx.activity:activity-ktx:1.2.0"
+
+
 }
