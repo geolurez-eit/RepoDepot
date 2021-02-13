@@ -1,9 +1,11 @@
-package com.agjk.repodepot
+package com.agjk.repodepot.view
 
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.agjk.repodepot.util.DebugLogger
+import com.agjk.repodepot.R
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.agjk.repodepot.viewmodel.RepoViewModelFactory
 import com.google.android.gms.tasks.OnSuccessListener
@@ -41,8 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         //Testing viewmodel methods
         DebugLogger("MainActivity onCreate - saveNewRepos")
-        repoViewModel.saveNewRepos("geolurez-eit")
-
+        repoViewModel.getNewRepos("geolurez-eit")
     }
 
     private fun startSignIn() {
