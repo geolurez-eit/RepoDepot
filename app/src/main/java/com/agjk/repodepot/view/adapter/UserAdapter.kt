@@ -8,9 +8,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.agjk.repodepot.DebugLogger
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Users
+import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.MainActivity
 import com.bumptech.glide.Glide
 

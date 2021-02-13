@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_user_profile"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="32dp"
         android:src="@drawable/github_logo"
         app:civ_border_color="#9E0F0F"
         app:civ_border_width="1dp"
@@ -17,7 +17,40 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_user_repo"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_user_profile" />
+
+    <TextView
+        android:id="@+id/tv_name_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="Name"
+        app:layout_constraintStart_toEndOf="@+id/iv_user_profile"
+        app:layout_constraintTop_toTopOf="@+id/iv_user_profile" />
+
+    <TextView
+        android:id="@+id/tv_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="Username"
+        app:layout_constraintStart_toEndOf="@+id/iv_user_profile"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name_main" />
+
+    <TextView
+        android:id="@+id/tv_light_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="Details"
+        app:layout_constraintStart_toEndOf="@+id/iv_user_profile"
+        app:layout_constraintTop_toBottomOf="@+id/tv_username" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

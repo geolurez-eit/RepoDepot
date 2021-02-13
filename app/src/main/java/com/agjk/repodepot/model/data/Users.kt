@@ -1,3 +1,5 @@
 package com.agjk.repodepot.model.data
 
-data class Users(val imageUrl: String, val username: String)
+import androidx.fragment.app.Fragment
+
+data class Users(val imageUrl: String, val username: String, val userFragment: Fragment)
