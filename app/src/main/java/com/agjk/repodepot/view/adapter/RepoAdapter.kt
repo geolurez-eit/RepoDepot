@@ -3,6 +3,8 @@ package com.agjk.repodepot.view.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +21,7 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
         val repoLanguage: TextView = itemView.findViewById(R.id.tv_repo_language)
         val repoRating: TextView = itemView.findViewById(R.id.tv_rating_count)
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserRepoViewHolder {
         return UserRepoViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_repos, parent, false))

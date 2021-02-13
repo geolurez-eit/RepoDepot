@@ -15,7 +15,7 @@
     </style>
 
     <style name="LogoFont" parent="@style/TextAppearance.AppCompat.Title">
-        <item name="android:fontFamily" >@font/orbitronsemibold</item>
+        <item name="android:fontFamily" >@font/app_name_font</item>
     </style>
 
     <style name="Theme.AppCompat.DayNight.NoActionBar">

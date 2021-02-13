@@ -180,6 +180,7 @@ class MainActivity : AppCompatActivity() {
                 // authResult.getAdditionalUserInfo().getProfile().
                 // The OAuth access token can also be retrieved:
                 // authResult.getCredential().getAccessToken().
+                DebugLogger("startSignIn success")
                 DebugLogger(it.credential?.provider.toString())
                 mainTextView.text = it.credential?.provider.toString()
             }
