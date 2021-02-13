@@ -15,7 +15,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 object DepotRepository {
-    private val repoLiveData: MutableLiveData<List<GitRepo.GitRepoItem>> = MutableLiveData()
+    private val repoUserLiveData: MutableLiveData<List<GitRepo.GitRepoItem>> = MutableLiveData()
+    private val commitLiveData: MutableLiveData<List<GitRepoCommits.GitRepoCommitsItem>> = MutableLiveData()
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
 
     private val gitRetrofit: GitRetrofit = GitRetrofit()
@@ -24,26 +25,6 @@ object DepotRepository {
 
     init {
         firebaseDatabase.setPersistenceEnabled(true)
-    }
-
-    fun getRepos(): LiveData<List<GitRepo.GitRepoItem>> {
-        firebaseDatabase.reference.child("REPOSITORIES")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                    DebugLogger("Error ${error.message}")
-                }
-
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val repoList = mutableListOf<GitRepo.GitRepoItem>()
-                    snapshot.children.forEach {
-                        it.getValue(GitRepo.GitRepoItem::class.java)?.let { repo ->
-                            repoList.add(repo)
-                        }
-                    }
-                    repoLiveData.value = repoList
-                }
-            })
-        return repoLiveData
     }
 
     fun saveNewRepos(userName: String) {
@@ -98,5 +79,50 @@ object DepotRepository {
         firebaseDatabase.reference.child("COMMITS").child(userName).child(repoName)
             .setValue(commits)
         DebugLogger("Commits for :${repoName} added!")
+    }
+
+    fun getReposForUser(username: String): LiveData<List<GitRepo.GitRepoItem>> {
+        DebugLogger("DepotRepository.getReposForUser")
+        firebaseDatabase.reference.child("REPOSITORIES").child(username)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    DebugLogger("Error ${error.message}")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    DebugLogger("onDataChange")
+                    val repoList = mutableListOf<GitRepo.GitRepoItem>()
+                    snapshot.children.forEach {
+                        it.getValue(GitRepo.GitRepoItem::class.java)?.let { repo ->
+                            repoList.add(repo)
+                        }
+                    }
+                    repoUserLiveData.value = repoList
+                }
+            })
+        DebugLogger("Returning from getReposForUser")
+        return repoUserLiveData
+    }
+    fun getCommitsForUser(username: String, repoName: String): LiveData<List<GitRepoCommits.GitRepoCommitsItem>> {
+        DebugLogger("DepotRepository.getCommitsForUser")
+        firebaseDatabase.reference.child("COMMITS").child(username).child(repoName)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    DebugLogger("Error ${error.message}")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    DebugLogger("onDataChange")
+                    val commitList = mutableListOf<GitRepoCommits.GitRepoCommitsItem>()
+                    snapshot.children.forEach {
+                        it.getValue(GitRepoCommits.GitRepoCommitsItem::class.java)?.let { commit ->
+                            commitList.add(commit)
+                        }
+                    }
+                    commitLiveData.value = commitList
+                }
+            })
+        DebugLogger("Returning from getCommitsForUser")
+        return commitLiveData
     }
 }
