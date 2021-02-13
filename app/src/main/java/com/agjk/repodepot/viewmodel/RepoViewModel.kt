@@ -20,6 +20,9 @@ class RepoViewModel : ViewModel() {
     fun getNewRepos(userName: String) {
         DepotRepository.saveNewRepos(userName)
     }
+    fun getNewPrivateRepos(userName: String, token:String) {
+        DepotRepository.saveNewPrivateRepos(userName,token)
+    }
 
     fun getNewCommits(userName: String, repoName: String) {
         DepotRepository.saveNewCommits(userName, repoName)

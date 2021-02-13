@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.agjk.repodepot.R
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.viewmodel.RepoViewModel
@@ -13,11 +12,13 @@ import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.OAuthCredential
 import com.google.firebase.auth.OAuthProvider
 
 class MainActivity : AppCompatActivity() {
     private val firebaseAuth = FirebaseAuth.getInstance()
     private var provider = OAuthProvider.newBuilder("github.com")
+
 
     private lateinit var mainTextView: TextView
 
@@ -35,17 +36,19 @@ class MainActivity : AppCompatActivity() {
         provider.addCustomParameter("login", "george.perez@enhanceit.us")
         // Request read access to a user's email addresses.
         // This must be preconfigured in the app's API permissions.
-        val scopes: List<String> = listOf("user", "repo:status")
+        val scopes: List<String> = listOf("user", "repo")
         provider.scopes = scopes
         mainTextView = findViewById(R.id.main_textview)
 
         //Check if login is pending, sign in if not
-        //checkPendingResult()
+        checkPendingResult()
 
         //Testing viewmodel methods
         DebugLogger("MainActivity onCreate - saveNewRepos")
         //repoViewModel.getNewRepos("geolurez-eit")
+
         //repoViewModel.getNewCommits("geolurez-eit","android-kotlin-geo-fences")
+        /*
         repoViewModel.getStoredReposForUser("geolurez-eit")
             .observe(this, { DebugLogger("Testing output for repos: $it") })
 
@@ -53,6 +56,7 @@ class MainActivity : AppCompatActivity() {
             "geolurez-eit",
             "android-kotlin-geo-fences"
         ).observe(this, Observer { DebugLogger("Testing output for commits: $it") })
+        */
 
     }
 
@@ -65,8 +69,14 @@ class MainActivity : AppCompatActivity() {
                 // authResult.getAdditionalUserInfo().getProfile().
                 // The OAuth access token can also be retrieved:
                 // authResult.getCredential().getAccessToken().
+                DebugLogger("startSignIn success")
                 DebugLogger(it.credential?.provider.toString())
                 mainTextView.text = it.credential?.provider.toString()
+                DebugLogger((it.credential as OAuthCredential).accessToken)
+                repoViewModel.getNewPrivateRepos(
+                    it.additionalUserInfo?.username.toString(),
+                    (it.credential as OAuthCredential).accessToken
+                )
             }
             .addOnFailureListener {
                 // Handle failure.
@@ -87,6 +97,7 @@ class MainActivity : AppCompatActivity() {
                         // authResult.getAdditionalUserInfo().getProfile().
                         // The OAuth access token can also be retrieved:
                         // authResult.getCredential().getAccessToken().
+                        DebugLogger(this.firebaseAuth.getAccessToken(true).toString())
                     })
                 .addOnFailureListener {
                     // Handle failure.

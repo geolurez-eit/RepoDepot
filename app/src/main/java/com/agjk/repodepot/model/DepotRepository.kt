@@ -16,7 +16,8 @@ import io.reactivex.schedulers.Schedulers
 
 object DepotRepository {
     private val repoUserLiveData: MutableLiveData<List<GitRepo.GitRepoItem>> = MutableLiveData()
-    private val commitLiveData: MutableLiveData<List<GitRepoCommits.GitRepoCommitsItem>> = MutableLiveData()
+    private val commitLiveData: MutableLiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
+        MutableLiveData()
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
 
     private val gitRetrofit: GitRetrofit = GitRetrofit()
@@ -36,7 +37,25 @@ object DepotRepository {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     DebugLogger(".subscribe - it: $it")
-                    postRepos(it)
+                    postRepos(userName, it)
+                    compositeDisposable.clear()
+                }, {
+                    DebugLogger(".subscribe Error")
+                    DebugLogger(it.localizedMessage)
+                })
+        )
+    }
+
+    fun saveNewPrivateRepos(userName:String,token: String) {
+        DebugLogger("DepotRepository - saveNewRepos")
+        DebugLogger("compositeDisposable.add")
+        compositeDisposable.add(
+            gitRetrofit.getUserAllRepositories(token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    DebugLogger(".subscribe - it: $it")
+                    postRepos(userName, it)
                     compositeDisposable.clear()
                 }, {
                     DebugLogger(".subscribe Error")
@@ -63,9 +82,9 @@ object DepotRepository {
         )
     }
 
-    private fun postRepos(repo: List<GitRepo.GitRepoItem>) {
+    private fun postRepos(userName: String, repo: List<GitRepo.GitRepoItem>) {
         DebugLogger("DepotRepository.postRepos")
-        firebaseDatabase.reference.child("REPOSITORIES").child(repo.first().owner?.login.toString())
+        firebaseDatabase.reference.child("REPOSITORIES").child(userName)
             .setValue(repo)
         DebugLogger("Repos for :${repo.first().owner?.login} added!")
     }
@@ -103,7 +122,11 @@ object DepotRepository {
         DebugLogger("Returning from getReposForUser")
         return repoUserLiveData
     }
-    fun getCommitsForUser(username: String, repoName: String): LiveData<List<GitRepoCommits.GitRepoCommitsItem>> {
+
+    fun getCommitsForUser(
+        username: String,
+        repoName: String
+    ): LiveData<List<GitRepoCommits.GitRepoCommitsItem>> {
         DebugLogger("DepotRepository.getCommitsForUser")
         firebaseDatabase.reference.child("COMMITS").child(username).child(repoName)
             .addValueEventListener(object : ValueEventListener {
