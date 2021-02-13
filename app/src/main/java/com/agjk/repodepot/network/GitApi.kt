@@ -13,11 +13,11 @@ import retrofit2.http.Path
 
 interface GitApi {
     @GET(URL_PATH_REPOS)
-    fun getGitRepos(@Path(USER_NAME_PATH) userName: String): Observable<List<GitRepo.GitRepoItem>>
+    fun getGitRepos(@Path(USER_NAME_PATH) username: String): Observable<List<GitRepo.GitRepoItem>>
 
     @GET(URL_PATH_COMMITS)
     fun getGitRepoCommits(
-        @Path(USER_NAME_PATH) userName: String,
-        @Path(REPO_PATH) repoName: String
+        @Path(USER_NAME_PATH) username: String,
+        @Path(REPO_PATH) repo: String
     ): Observable<List<GitRepoCommits.GitRepoCommitsItem>>
 }

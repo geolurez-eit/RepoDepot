@@ -6,7 +6,7 @@ class Constants {
         const val USER_NAME_PATH = "username"
         const val REPO_PATH = "repo"
         const val URL_PATH_REPOS = "/users/{$USER_NAME_PATH}/repos"
-        const val URL_PATH_COMMITS = "/repos/{$USER_NAME_PATH}/${REPO_PATH}/commits"
+        const val URL_PATH_COMMITS = "/repos/{$USER_NAME_PATH}/{$REPO_PATH}/commits"
         const val TAG_X = "TAG_X"
     }
 }

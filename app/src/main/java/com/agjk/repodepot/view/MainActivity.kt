@@ -44,6 +44,7 @@ class MainActivity : AppCompatActivity() {
         //Testing viewmodel methods
         DebugLogger("MainActivity onCreate - saveNewRepos")
         repoViewModel.getNewRepos("geolurez-eit")
+        repoViewModel.getNewCommits("geolurez-eit","android-kotlin-geo-fences")
     }
 
     private fun startSignIn() {

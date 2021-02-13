@@ -2,10 +2,10 @@ package com.agjk.repodepot.model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
 import com.agjk.repodepot.network.GitRetrofit
+import com.agjk.repodepot.util.DebugLogger
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -73,7 +73,7 @@ object DepotRepository {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     DebugLogger(".subscribe - it: $it")
-                    postCommits(it, repoName)
+                    postCommits(it, userName, repoName)
                     compositeDisposable.clear()
                 }, {
                     DebugLogger(".subscribe Error")
@@ -83,24 +83,20 @@ object DepotRepository {
     }
 
     private fun postRepos(repo: List<GitRepo.GitRepoItem>) {
+        DebugLogger("DepotRepository.postRepos")
         firebaseDatabase.reference.child("REPOSITORIES").child(repo.first().owner?.login.toString())
             .setValue(repo)
-        DebugLogger(firebaseDatabase.reference.toString())
         DebugLogger("Repos for :${repo.first().owner?.login} added!")
     }
 
-    private fun postCommits(commits: List<GitRepoCommits.GitRepoCommitsItem>, repoName: String) {
-        firebaseDatabase.reference.child("COMMITS").child(repoName).setValue(commits)
-        DebugLogger(firebaseDatabase.reference.toString())
-        DebugLogger("Repos for :${repoName} added!")
+    private fun postCommits(
+        commits: List<GitRepoCommits.GitRepoCommitsItem>,
+        userName: String,
+        repoName: String
+    ) {
+        DebugLogger("DepotRepository.postCommits")
+        firebaseDatabase.reference.child("COMMITS").child(userName).child(repoName)
+            .setValue(commits)
+        DebugLogger("Commits for :${repoName} added!")
     }
-
-    fun postReposComplete(repo: List<GitRepo.GitRepoItem>) {
-        firebaseDatabase.reference.child("REPOSITORIES").child(repo.first().owner?.login.toString())
-            .setValue(repo)
-        DebugLogger(firebaseDatabase.reference.toString())
-        DebugLogger("Repos for :${repo.first().owner?.login} added!")
-    }
-
-
 }
