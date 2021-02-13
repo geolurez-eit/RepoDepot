@@ -2,7 +2,7 @@ package com.agjk.repodepot.model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.agjk.repodepot.DebugLogger
+import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
 import com.agjk.repodepot.network.GitRetrofit

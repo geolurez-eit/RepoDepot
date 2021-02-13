@@ -1,6 +1,6 @@
 @file:Suppress("FunctionName")
 
-package com.agjk.repodepot
+package com.agjk.repodepot.util
 
 import android.util.Log
 
