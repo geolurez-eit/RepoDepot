@@ -38,6 +38,6 @@ class GitRetrofit {
     fun getRepositoryCommits(
         username: String,
         repo: String
-    ): Observable<GitRepoCommits.GitRepoCommitsItem> = gitApi.getGitRepoCommits(username, repo)
+    ): Observable<List<GitRepoCommits.GitRepoCommitsItem>> = gitApi.getGitRepoCommits(username, repo)
 
 }

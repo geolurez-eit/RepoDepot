@@ -41,8 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         //Testing viewmodel methods
         DebugLogger("MainActivity onCreate - saveNewRepos")
-        repoViewModel.saveNewRepos("geolurez-eit")
-
+        repoViewModel.getNewRepos("geolurez-eit")
     }
 
     private fun startSignIn() {

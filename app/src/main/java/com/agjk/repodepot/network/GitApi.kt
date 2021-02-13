@@ -19,5 +19,5 @@ interface GitApi {
     fun getGitRepoCommits(
         @Path(USER_NAME_PATH) userName: String,
         @Path(REPO_PATH) repoName: String
-    ): Observable<GitRepoCommits.GitRepoCommitsItem>
+    ): Observable<List<GitRepoCommits.GitRepoCommitsItem>>
 }
