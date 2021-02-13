@@ -1,8 +1,8 @@
 package com.agjk.repodepot.network
 
-import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
+import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.util.Constants.Companion.BASE_URL
 import io.reactivex.Observable
 import retrofit2.Retrofit
