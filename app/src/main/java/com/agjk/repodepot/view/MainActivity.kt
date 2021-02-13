@@ -2,18 +2,12 @@ package com.agjk.repodepot.view
 
 import android.os.Bundle
 import android.widget.TextView
-import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
-import com.agjk.repodepot.DebugLogger
+import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.R
-import com.agjk.repodepot.model.data.Users
-import com.agjk.repodepot.view.adapter.MainFragmentAdapter
-import com.agjk.repodepot.view.adapter.UserAdapter
+import com.agjk.repodepot.viewmodel.RepoViewModel
+import com.agjk.repodepot.viewmodel.RepoViewModelFactory
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -25,33 +19,16 @@ class MainActivity : AppCompatActivity() {
     private var provider = OAuthProvider.newBuilder("github.com")
 
     private lateinit var mainTextView: TextView
-    private lateinit var navigationDrawer: DrawerLayout
-    private lateinit var userRecyclerView: RecyclerView
-    private lateinit var viewPager: ViewPager2
-    private var viewPagePosition = 0
 
-    private val userAdapter = UserAdapter(mutableListOf(),this)
+    private val repoViewModel: RepoViewModel by viewModels(
+        factoryProducer = { RepoViewModelFactory }
+    )
 
-    private lateinit var mainFragmentAdapter: MainFragmentAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DebugLogger("MainActivity onCreate")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-
-        navDrawerToolbarSetup()
-        viewPagerSetup()
-
-        // Testing only
-        var testList = mutableListOf(
-            Users(
-                "", "Bladerjam7"),
-            Users(
-                "", "Johnnyboi")
-        )
-
-        userAdapter.updateUsers(testList)
-
 
         // Target specific email with login hint.
         provider.addCustomParameter("login", "george.perez@enhanceit.us")
@@ -59,62 +36,14 @@ class MainActivity : AppCompatActivity() {
         // This must be preconfigured in the app's API permissions.
         val scopes: List<String> = listOf("user", "repo:status")
         provider.scopes = scopes
-        //mainTextView = findViewById(R.id.main_textview)
+        mainTextView = findViewById(R.id.main_textview)
 
-        checkPendingResult()
-    }
+        //Check if login is pending, sign in if not
+        //checkPendingResult()
 
-    private fun viewPagerSetup() {
-
-        viewPager = findViewById(R.id.main_view_pager_2)
-        mainFragmentAdapter = MainFragmentAdapter(mutableListOf(),this)
-        viewPager.adapter = mainFragmentAdapter
-
-        viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-
-                // Whenever the user swipes to page position, the text in the recyclerView in the
-                // navigation drawer is be colored green on the username selected
-                userAdapter.selectedUser(position)
-            }
-        })
-    }
-
-    fun loadViewPagerFragment(i: Int){
-        viewPager.currentItem = i
-    }
-
-    private fun navDrawerToolbarSetup() {
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
-        navigationDrawer = findViewById(R.id.drawer_layout)
-        userRecyclerView = findViewById(R.id.rv_users)
-
-        userRecyclerView.adapter = userAdapter
-
-        // Toggle is used to attach the toolbar and navigation drawer
-        val toggle = ActionBarDrawerToggle(
-            this,
-            navigationDrawer,
-            toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
-        )
-
-        navigationDrawer.addDrawerListener(toggle)
-        toggle.syncState()  // Menu button default animation when drawer is open and closed
-    }
-
-    override fun onBackPressed() {
-        if(navigationDrawer.isDrawerOpen(GravityCompat.START)){
-            navigationDrawer.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-
-
+        //Testing viewmodel methods
+        DebugLogger("MainActivity onCreate - saveNewRepos")
+        repoViewModel.getNewRepos("geolurez-eit")
     }
 
     private fun startSignIn() {
