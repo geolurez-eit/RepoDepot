@@ -1,4 +1,4 @@
-package com.agjk.repodepot
+package com.agjk.repodepot.view
 
 import android.os.Bundle
 import android.widget.TextView
@@ -7,6 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
+import com.agjk.repodepot.DebugLogger
+import com.agjk.repodepot.R
+import com.agjk.repodepot.model.data.Users
+import com.agjk.repodepot.view.adapter.MainFragmentAdapter
+import com.agjk.repodepot.view.adapter.UserAdapter
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -19,6 +26,13 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mainTextView: TextView
     private lateinit var navigationDrawer: DrawerLayout
+    private lateinit var userRecyclerView: RecyclerView
+    private lateinit var viewPager: ViewPager2
+    private var viewPagePosition = 0
+
+    private val userAdapter = UserAdapter(mutableListOf(),this)
+
+    private lateinit var mainFragmentAdapter: MainFragmentAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +40,17 @@ class MainActivity : AppCompatActivity() {
 
 
         navDrawerToolbarSetup()
+        viewPagerSetup()
+
+        // Testing only
+        var testList = mutableListOf(
+            Users(
+                "", "Bladerjam7"),
+            Users(
+                "", "Johnnyboi")
+        )
+
+        userAdapter.updateUsers(testList)
 
 
         // Target specific email with login hint.
@@ -39,11 +64,35 @@ class MainActivity : AppCompatActivity() {
         checkPendingResult()
     }
 
+    private fun viewPagerSetup() {
+
+        viewPager = findViewById(R.id.main_view_pager_2)
+        mainFragmentAdapter = MainFragmentAdapter(mutableListOf(),this)
+        viewPager.adapter = mainFragmentAdapter
+
+        viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+                // Whenever the user swipes to page position, the text in the recyclerView in the
+                // navigation drawer is be colored green on the username selected
+                userAdapter.selectedUser(position)
+            }
+        })
+    }
+
+    fun loadViewPagerFragment(i: Int){
+        viewPager.currentItem = i
+    }
+
     private fun navDrawerToolbarSetup() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         navigationDrawer = findViewById(R.id.drawer_layout)
+        userRecyclerView = findViewById(R.id.rv_users)
+
+        userRecyclerView.adapter = userAdapter
 
         // Toggle is used to attach the toolbar and navigation drawer
         val toggle = ActionBarDrawerToggle(
