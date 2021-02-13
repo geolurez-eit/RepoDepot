@@ -32,9 +32,6 @@ class MainUserRepoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initalize(view)
-
-
-
     }
 
     private fun initalize(view: View) {

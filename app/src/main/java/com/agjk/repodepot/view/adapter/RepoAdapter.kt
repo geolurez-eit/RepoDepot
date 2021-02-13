@@ -8,9 +8,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Repos
-import com.agjk.repodepot.model.data.Users
 
-class MainUserRepoAdapter(val repoList: List<Repos>) : RecyclerView.Adapter<MainUserRepoAdapter.UserRepoViewHolder>() {
+class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
 
     inner class UserRepoViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val repoDetailCard: ConstraintLayout = itemView.findViewById(R.id.cl_user_item_box)
@@ -34,6 +33,14 @@ class MainUserRepoAdapter(val repoList: List<Repos>) : RecyclerView.Adapter<Main
             repoDescription.text = repo.repoDescription
             repoLanguage.text = repo.repoLanguage
             repoRating.text = repo.repoStarNum.toString()
+
+            repoDetailCard.setOnClickListener {
+                // TODO: transition to detail fragment
+            }
         }
+    }
+
+    fun updateRepo(newRepoList: List<Repos>){
+        repoList = newRepoList
     }
 }
