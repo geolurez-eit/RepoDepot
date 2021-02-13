@@ -1,7 +1,6 @@
 package com.agjk.repodepot
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.tasks.OnSuccessListener
@@ -22,7 +21,7 @@ class MainActivity : AppCompatActivity() {
 
 
         // Target specific email with login hint.
-        provider.addCustomParameter("login", "george.perez@enhanceit.us");
+        provider.addCustomParameter("login", "george.perez@enhanceit.us")
         // Request read access to a user's email addresses.
         // This must be preconfigured in the app's API permissions.
         val scopes: List<String> = listOf("user", "repo:status")
