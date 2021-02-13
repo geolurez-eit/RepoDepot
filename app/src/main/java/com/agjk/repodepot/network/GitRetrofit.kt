@@ -1,8 +1,8 @@
 package com.agjk.repodepot.network
 
-import com.agjk.repodepot.DebugLogger
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
+import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.util.Constants.Companion.BASE_URL
 import io.reactivex.Observable
 import retrofit2.Retrofit
@@ -38,6 +38,6 @@ class GitRetrofit {
     fun getRepositoryCommits(
         username: String,
         repo: String
-    ): Observable<GitRepoCommits.GitRepoCommitsItem> = gitApi.getGitRepoCommits(username, repo)
+    ): Observable<List<GitRepoCommits.GitRepoCommitsItem>> = gitApi.getGitRepoCommits(username, repo)
 
 }
