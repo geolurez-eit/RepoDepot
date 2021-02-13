@@ -12,9 +12,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.R
-import com.agjk.repodepot.model.data.Users
+import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
 import com.agjk.repodepot.viewmodel.RepoViewModel
@@ -23,7 +22,6 @@ import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.OAuthCredential
 import com.google.firebase.auth.OAuthProvider
 
 class MainActivity : AppCompatActivity() {
@@ -35,9 +33,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var userRecyclerView: RecyclerView
     private lateinit var viewPager: ViewPager2
     private var viewPagePosition = 0
-    private lateinit var mainUserRepoFragment : Fragment
+    private lateinit var mainUserRepoFragment: Fragment
 
-    private val userAdapter = UserAdapter(mutableListOf(),this)
+    private val userAdapter = UserAdapter(mutableListOf(), this)
 
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
 
@@ -93,10 +91,10 @@ class MainActivity : AppCompatActivity() {
     private fun viewPagerSetup() {
 
         viewPager = findViewById(R.id.main_view_pager_2)
-        mainFragmentAdapter = MainFragmentAdapter(mutableListOf(),this)
+        mainFragmentAdapter = MainFragmentAdapter(mutableListOf(), this)
         viewPager.adapter = mainFragmentAdapter
 
-        viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
 
@@ -107,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun loadViewPagerFragment(i: Int){
+    fun loadViewPagerFragment(i: Int) {
         viewPager.currentItem = i
     }
 
@@ -134,7 +132,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(navigationDrawer.isDrawerOpen(GravityCompat.START)){
+        if (navigationDrawer.isDrawerOpen(GravityCompat.START)) {
             navigationDrawer.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
