@@ -27,6 +27,7 @@
         android:textColor="@color/black"
         />
 
+<!--
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
@@ -37,9 +38,10 @@
         android:indeterminate="true"
         android:layout_marginStart="70dp"
         android:layout_marginEnd="70dp"
-
         android:indeterminateTint="@color/black"
         />
+-->
+
     <TextView
         android:id="@+id/website"
         android:layout_width="match_parent"
@@ -51,14 +53,29 @@
         android:layout_marginBottom="20dp"
         android:textColor="@color/black"
         />
-
-
-
-
-
-
-
-
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/sign_in_Button_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/slogan"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="70dp"
+        android:src="@drawable/arrow_next"
+        android:backgroundTint="@color/MeduimGray50"
+        app:elevation="0dp"
+        app:fabCustomSize="65dp"
+       />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sign_in_Button_main"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="27dp"
+        android:text="Login"
+        android:textAlignment="center"
+        android:fontFamily="@font/orbitronsemibold"
+        android:textColor="@color/black"
+        />
 
 
 </RelativeLayout>
