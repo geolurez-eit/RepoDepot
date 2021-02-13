@@ -46,7 +46,7 @@ object DepotRepository {
         )
     }
 
-    fun saveNewPrivateRepos(userName:String,token: String) {
+    fun saveNewPrivateRepos(userName: String, token: String) {
         DebugLogger("DepotRepository - saveNewRepos")
         DebugLogger("compositeDisposable.add")
         compositeDisposable.add(
@@ -55,7 +55,7 @@ object DepotRepository {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     DebugLogger(".subscribe - it: $it")
-                    postRepos(userName, it)
+                    postRepos(userName + "_private", it)
                     compositeDisposable.clear()
                 }, {
                     DebugLogger(".subscribe Error")
