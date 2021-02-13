@@ -14,7 +14,7 @@ class RepoViewModel : ViewModel() {
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
     val repoData: MutableLiveData<GitRepo.GitRepoItem> = MutableLiveData()
 
-    fun getRepos(userName: String) {
+    fun getNewRepos(userName: String) {
         compositeDisposable.add(
             gitRetrofit.getUserRepositories(userName)
                 .subscribeOn(Schedulers.io())
