@@ -8,6 +8,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Repos
+import com.agjk.repodepot.util.DebugLogger
 
 class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
 
@@ -20,13 +21,18 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserRepoViewHolder {
-        return UserRepoViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_users, parent, false))
+        return UserRepoViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_repos, parent, false))
     }
 
-    override fun getItemCount(): Int = repoList.size
+    override fun getItemCount(): Int {
+        DebugLogger("Repo Count Size: ${repoList.size}")
+        return repoList.size
+    }
 
     override fun onBindViewHolder(holder: UserRepoViewHolder, position: Int) {
         val repo = repoList[position]
+
+        DebugLogger("RepoList Size: ${repoList.size}")
 
         holder.apply {
             repoTitle.text = repo.repoName
@@ -41,6 +47,8 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
     }
 
     fun updateRepo(newRepoList: List<Repos>){
+        DebugLogger("RepoList: ${newRepoList}")
         repoList = newRepoList
+        notifyDataSetChanged()
     }
 }

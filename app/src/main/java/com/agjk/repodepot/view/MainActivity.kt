@@ -14,9 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.R
+import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.model.data.Users
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
+import com.agjk.repodepot.view.adapter.RepoAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
+import com.agjk.repodepot.view.fragment.MainUserRepoFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.agjk.repodepot.viewmodel.RepoViewModelFactory
 import com.google.android.gms.tasks.OnSuccessListener
@@ -34,9 +37,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var userRecyclerView: RecyclerView
     private lateinit var viewPager: ViewPager2
     private var viewPagePosition = 0
-    private lateinit var mainUserRepoFragment : Fragment
+
+    private val mainFragment = MainUserRepoFragment()
 
     private val userAdapter = UserAdapter(mutableListOf(),this)
+    private val repoAdapter = RepoAdapter(mutableListOf())
 
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
 
@@ -63,9 +68,31 @@ class MainActivity : AppCompatActivity() {
                 "", "Johnnyboi")
         )*/
 
+        // When getting the data from the Firebase... create repo then store in userlist
+        var dummyRepo = mutableListOf(
+            Repos("name", "description", "Kotlin", 7),
+            Repos("name2", "description2", "Kotlin", 5),
+            Repos("name3", "description3", "Kotlin", 2),
+            Repos("name4", "description4", "Kotlin", 6)
+
+        )
 
 
-//        userAdapter.updateUsers(testList)
+        var dummyList = mutableListOf(
+            Users("", "bladerjam7", MainUserRepoFragment(), dummyRepo),
+            Users("", "geolurez", MainUserRepoFragment(), dummyRepo),
+            Users("", "aormsbyeit", MainUserRepoFragment(), dummyRepo),
+            Users("", "kamelkhbr", MainUserRepoFragment(), dummyRepo)
+        )
+
+        mainFragmentAdapter.addFragmentToList(dummyList[0])
+        mainFragmentAdapter.addFragmentToList(dummyList[1])
+        mainFragmentAdapter.addFragmentToList(dummyList[2])
+        mainFragmentAdapter.addFragmentToList(dummyList[3])
+
+
+
+        userAdapter.updateUsers(dummyList)
 
         // Target specific email with login hint.
         provider.addCustomParameter("login", "george.perez@enhanceit.us")
@@ -185,6 +212,14 @@ class MainActivity : AppCompatActivity() {
             startSignIn()
         }
 
+    }
+
+    fun updateRepoList(repo: List<Repos>) {
+        mainFragment.updateRepoRecyclerview(repo)
+    }
+
+    fun closeNavDrawer() {
+        navigationDrawer.closeDrawers()
     }
 
 }

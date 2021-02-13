@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
+import com.agjk.repodepot.model.data.Repos
+import com.agjk.repodepot.view.adapter.RepoAdapter
 import de.hdodenhof.circleimageview.CircleImageView
 
 class MainUserRepoFragment : Fragment() {
@@ -18,7 +20,7 @@ class MainUserRepoFragment : Fragment() {
     private lateinit var tvUsername: TextView
     private lateinit var tvDetail: TextView
 
-
+    private val repoAdapter = RepoAdapter(mutableListOf())
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,5 +44,12 @@ class MainUserRepoFragment : Fragment() {
             tvUsername = findViewById(R.id.tv_username)
             tvDetail = findViewById(R.id.tv_light_details)
         }
+        rvUserRepo.adapter = repoAdapter
     }
+
+    fun updateRepoRecyclerview(repoList: List<Repos>){
+        repoAdapter.updateRepo(repoList)
+    }
+
+
 }
