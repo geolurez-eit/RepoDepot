@@ -1,3 +1,7 @@
 <resources>
     <string name = "app_name">RepoDepot</string>
+
+    <!--Navigation Drawer-->
+    <string name="navigation_drawer_open">Open navigation</string>
+    <string name="navigation_drawer_close">Close navigation</string>
 </resources>

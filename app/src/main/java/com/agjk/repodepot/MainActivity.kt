@@ -2,7 +2,11 @@ package com.agjk.repodepot
 
 import android.os.Bundle
 import android.widget.TextView
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -14,10 +18,14 @@ class MainActivity : AppCompatActivity() {
     private var provider = OAuthProvider.newBuilder("github.com")
 
     private lateinit var mainTextView: TextView
+    private lateinit var navigationDrawer: DrawerLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+        navDrawerToolbarSetup()
 
 
         // Target specific email with login hint.
@@ -26,9 +34,38 @@ class MainActivity : AppCompatActivity() {
         // This must be preconfigured in the app's API permissions.
         val scopes: List<String> = listOf("user", "repo:status")
         provider.scopes = scopes
-        mainTextView = findViewById(R.id.main_textview)
+        //mainTextView = findViewById(R.id.main_textview)
 
         checkPendingResult()
+    }
+
+    private fun navDrawerToolbarSetup() {
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        navigationDrawer = findViewById(R.id.drawer_layout)
+
+        // Toggle is used to attach the toolbar and navigation drawer
+        val toggle = ActionBarDrawerToggle(
+            this,
+            navigationDrawer,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+
+        navigationDrawer.addDrawerListener(toggle)
+        toggle.syncState()  // Menu button default animation when drawer is open and closed
+    }
+
+    override fun onBackPressed() {
+        if(navigationDrawer.isDrawerOpen(GravityCompat.START)){
+            navigationDrawer.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
+        }
+
+
     }
 
     private fun startSignIn() {
