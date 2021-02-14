@@ -79,17 +79,19 @@ class MainActivity : AppCompatActivity() {
 
 //        userAdapter.updateUsers(testList)
 
+
+        // TODO: check on Observer
         //Testing viewmodel methods
         DebugLogger("MainActivity onCreate - saveNewRepos")
         //repoViewModel.getNewRepos("geolurez-eit")
         //repoViewModel.getNewCommits("geolurez-eit","android-kotlin-geo-fences")
         repoViewModel.getStoredReposForUser("geolurez-eit")
-            .observe(this, { DebugLogger("Testing output for repos: $it") })
+            .observe(this, Observer{ DebugLogger("Testing output for repos: $it") })
 
         repoViewModel.getStoredCommitsForUser(
             "geolurez-eit",
             "android-kotlin-geo-fences"
-        ).observe(this, { DebugLogger("Testing output for commits: $it") })
+        ).observe(this, Observer{ DebugLogger("Testing output for commits: $it") })
     }
 
     private fun viewPagerSetup() {
