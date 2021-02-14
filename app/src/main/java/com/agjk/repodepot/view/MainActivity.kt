@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
+    private var tokenSaved = ""
 
     private val userAdapter = UserAdapter(mutableListOf(), this)
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
@@ -114,16 +115,14 @@ class MainActivity : AppCompatActivity() {
         DebugLogger("Username -----> ${userName}")
         DebugLogger("Token -----> ${tokenSaved}")
 
-        repoViewModel.getNewRepos(userName)
-        repoViewModel.getNewPrivateRepos("bladerjam7", tokenSaved)
-        repoViewModel.getStoredPrivateReposForUser("bladerjam7").observe( this, Observer {
-            DebugLogger("Repo size -------> ${it.size}")
+        repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved).observe( this, Observer {
+            DebugLogger("Repo size -------> ${it}")
         })
 
         /*repoViewModel.getStoredCommitsForUser(
             "geolurez-eit",
             "android-kotlin-geo-fences"
-        ).observe(this, Observer{ DebugLogger("Testing output for commits: $it") })
+        ).observe(this, Observer{ DebugLogger("Testing output for commits: $it") })*/
     }
 
     private fun viewPagerSetup() {
