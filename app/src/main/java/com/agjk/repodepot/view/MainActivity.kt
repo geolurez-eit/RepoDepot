@@ -1,7 +1,6 @@
 package com.agjk.repodepot.view
 
 import android.os.Bundle
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -11,46 +10,58 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.R
-import com.agjk.repodepot.model.data.Repos
-import com.agjk.repodepot.model.data.Users
+import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
-import com.agjk.repodepot.view.adapter.RepoAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
 import com.agjk.repodepot.view.fragment.MainUserRepoFragment
+import com.agjk.repodepot.view.fragment.SplashScreenFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.agjk.repodepot.viewmodel.RepoViewModelFactory
-import com.google.android.gms.tasks.OnSuccessListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.OAuthProvider
-import kotlinx.coroutines.selects.select
 
 class MainActivity : AppCompatActivity() {
-    private val firebaseAuth = FirebaseAuth.getInstance()
-    private var provider = OAuthProvider.newBuilder("github.com")
 
-    private lateinit var mainTextView: TextView
+    private var isFreshLaunch = true
+
     private lateinit var navigationDrawer: DrawerLayout
     private lateinit var userRecyclerView: RecyclerView
     private lateinit var viewPager: ViewPager2
 
     private val userAdapter = UserAdapter(mutableListOf(), this)
-
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
 
     private val repoViewModel: RepoViewModel by viewModels(
         factoryProducer = { RepoViewModelFactory }
     )
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         DebugLogger("MainActivity onCreate")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Show splash on launch
+        if (isFreshLaunch) {
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    android.R.anim.fade_in, android.R.anim.fade_out,
+                    android.R.anim.fade_in, android.R.anim.fade_out
+                )
+                .add(R.id.splash_fragment_container, SplashScreenFragment())
+                .addToBackStack(null)
+                .commit()
+
+            isFreshLaunch = false
+        }
+    }
+
+    fun closeSplash() {
+        runOnUiThread {
+            supportFragmentManager.popBackStack()
+            initMainActivity()
+        }
+    }
+
+    private fun initMainActivity() {
         navDrawerToolbarSetup()
         viewPagerSetup()
 
@@ -65,9 +76,7 @@ class MainActivity : AppCompatActivity() {
         val scopes: List<String> = listOf("user", "repo:status")
         provider.scopes = scopes
 
-        //Check if login is pending, sign in if not
-        //checkPendingResult()
-
+        // TODO: check on Observer
         //Testing viewmodel methods
         DebugLogger("MainActivity onCreate - saveNewRepos")
         //repoViewModel.getNewRepos("geolurez-eit")
@@ -85,7 +94,7 @@ class MainActivity : AppCompatActivity() {
     private fun viewPagerSetup() {
 
         viewPager = findViewById(R.id.main_view_pager_2)
-        mainFragmentAdapter = MainFragmentAdapter(this)
+        mainFragmentAdapter = MainFragmentAdapter(mutableListOf(), this)
 
         //mainFragmentAdapter.addFragmentToList(//)
 
@@ -94,19 +103,13 @@ class MainActivity : AppCompatActivity() {
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                //userAdapter.updateUsers(List of users)
 
-                DebugLogger("ViewPager Debug")
-
-                // Updates the User selected in the nav drawer color
+                // Whenever the user swipes to page position, the text in the recyclerView in the
+                // navigation drawer is be colored green on the username selected
                 userAdapter.selectedUser(position)
             }
         })
     }
-
-   /* private fun sendAdapter(repoAdapter: RepoAdapter) {
-        repoAdapter.updateRepo()
-    }*/
 
     fun loadViewPagerFragment(i: Int) {
         viewPager.currentItem = i
@@ -140,56 +143,9 @@ class MainActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
-
-
-    }
-
-    private fun startSignIn() {
-        firebaseAuth
-            .startActivityForSignInWithProvider( /* activity= */this, provider.build())
-            .addOnSuccessListener {
-                // User is signed in.
-                // IdP data available in
-                // authResult.getAdditionalUserInfo().getProfile().
-                // The OAuth access token can also be retrieved:
-                // authResult.getCredential().getAccessToken().
-                DebugLogger("startSignIn success")
-                DebugLogger(it.credential?.provider.toString())
-                mainTextView.text = it.credential?.provider.toString()
-            }
-            .addOnFailureListener {
-                // Handle failure.
-                DebugLogger(it.localizedMessage)
-            }
-    }
-
-
-    private fun checkPendingResult() {
-        val pendingResultTask: Task<AuthResult>? = firebaseAuth.pendingAuthResult
-        if (pendingResultTask != null) {
-            // There's something already here! Finish the sign-in for your user.
-            pendingResultTask
-                .addOnSuccessListener(
-                    OnSuccessListener {
-                        // User is signed in.
-                        // IdP data available in
-                        // authResult.getAdditionalUserInfo().getProfile().
-                        // The OAuth access token can also be retrieved:
-                        // authResult.getCredential().getAccessToken().
-                    })
-                .addOnFailureListener {
-                    // Handle failure.
-                }
-        } else {
-            // There's no pending result so you need to start the sign-in flow.
-            // See below.
-            startSignIn()
-        }
-
     }
 
     fun closeNavDrawer() {
         navigationDrawer.closeDrawers()
     }
-
 }
