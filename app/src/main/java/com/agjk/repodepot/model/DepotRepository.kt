@@ -217,8 +217,11 @@ object DepotRepository {
     }
 
     fun getUserList(): LiveData<List<String>> {
+       val thisUserName = firebaseAuth.currentUser?.displayName.toString()
         firebaseDatabase.reference.child("USERLISTS")
-            .child(firebaseAuth.currentUser?.displayName.toString())
+            .child(thisUserName).child(thisUserName).setValue(thisUserName)
+        firebaseDatabase.reference.child("USERLISTS")
+            .child(thisUserName)
             .addValueEventListener(
                 object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
