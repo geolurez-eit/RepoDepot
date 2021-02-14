@@ -22,7 +22,7 @@
         android:text="Repot Depot"
         android:textAlignment="center"
         android:textSize="30dp"
-        android:fontFamily="@font/orbitronsemibold"
+        android:fontFamily="@font/app_name_font"
         android:layout_marginTop="10dp"
         android:textColor="@color/black"
         />
@@ -72,7 +72,7 @@
         android:layout_marginTop="27dp"
         android:text="Login"
         android:textAlignment="center"
-        android:fontFamily="@font/orbitronsemibold"
+        android:fontFamily="@font/app_name_font"
         android:textColor="@color/black"
         />
 

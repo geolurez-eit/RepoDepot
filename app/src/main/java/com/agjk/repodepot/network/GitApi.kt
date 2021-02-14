@@ -5,9 +5,12 @@ import com.agjk.repodepot.model.data.GitRepoCommits
 import com.agjk.repodepot.util.Constants.Companion.REPO_PATH
 import com.agjk.repodepot.util.Constants.Companion.URL_PATH_COMMITS
 import com.agjk.repodepot.util.Constants.Companion.URL_PATH_REPOS
+import com.agjk.repodepot.util.Constants.Companion.URL_PATH_REPOS_PRIVATE
 import com.agjk.repodepot.util.Constants.Companion.USER_NAME_PATH
 import io.reactivex.Observable
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.Path
 
 interface GitApi {
@@ -19,4 +22,7 @@ interface GitApi {
         @Path(USER_NAME_PATH) username: String,
         @Path(REPO_PATH) repo: String
     ): Observable<List<GitRepoCommits.GitRepoCommitsItem>>
+
+    @GET(URL_PATH_REPOS_PRIVATE)
+    fun getGitReposPrivate(@Header("Authorization") authHeader:String): Observable<List<GitRepo.GitRepoItem>>
 }

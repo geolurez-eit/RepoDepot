@@ -34,6 +34,12 @@ class GitRetrofit {
         DebugLogger("gitApi: $gitApi")
         return gitApi.getGitRepos(username)
     }
+    fun getUserAllRepositories(token:String): Observable<List<GitRepo.GitRepoItem>> {
+        DebugLogger("GitRetroFit.getUserRepositories")
+        DebugLogger("gitApi: $gitApi")
+        DebugLogger(token)
+        return gitApi.getGitReposPrivate("token $token")
+    }
 
     fun getRepositoryCommits(
         username: String,

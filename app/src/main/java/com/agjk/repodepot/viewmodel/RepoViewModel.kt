@@ -10,6 +10,8 @@ class RepoViewModel : ViewModel() {
 
     fun getStoredReposForUser(username: String): LiveData<List<GitRepo.GitRepoItem>> =
         DepotRepository.getReposForUser(username)
+    fun getStoredPrivateReposForUser(username: String): LiveData<List<GitRepo.GitRepoItem>> =
+        DepotRepository.getReposForUser(username+"_private")
 
     fun getStoredCommitsForUser(
         username: String,
@@ -19,6 +21,9 @@ class RepoViewModel : ViewModel() {
 
     fun getNewRepos(userName: String) {
         DepotRepository.saveNewRepos(userName)
+    }
+    fun getNewPrivateRepos(userName: String, token:String) {
+        DepotRepository.saveNewPrivateRepos(userName,token)
     }
 
     fun getNewCommits(userName: String, repoName: String) {

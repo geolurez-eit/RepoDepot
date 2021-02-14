@@ -26,9 +26,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var userRecyclerView: RecyclerView
     private lateinit var viewPager: ViewPager2
     private var viewPagePosition = 0
-    private lateinit var mainUserRepoFragment : Fragment
+    private lateinit var mainUserRepoFragment: Fragment
 
-    private val userAdapter = UserAdapter(mutableListOf(),this)
+    private val userAdapter = UserAdapter(mutableListOf(), this)
 
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
 
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         //repoViewModel.getNewRepos("geolurez-eit")
         //repoViewModel.getNewCommits("geolurez-eit","android-kotlin-geo-fences")
         repoViewModel.getStoredReposForUser("geolurez-eit")
-            .observe(this, Observer{ DebugLogger("Testing output for repos: $it") })
+            .observe(this, { DebugLogger("Testing output for repos: $it") })
 
         repoViewModel.getStoredCommitsForUser(
             "geolurez-eit",
@@ -73,10 +73,10 @@ class MainActivity : AppCompatActivity() {
     private fun viewPagerSetup() {
 
         viewPager = findViewById(R.id.main_view_pager_2)
-        mainFragmentAdapter = MainFragmentAdapter(mutableListOf(),this)
+        mainFragmentAdapter = MainFragmentAdapter(mutableListOf(), this)
         viewPager.adapter = mainFragmentAdapter
 
-        viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback(){
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
 
@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun loadViewPagerFragment(i: Int){
+    fun loadViewPagerFragment(i: Int) {
         viewPager.currentItem = i
     }
 
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(navigationDrawer.isDrawerOpen(GravityCompat.START)){
+        if (navigationDrawer.isDrawerOpen(GravityCompat.START)) {
             navigationDrawer.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
