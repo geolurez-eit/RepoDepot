@@ -31,25 +31,14 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-        <TextView
-            android:id="@+id/tv_repo_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:padding="8dp"
-            android:fontFamily="@font/description_font"
-            android:text="Description goes here, text test test..."
-            app:layout_constraintTop_toBottomOf="@id/tv_repo_name"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            />
+
         <ImageView
             android:id="@+id/iv_star"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="8dp"
             app:srcCompat="@drawable/ic_baseline_star_rate_24"
-            app:layout_constraintTop_toBottomOf="@id/tv_repo_description"
+            app:layout_constraintTop_toBottomOf="@id/tv_repo_name"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             />
@@ -62,7 +51,7 @@
             android:padding="8dp"
             android:text="0"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_repo_description"
+            app:layout_constraintTop_toBottomOf="@id/tv_repo_name"
             app:layout_constraintStart_toEndOf="@id/iv_star"
 
             />
@@ -76,7 +65,7 @@
             android:fontFamily="@font/names_font"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_repo_description"
+            app:layout_constraintTop_toBottomOf="@id/tv_repo_name"
 
              />
 

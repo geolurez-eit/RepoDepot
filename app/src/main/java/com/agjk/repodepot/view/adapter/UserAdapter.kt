@@ -16,7 +16,6 @@ import com.bumptech.glide.Glide
 
 class UserAdapter(var userList: List<Users>, val activity: MainActivity): RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
-
     var selectedPosition = 0
     inner class UserViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val clUserBox: ConstraintLayout = itemView.findViewById(R.id.cl_user_item_box)
@@ -40,13 +39,13 @@ class UserAdapter(var userList: List<Users>, val activity: MainActivity): Recycl
 
            tvUsers.text = user.username
 
-
            setSelectedUserColor(position)
 
            clUserBox.setOnClickListener {
                activity.loadViewPagerFragment(position)
+               //activity.updateRepoList(user.repo)
+               activity.closeNavDrawer()
            }
-
 
        }
     }

@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
+    private var tokenSaved = ""
 
     private val userAdapter = UserAdapter(mutableListOf(), this)
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
@@ -100,35 +101,37 @@ class MainActivity : AppCompatActivity() {
         navDrawerToolbarSetup()
         viewPagerSetup()
 
-        //mainUserRepoFragment = findViewById(R.id.)
+        // TODO: Store api call for users into userList
+        // TODO: Update userAdapter with userList
+        // TODO: Add user to MainFragmentAdapter.addFragmentToList(userList.fragment)
 
-        // Testing only
-        /*var testList = mutableListOf(
-            Users(
-                "", "Bladerjam7"),
-            Users(
-                "", "Johnnyboi")
-        )*/
-
-//        userAdapter.updateUsers(testList)
-
+        // TODO: check on Observer
         //Testing viewmodel methods
         DebugLogger("MainActivity onCreate - saveNewRepos")
-        //repoViewModel.getNewRepos("geolurez-eit")
-        //repoViewModel.getNewCommits("geolurez-eit","android-kotlin-geo-fences")
-        repoViewModel.getStoredReposForUser("geolurez-eit")
-            .observe(this, { DebugLogger("Testing output for repos: $it") })
+        /*//repoViewModel.getNewRepos("geolurez-eit")
+        //repoViewModel.getNewCommits("geolurez-eit","android-kotlin-geo-fences")*/
 
-        repoViewModel.getStoredCommitsForUser(
+        val userName: String = FirebaseAuth.getInstance().currentUser?.displayName.toString()
+        DebugLogger("Username -----> ${userName}")
+        DebugLogger("Token -----> ${tokenSaved}")
+
+        repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved).observe( this, Observer {
+            DebugLogger("Repo size -------> ${it}")
+        })
+
+        /*repoViewModel.getStoredCommitsForUser(
             "geolurez-eit",
             "android-kotlin-geo-fences"
-        ).observe(this, { DebugLogger("Testing output for commits: $it") })
+        ).observe(this, Observer{ DebugLogger("Testing output for commits: $it") })*/
     }
 
     private fun viewPagerSetup() {
 
         viewPager = findViewById(R.id.main_view_pager_2)
         mainFragmentAdapter = MainFragmentAdapter(mutableListOf(), this)
+
+        //mainFragmentAdapter.addFragmentToList(//)
+
         viewPager.adapter = mainFragmentAdapter
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -175,4 +178,16 @@ class MainActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
+
+    fun closeNavDrawer() {
+        navigationDrawer.closeDrawers()
+    }
+
+    fun saveToken(tokenSaved: String) {
+        this.tokenSaved = tokenSaved
+    }
+
+    /* fun saveUsername(input: String){
+         username = input
+     }*/
 }

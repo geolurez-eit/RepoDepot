@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.annotation.CheckResult
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.agjk.repodepot.R
@@ -21,9 +22,8 @@ import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.OAuthProvider
+import com.google.firebase.auth.*
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import kotlinx.coroutines.*
 import java.util.*
 import kotlin.math.log
@@ -42,6 +42,8 @@ class SplashScreenFragment : Fragment() {
     private lateinit var loginbtn: MaterialButton
 //    private lateinit var loginText: TextView
     private lateinit var progressBar: ProgressBar
+
+    private var tokenSaved: String = ""
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -89,6 +91,8 @@ class SplashScreenFragment : Fragment() {
 //        val animationFadeIn = AnimationUtils.loadAnimation(thisContext, R.anim.text_fade_in)
 //        loginText.startAnimation(animationFadeIn)
 
+
+
         // Only show login buttons if no 'currentUser'
         firebaseAuth.currentUser?.let {
             closeSplashToMainActivity()
@@ -107,6 +111,8 @@ class SplashScreenFragment : Fragment() {
     }
     
     private fun closeSplashToMainActivity() {
+        //(thisContext as MainActivity).saveUsername(username)
+
         val animFadeOut = AnimationUtils.loadAnimation(thisContext, R.anim.fast_fade_out)
         loginbtn.visibility = View.INVISIBLE
         loginbtn.startAnimation(animFadeOut)
@@ -129,6 +135,7 @@ class SplashScreenFragment : Fragment() {
     }
 
     private fun startSignIn() {
+
         firebaseAuth
             .startActivityForSignInWithProvider( /* activity= */(context as MainActivity), provider.build())
             .addOnSuccessListener {
@@ -138,6 +145,16 @@ class SplashScreenFragment : Fragment() {
                 // The OAuth access token can also be retrieved:
                 // authResult.getCredential().getAccessToken().
                 DebugLogger(it.credential?.provider.toString())
+
+                val profileUpdate = UserProfileChangeRequest.Builder()
+                    .setDisplayName(it.additionalUserInfo?.username.toString())
+                    .build()
+                firebaseAuth.currentUser?.updateProfile(profileUpdate)
+                tokenSaved = (it.credential as OAuthCredential).accessToken
+
+                DebugLogger("Token Log : -----> $tokenSaved")
+
+                (thisContext as MainActivity).saveToken(tokenSaved)
 
                 Log.d("TAG_A", "sign in success")
                 closeSplashToMainActivity()
