@@ -186,6 +186,10 @@ object DepotRepository {
             //Update repos for user
             saveNewPrivateRepos(username, token)
         }
+        //add user to userlist
+        DebugLogger(firebaseAuth.currentUser?.displayName.toString())
+        firebaseDatabase.reference.child("USERLISTS")
+            .child(firebaseAuth.currentUser?.displayName.toString()).child(username).setValue(username)
         //Retrieve stored repos
         return getRepositories(username)
     }
