@@ -15,12 +15,13 @@ import com.agjk.repodepot.R
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
+import com.agjk.repodepot.view.fragment.SplashScreenFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.agjk.repodepot.viewmodel.RepoViewModelFactory
-import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
-    private val firebaseAuth = FirebaseAuth.getInstance()
+
+    private var isFreshLaunch = true
 
     private lateinit var navigationDrawer: DrawerLayout
     private lateinit var userRecyclerView: RecyclerView
@@ -29,7 +30,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainUserRepoFragment: Fragment
 
     private val userAdapter = UserAdapter(mutableListOf(), this)
-
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
 
     private val repoViewModel: RepoViewModel by viewModels(
@@ -41,6 +41,29 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Show splash on launch
+        if (isFreshLaunch) {
+            supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    android.R.anim.fade_in, android.R.anim.fade_out,
+                    android.R.anim.fade_in, android.R.anim.fade_out
+                )
+                .add(R.id.splash_fragment_container, SplashScreenFragment())
+                .addToBackStack(null)
+                .commit()
+
+            isFreshLaunch = false
+        }
+    }
+
+    fun closeSplash() {
+        runOnUiThread {
+            supportFragmentManager.popBackStack()
+            initMainActivity()
+        }
+    }
+
+    private fun initMainActivity() {
         navDrawerToolbarSetup()
         viewPagerSetup()
 
@@ -66,8 +89,7 @@ class MainActivity : AppCompatActivity() {
         repoViewModel.getStoredCommitsForUser(
             "geolurez-eit",
             "android-kotlin-geo-fences"
-        ).observe(this, Observer { DebugLogger("Testing output for commits: $it") })
-
+        ).observe(this, { DebugLogger("Testing output for commits: $it") })
     }
 
     private fun viewPagerSetup() {

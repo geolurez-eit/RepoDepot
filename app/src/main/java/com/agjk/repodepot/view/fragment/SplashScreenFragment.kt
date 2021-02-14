@@ -1,14 +1,20 @@
-package com.agjk.repodepot
+package com.agjk.repodepot.view.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.agjk.repodepot.R
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.MainActivity
 import com.google.android.gms.tasks.OnSuccessListener
@@ -17,16 +23,18 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.OAuthProvider
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.util.*
+import kotlin.math.log
 
-class SplashScreen : AppCompatActivity() {
+class SplashScreenFragment : Fragment() {
+
+    private lateinit var thisContext: Context
 
     private val firebaseAuth = FirebaseAuth.getInstance()
     private var provider = OAuthProvider.newBuilder("github.com")
 
-    private val SPLASH_TIME: Long = 1000
+    private val SPLASH_TIME: Long = 500
 
     private lateinit var sloganTextView: TextView
     private lateinit var logoImageView: ImageView
@@ -34,76 +42,93 @@ class SplashScreen : AppCompatActivity() {
     private lateinit var loginText: TextView
     private lateinit var progressBar: ProgressBar
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.splash_screen_activity)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        thisContext = context
+    }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? =
+        inflater.inflate(R.layout.splash_screen_fragment, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        sloganTextView = view.findViewById(R.id.slogan)
+        logoImageView = view.findViewById(R.id.RepotDepotLogo)
+        loginbtn = view.findViewById(R.id.sign_in_Button_main)
+        loginText = view.findViewById(R.id.login_text)
+        progressBar = view.findViewById(R.id.progress_bar)
+
+        //// OAUTH
         // Target specific email with login hint.
         provider.addCustomParameter("login", "george.perez@enhanceit.us")
         // Request read access to a user's email addresses.
         // This must be preconfigured in the app's API permissions.
         val scopes: List<String> = listOf("user", "repo:status")
         provider.scopes = scopes
+        ////
 
-        sloganTextView= findViewById(R.id.slogan)
-        logoImageView = findViewById(R.id.RepotDepotLogo)
-        loginbtn = findViewById(R.id.sign_in_Button_main)
-        loginText = findViewById(R.id.login_text)
-        progressBar = findViewById(R.id.progress_bar)
-
-        // Bounce animation for the slogan (textview)
+        // Logo animation
         logoImageView.visibility = View.VISIBLE
-        val animationRotate = AnimationUtils.loadAnimation(this, R.anim.rotate_text)
+        val animationRotate = AnimationUtils.loadAnimation(thisContext, R.anim.rotate_text)
         logoImageView.startAnimation(animationRotate)
 
-        // Bounce animation for the slogan (textview)
+        // Slogan animation
         sloganTextView.visibility = View.VISIBLE
-        val animationZoomIn = AnimationUtils.loadAnimation(this, R.anim.zoom_in_text)
+        val animationZoomIn = AnimationUtils.loadAnimation(thisContext, R.anim.zoom_in_text)
         sloganTextView.startAnimation(animationZoomIn)
 
-        // only run button animation if no user logged in
-        firebaseAuth.currentUser?.let {
-            startMainActivity()
-        } ?: {
-            progressBar.visibility = View.INVISIBLE
+        // Login text animation
+        loginText.visibility = View.VISIBLE
+        val animationFadeIn = AnimationUtils.loadAnimation(thisContext, R.anim.text_fade_in)
+        loginText.startAnimation(animationFadeIn)
 
+        // Only show login buttons if no 'currentUser'
+        firebaseAuth.currentUser?.let {
+            closeSplashToMainActivity()
+        } ?: {
             // Animation for the login button
             loginbtn.visibility = View.VISIBLE
-            val animationSlideDown = AnimationUtils.loadAnimation(this, R.anim.slide_down_text)
+            val animationSlideDown = AnimationUtils.loadAnimation(thisContext, R.anim.slide_down_text)
             loginbtn.startAnimation(animationSlideDown)
 
+            // OAUTH GO!
             loginbtn.setOnClickListener {
                 //Check if login is pending, sign in if not
                 checkPendingResult()
             }
         }()
     }
-
-    private fun startMainActivity() {
-        Log.d("TAG_A", "starting main activity")
-
-        val animFadeOut = AnimationUtils.loadAnimation(this, R.anim.fast_fade_out)
+    
+    private fun closeSplashToMainActivity() {
+        val animFadeOut = AnimationUtils.loadAnimation(thisContext, R.anim.fast_fade_out)
         loginbtn.visibility = View.INVISIBLE
         loginbtn.startAnimation(animFadeOut)
+
         loginText.visibility = View.INVISIBLE
         loginText.startAnimation(animFadeOut)
 
+        val animFadeIn = AnimationUtils.loadAnimation(thisContext, R.anim.fast_fade_in)
         progressBar.visibility = View.VISIBLE
-        val animFadeIn = AnimationUtils.loadAnimation(this, R.anim.fast_fade_in)
         progressBar.startAnimation(animFadeIn)
 
-        GlobalScope.launch {
+        // TODO: change artificial loading delay
+        lifecycleScope.launch(context = Dispatchers.Default) {
             delay(SPLASH_TIME)
-            runOnUiThread {
-                startActivity(Intent(this@SplashScreen, MainActivity::class.java))
-                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            logoImageView.animation?.let {
+                while (!it.hasEnded()) { /* no-op */ }
             }
+            (context as MainActivity).closeSplash()
         }
     }
 
     private fun startSignIn() {
         firebaseAuth
-            .startActivityForSignInWithProvider( /* activity= */this, provider.build())
+            .startActivityForSignInWithProvider( /* activity= */(context as MainActivity), provider.build())
             .addOnSuccessListener {
                 // User is signed in.
                 // IdP data available in
@@ -111,8 +136,9 @@ class SplashScreen : AppCompatActivity() {
                 // The OAuth access token can also be retrieved:
                 // authResult.getCredential().getAccessToken().
                 DebugLogger(it.credential?.provider.toString())
+
                 Log.d("TAG_A", "sign in success")
-                startMainActivity()
+                closeSplashToMainActivity()
             }
             .addOnFailureListener {
                 // Handle failure.
@@ -133,8 +159,9 @@ class SplashScreen : AppCompatActivity() {
                         // authResult.getAdditionalUserInfo().getProfile().
                         // The OAuth access token can also be retrieved:
                         // authResult.getCredential().getAccessToken().
+
                         Log.d("TAG_A", "pending result success")
-                        startMainActivity()
+                        closeSplashToMainActivity()
                     })
                 .addOnFailureListener {
                     // Handle failure.
@@ -146,6 +173,5 @@ class SplashScreen : AppCompatActivity() {
             Log.d("TAG_A", "pending result is null, start sign in")
             startSignIn()
         }
-
     }
 }
