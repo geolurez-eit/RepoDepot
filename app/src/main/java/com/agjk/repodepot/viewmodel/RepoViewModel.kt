@@ -8,9 +8,12 @@ import com.agjk.repodepot.model.data.GitRepoCommits
 
 class RepoViewModel : ViewModel() {
 
+    /* getting data from Firebase */
+    // public only - common use
     fun getStoredReposForUser(username: String): LiveData<List<GitRepo.GitRepoItem>> =
         DepotRepository.getReposForUser(username)
 
+    // private and public - for signed in user
     fun getStoredPrivateReposForUser(
         username: String,
         token: String
