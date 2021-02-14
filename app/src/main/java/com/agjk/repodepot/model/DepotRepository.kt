@@ -6,6 +6,7 @@ import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
 import com.agjk.repodepot.network.GitRetrofit
 import com.agjk.repodepot.util.DebugLogger
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -15,10 +16,13 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 object DepotRepository {
+    private val resultRepoList: List<GitRepo.GitRepoItem> = listOf()
     private val repoUserLiveData: MutableLiveData<List<GitRepo.GitRepoItem>> = MutableLiveData()
+    private val userListLiveData: MutableLiveData<List<String>> = MutableLiveData()
     private val commitLiveData: MutableLiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
         MutableLiveData()
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private val firebaseAuth = FirebaseAuth.getInstance()
 
     private val gitRetrofit = GitRetrofit
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
@@ -28,16 +32,20 @@ object DepotRepository {
         firebaseDatabase.setPersistenceEnabled(true)
     }
 
-    private fun saveNewRepos(userName: String) {
+
+    private fun saveNewRepos(userName: String, page: Int) {
         DebugLogger("DepotRepository - saveNewRepos")
         DebugLogger("compositeDisposable.add")
         compositeDisposable.add(
-            gitRetrofit.getUserRepositories(userName)
+            gitRetrofit.getUserRepositories(userName, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    DebugLogger(".subscribe - it: $it")
-                    postRepos(userName, it)
+                    //DebugLogger(".subscribe - it: $it")
+                    if (it.size < 100)
+                        postRepos(userName, it)
+                    else
+                        resultRepoList
                     compositeDisposable.clear()
                 }, {
                     DebugLogger(".subscribe Error")
@@ -49,15 +57,11 @@ object DepotRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    DebugLogger(it.rate?.limit.toString())
-                    DebugLogger(it.rate?.remaining.toString())
-                    DebugLogger(it.rate?.reset.toString())
-                    DebugLogger(it.resources?.core?.remaining.toString())
-                    DebugLogger(it.resources?.core?.reset.toString())
+                    DebugLogger("Remaining calls: " + it.resources?.core?.remaining.toString())
+                    DebugLogger("Remaining time: " + (it.resources?.core?.reset.toString()))
                 }
         )
     }
-
 
     private fun saveNewPrivateRepos(userName: String, token: String) {
         DebugLogger("DepotRepository - saveNewRepos")
@@ -130,8 +134,12 @@ object DepotRepository {
         // Check if it has been 24 hours
         if (true) {
             //Update repos for user
-            saveNewRepos(username)
+            saveNewRepos(username, 1)
         }
+        //add user to userlist
+        DebugLogger(firebaseAuth.currentUser?.displayName.toString())
+        firebaseDatabase.reference.child("USERLISTS")
+            .child(firebaseAuth.currentUser?.displayName.toString()).child(username).setValue(username)
         //Retrieve stored repos
         return getRepositories(username)
     }
@@ -202,5 +210,27 @@ object DepotRepository {
             })
         DebugLogger("Returning from getRepositories")
         return repoUserLiveData
+    }
+
+    fun getUserList(): LiveData<List<String>> {
+        firebaseDatabase.reference.child("USERLISTS")
+            .child(firebaseAuth.currentUser?.displayName.toString())
+            .addValueEventListener(
+                object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val usersList = mutableListOf<String>()
+                        snapshot.children.forEach {
+                            it.getValue(String::class.java).let { user ->
+                                usersList.add(user.toString())
+                            }
+                        }
+                        userListLiveData.value = usersList
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        DebugLogger("Error ${error.message}")
+                    }
+                })
+        return userListLiveData
     }
 }

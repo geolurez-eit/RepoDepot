@@ -32,16 +32,15 @@ object GitRetrofit {
         .build()
 
 
-    fun getUserRepositories(username: String): Observable<List<GitRepo.GitRepoItem>> {
+    fun getUserRepositories(username: String, page:Int): Observable<List<GitRepo.GitRepoItem>> {
         DebugLogger("GitRetroFit.getUserRepositories")
         DebugLogger("username: $username")
         DebugLogger("gitApi: $gitApi")
-        return  gitApi.getGitRepos(username)
+        return  gitApi.getGitReposPage(username,page,100)
     }
     fun getRateLimit():Observable<RateLimit>{
         return gitApi.getRateLimit()
     }
-
 
     fun getUserAllRepositories(token: String): Observable<List<GitRepo.GitRepoItem>> {
         DebugLogger("GitRetroFit.getUserRepositories")
