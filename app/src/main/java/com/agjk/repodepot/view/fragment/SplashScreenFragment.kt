@@ -65,7 +65,8 @@ class SplashScreenFragment : Fragment() {
 
         //// OAUTH
         // Target specific email with login hint.
-        provider.addCustomParameter("login", "george.perez@enhanceit.us")
+//        provider.addCustomParameter("login", "george.perez@enhanceit.us")
+
         // Request read access to a user's email addresses.
         // This must be preconfigured in the app's API permissions.
         val scopes: List<String> = listOf("user", "repo:status")
