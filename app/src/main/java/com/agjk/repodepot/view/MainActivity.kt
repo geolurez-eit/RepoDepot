@@ -1,6 +1,7 @@
 package com.agjk.repodepot.view
 
 import android.os.Bundle
+import android.os.Debug
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,7 @@ import com.agjk.repodepot.view.fragment.MainUserRepoFragment
 import com.agjk.repodepot.view.fragment.SplashScreenFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.agjk.repodepot.viewmodel.RepoViewModelFactory
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
 
@@ -29,6 +31,8 @@ class MainActivity : AppCompatActivity() {
 
     private val userAdapter = UserAdapter(mutableListOf(), this)
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
+
+    private var tokenSaved = ""
 
     private val repoViewModel: RepoViewModel by viewModels(
         factoryProducer = { RepoViewModelFactory }
@@ -65,29 +69,37 @@ class MainActivity : AppCompatActivity() {
         navDrawerToolbarSetup()
         viewPagerSetup()
 
-        //TODO: Store api call for users into userList
-        //TODO: Update userAdapter with userList
-        //TODO: Add user to MainFragmentAdapter.addFragmentToList(userList.fragment)
-
-        // Target specific email with login hint.
-        provider.addCustomParameter("login", "george.perez@enhanceit.us")
-        // Request read access to a user's email addresses.
-        // This must be preconfigured in the app's API permissions.
-        val scopes: List<String> = listOf("user", "repo:status")
-        provider.scopes = scopes
+        // TODO: Store api call for users into userList
+        // TODO: Update userAdapter with userList
+        // TODO: Add user to MainFragmentAdapter.addFragmentToList(userList.fragment)
 
         // TODO: check on Observer
-        //Testing viewmodel methods
-        DebugLogger("MainActivity onCreate - saveNewRepos")
-        //repoViewModel.getNewRepos("geolurez-eit")
-        //repoViewModel.getNewCommits("geolurez-eit","android-kotlin-geo-fences")
-        repoViewModel.getStoredReposForUser("geolurez-eit")
-            .observe(this, Observer { DebugLogger("Testing output for repos: $it") })
 
-        repoViewModel.getStoredCommitsForUser(
+
+        /*repoViewModel.getStoredReposForUser(FirebaseAuth.getInstance().).observe(this, Observer {
+
+        })*/
+        //Testing viewmodel methods
+
+
+        DebugLogger("MainActivity onCreate - saveNewRepos")
+        /*//repoViewModel.getNewRepos("geolurez-eit")
+        //repoViewModel.getNewCommits("geolurez-eit","android-kotlin-geo-fences")*/
+
+        val userName: String = FirebaseAuth.getInstance().currentUser?.displayName.toString()
+        DebugLogger("Username -----> ${userName}")
+        DebugLogger("Token -----> ${tokenSaved}")
+
+        repoViewModel.getNewRepos(userName)
+        repoViewModel.getNewPrivateRepos("bladerjam7", tokenSaved)
+        repoViewModel.getStoredPrivateReposForUser("bladerjam7").observe( this, Observer {
+            DebugLogger("Repo size -------> ${it.size}")
+        })
+
+        /*repoViewModel.getStoredCommitsForUser(
             "geolurez-eit",
             "android-kotlin-geo-fences"
-        ).observe(this, Observer { DebugLogger("Testing output for commits: $it") })
+        ).observe(this, Observer { DebugLogger("Testing output for commits: $it") })*/
 
     }
 
@@ -148,4 +160,12 @@ class MainActivity : AppCompatActivity() {
     fun closeNavDrawer() {
         navigationDrawer.closeDrawers()
     }
+
+    fun saveToken(tokenSaved: String) {
+        this.tokenSaved = tokenSaved
+    }
+
+    /* fun saveUsername(input: String){
+         username = input
+     }*/
 }
