@@ -20,7 +20,7 @@ object DepotRepository {
         MutableLiveData()
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
 
-    private val gitRetrofit: GitRetrofit = GitRetrofit()
+    private val gitRetrofit = GitRetrofit
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
 
@@ -28,7 +28,7 @@ object DepotRepository {
         firebaseDatabase.setPersistenceEnabled(true)
     }
 
-    fun saveNewRepos(userName: String) {
+    private fun saveNewRepos(userName: String) {
         DebugLogger("DepotRepository - saveNewRepos")
         DebugLogger("compositeDisposable.add")
         compositeDisposable.add(
@@ -44,9 +44,22 @@ object DepotRepository {
                     DebugLogger(it.localizedMessage)
                 })
         )
+        compositeDisposable.add(
+            gitRetrofit.getRateLimit()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    DebugLogger(it.rate?.limit.toString())
+                    DebugLogger(it.rate?.remaining.toString())
+                    DebugLogger(it.rate?.reset.toString())
+                    DebugLogger(it.resources?.core?.remaining.toString())
+                    DebugLogger(it.resources?.core?.reset.toString())
+                }
+        )
     }
 
-    fun saveNewPrivateRepos(userName: String, token: String) {
+
+    private fun saveNewPrivateRepos(userName: String, token: String) {
         DebugLogger("DepotRepository - saveNewRepos")
         DebugLogger("compositeDisposable.add")
         compositeDisposable.add(
@@ -62,9 +75,21 @@ object DepotRepository {
                     DebugLogger(it.localizedMessage)
                 })
         )
+        compositeDisposable.add(
+            gitRetrofit.getRateLimit()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    DebugLogger(it.rate?.limit.toString())
+                    DebugLogger(it.rate?.remaining.toString())
+                    DebugLogger(it.rate?.reset.toString())
+                    DebugLogger(it.resources?.core?.remaining.toString())
+                    DebugLogger(it.resources?.core?.reset.toString())
+                }
+        )
     }
 
-    fun saveNewCommits(userName: String, repoName: String) {
+    private fun saveNewCommits(userName: String, repoName: String) {
         DebugLogger("DepotRepository - saveNewCommits")
         DebugLogger("compositeDisposable.add")
         compositeDisposable.add(
@@ -102,25 +127,13 @@ object DepotRepository {
 
     fun getReposForUser(username: String): LiveData<List<GitRepo.GitRepoItem>> {
         DebugLogger("DepotRepository.getReposForUser")
-        firebaseDatabase.reference.child("REPOSITORIES").child(username)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                    DebugLogger("Error ${error.message}")
-                }
-
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    DebugLogger("onDataChange")
-                    val repoList = mutableListOf<GitRepo.GitRepoItem>()
-                    snapshot.children.forEach {
-                        it.getValue(GitRepo.GitRepoItem::class.java)?.let { repo ->
-                            repoList.add(repo)
-                        }
-                    }
-                    repoUserLiveData.value = repoList
-                }
-            })
-        DebugLogger("Returning from getReposForUser")
-        return repoUserLiveData
+        // Check if it has been 24 hours
+        if (true) {
+            //Update repos for user
+            saveNewRepos(username)
+        }
+        //Retrieve stored repos
+        return getRepositories(username)
     }
 
     fun getCommitsForUser(
@@ -128,6 +141,12 @@ object DepotRepository {
         repoName: String
     ): LiveData<List<GitRepoCommits.GitRepoCommitsItem>> {
         DebugLogger("DepotRepository.getCommitsForUser")
+        // Check if it has been 24 hours
+        if (true) {
+            //Update commits for repo
+            saveNewCommits(username, repoName)
+        }
+        //Retrieve stored commits
         firebaseDatabase.reference.child("COMMITS").child(username).child(repoName)
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
@@ -147,5 +166,41 @@ object DepotRepository {
             })
         DebugLogger("Returning from getCommitsForUser")
         return commitLiveData
+    }
+
+    fun getReposForUserPrivate(
+        username: String,
+        token: String
+    ): LiveData<List<GitRepo.GitRepoItem>> {
+        DebugLogger("DepotRepository.getReposForUser")
+        // Check if it has been 24 hours
+        if (true) {
+            //Update repos for user
+            saveNewPrivateRepos(username, token)
+        }
+        //Retrieve stored repos
+        return getRepositories(username)
+    }
+
+    private fun getRepositories(username: String): MutableLiveData<List<GitRepo.GitRepoItem>> {
+        firebaseDatabase.reference.child("REPOSITORIES").child(username)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    DebugLogger("Error ${error.message}")
+                }
+
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    DebugLogger("onDataChange")
+                    val repoList = mutableListOf<GitRepo.GitRepoItem>()
+                    snapshot.children.forEach {
+                        it.getValue(GitRepo.GitRepoItem::class.java)?.let { repo ->
+                            repoList.add(repo)
+                        }
+                    }
+                    repoUserLiveData.value = repoList
+                }
+            })
+        DebugLogger("Returning from getRepositories")
+        return repoUserLiveData
     }
 }
