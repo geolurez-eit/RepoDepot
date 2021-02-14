@@ -72,10 +72,10 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_user_repo"
-        android:layout_width="378dp"
-        android:layout_height="541dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_margin="16dp"
-        tools:listitem="@layout/item_repos"
+        android:layout_marginTop="1dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

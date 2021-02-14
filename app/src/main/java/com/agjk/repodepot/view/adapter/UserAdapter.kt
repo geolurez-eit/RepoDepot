@@ -43,7 +43,7 @@ class UserAdapter(var userList: List<Users>, val activity: MainActivity): Recycl
 
            clUserBox.setOnClickListener {
                activity.loadViewPagerFragment(position)
-               activity.updateRepoList(user.repo)
+               //activity.updateRepoList(user.repo)
                activity.closeNavDrawer()
            }
 

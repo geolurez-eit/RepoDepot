@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
@@ -15,7 +16,7 @@ import com.agjk.repodepot.util.DebugLogger
 class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
 
     inner class UserRepoViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        val repoDetailCard: ConstraintLayout = itemView.findViewById(R.id.cl_user_item_box)
+        val repoDetailCard: CardView = itemView.findViewById(R.id.cv_repo_detail_card)
         val repoTitle: TextView = itemView.findViewById(R.id.tv_repo_name)
         val repoDescription: TextView = itemView.findViewById(R.id.tv_repo_description)
         val repoLanguage: TextView = itemView.findViewById(R.id.tv_repo_language)
@@ -28,14 +29,17 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
     }
 
     override fun getItemCount(): Int {
-        DebugLogger("Repo Count Size: ${repoList.size}")
+        DebugLogger("RepoList Size: ------------>   ${repoList.size}")
+        DebugLogger("RepoList -------------->: ${repoList}")
         return repoList.size
     }
 
     override fun onBindViewHolder(holder: UserRepoViewHolder, position: Int) {
         val repo = repoList[position]
 
-        DebugLogger("RepoList Size: ${repoList.size}")
+        DebugLogger("Repo Count Size: ${repoList.size}")
+
+
 
         holder.apply {
             repoTitle.text = repo.repoName
@@ -50,7 +54,7 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
     }
 
     fun updateRepo(newRepoList: List<Repos>){
-        DebugLogger("RepoList: ${newRepoList}")
+        DebugLogger("RepoList Size Update -------> ${newRepoList.size}")
         repoList = newRepoList
         notifyDataSetChanged()
     }
