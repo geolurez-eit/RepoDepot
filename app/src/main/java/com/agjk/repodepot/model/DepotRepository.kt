@@ -240,4 +240,10 @@ object DepotRepository {
                 })
         return userListLiveData
     }
+
+    fun addUserToList(userName: String) {
+        val thisUserName = firebaseAuth.currentUser?.displayName.toString()
+        firebaseDatabase.reference.child("USERLISTS")
+            .child(thisUserName).child(userName).setValue(userName)
+    }
 }

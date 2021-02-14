@@ -28,4 +28,7 @@ class RepoViewModel : ViewModel() {
 
     fun getUserList():LiveData<List<String>> =
         DepotRepository.getUserList()
+    fun addUserToList(userName:String) {
+        DepotRepository.addUserToList(userName)
+    }
 }
