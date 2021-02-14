@@ -15,9 +15,12 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
+import com.agjk.repodepot.model.data.Repos
+import com.agjk.repodepot.model.data.Users
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
+import com.agjk.repodepot.view.fragment.MainUserRepoFragment
 import com.agjk.repodepot.view.fragment.SplashScreenFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.agjk.repodepot.viewmodel.RepoViewModelFactory
@@ -37,6 +40,10 @@ class MainActivity : AppCompatActivity() {
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
     private var tokenSaved = ""
+
+    private var repoList: List<Repos> = mutableListOf()
+    private var listOfUserSaved: MutableList<String> = mutableListOf()
+    private var userList: MutableList<Users> = mutableListOf()
 
     private val userAdapter = UserAdapter(mutableListOf(), this)
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
@@ -115,9 +122,32 @@ class MainActivity : AppCompatActivity() {
         DebugLogger("Username -----> ${userName}")
         DebugLogger("Token -----> ${tokenSaved}")
 
-        repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved).observe( this, Observer {
-            DebugLogger("Repo size -------> ${it}")
+        repoViewModel.getUserList().observe(this, Observer<List<String>>{
+            it.forEach{
+                listOfUserSaved.add(it)
+            }
         })
+
+        listOfUserSaved.forEach {
+            repoViewModel.getStoredPrivateReposForUser(it, tokenSaved).observe( this, Observer { observed ->
+                val imageUrl = observed[0].owner?.avatar_url
+                val displayName = it
+                val repoList: MutableList<Repos> = mutableListOf()
+                observed.forEach {repo ->
+                    val repoName = repo.name
+                    val repoLanguage = repo.language
+                    val repoStarRating = repo.stargazers_count
+                    val repoDescription = repo.description
+                    repoList.add(Repos(repoName, repoDescription, repoLanguage, repoStarRating))
+                }
+                val fragment = MainUserRepoFragment(repoList)
+                val user = Users(imageUrl, displayName, fragment)
+                userList.add(user)
+
+                mainFragmentAdapter.addFragmentToList(user)
+            })
+        }
+
 
         /*repoViewModel.getStoredCommitsForUser(
             "geolurez-eit",
