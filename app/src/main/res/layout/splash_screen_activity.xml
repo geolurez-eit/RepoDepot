@@ -27,7 +27,6 @@
         android:textColor="@color/black"
         />
 
-<!--
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="match_parent"
@@ -40,7 +39,6 @@
         android:layout_marginEnd="70dp"
         android:indeterminateTint="@color/black"
         />
--->
 
     <TextView
         android:id="@+id/website"
@@ -66,6 +64,7 @@
         app:fabCustomSize="65dp"
        />
     <TextView
+        android:id="@+id/login_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/sign_in_Button_main"
