@@ -17,7 +17,7 @@ class MainUserRepoAdapter(val repoList: List<Repos>) : RecyclerView.Adapter<Main
     inner class UserRepoViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val repoDetailCard: ConstraintLayout = itemView.findViewById(R.id.cl_user_item_box)
         val repoTitle: TextView = itemView.findViewById(R.id.tv_repo_name)
-        val repoDescription: TextView = itemView.findViewById(R.id.tv_repo_description)
+        //val repoDescription: TextView = itemView.findViewById(R.id.tv_repo_description)
         val repoLanguage: TextView = itemView.findViewById(R.id.tv_repo_language)
         val repoRating: TextView = itemView.findViewById(R.id.tv_rating_count)
     }
@@ -34,7 +34,7 @@ class MainUserRepoAdapter(val repoList: List<Repos>) : RecyclerView.Adapter<Main
 
         holder.apply {
             repoTitle.text = repo.repoName
-            repoDescription.text = repo.repoDescription
+            //repoDescription.text = repo.repoDescription
             repoLanguage.text = repo.repoLanguage
             repoRating.text = repo.repoStarNum.toString()
         }

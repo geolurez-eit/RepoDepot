@@ -4,17 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="8dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/topLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/DarkGray50"
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:src="@drawable/maxresdefault"
+        app:layout_constraintHeight_percent="0.27"
+        android:scaleType="centerCrop"
+        app:layout_constraintVertical_bias="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_user_profile"
@@ -64,21 +66,35 @@
             android:fontFamily="@font/names_font"
             android:text="Details"
             android:textColor="@color/Gray50"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/iv_user_profile"
             app:layout_constraintTop_toBottomOf="@+id/tv_username" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_user_repo"
-        android:layout_width="378dp"
-        android:layout_height="541dp"
-        android:layout_margin="16dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.78"
+        app:layout_constraintVertical_bias="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topLayout"
-        tools:listitem="@layout/item_repos" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/cornerview" >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_user_repo"
+            android:layout_width="379dp"
+            android:layout_height="486dp"
+            android:layout_margin="16dp"
+            android:layout_marginTop="100dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:listitem="@layout/item_repos" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    >
 </androidx.constraintlayout.widget.ConstraintLayout>
