@@ -6,4 +6,9 @@
     <string name="navigation_drawer_close">Close navigation</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="log_out_button">Log out</string>
+    <string name="sign_out_alert">Sign Out</string>
+    <string name="sign_out_message">Do you want to sign out?</string>
+    <string name="sign_out_alert_positive">Sign out</string>
+    <string name="cancel">Cancel</string>
 </resources>
