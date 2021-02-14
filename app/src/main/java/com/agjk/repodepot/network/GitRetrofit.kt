@@ -1,16 +1,20 @@
 package com.agjk.repodepot.network
 
+import android.annotation.SuppressLint
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
-import com.agjk.repodepot.util.DebugLogger
+import com.agjk.repodepot.model.data.RateLimit
 import com.agjk.repodepot.util.Constants.Companion.BASE_URL
+import com.agjk.repodepot.util.DebugLogger
 import io.reactivex.Observable
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-class GitRetrofit {
+object GitRetrofit {
     private var gitApi: GitApi
+    private val client = OkHttpClient.Builder().build()
 
     init {
         gitApi = createGitApi(createRetrofit())
@@ -20,21 +24,26 @@ class GitRetrofit {
         return retrofit.create(GitApi::class.java)
     }
 
-    private fun createRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
-    }
+    private fun createRetrofit(): Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .client(client)
+        .build()
+
 
     fun getUserRepositories(username: String): Observable<List<GitRepo.GitRepoItem>> {
         DebugLogger("GitRetroFit.getUserRepositories")
         DebugLogger("username: $username")
         DebugLogger("gitApi: $gitApi")
-        return gitApi.getGitRepos(username)
+        return  gitApi.getGitRepos(username)
     }
-    fun getUserAllRepositories(token:String): Observable<List<GitRepo.GitRepoItem>> {
+    fun getRateLimit():Observable<RateLimit>{
+        return gitApi.getRateLimit()
+    }
+
+
+    fun getUserAllRepositories(token: String): Observable<List<GitRepo.GitRepoItem>> {
         DebugLogger("GitRetroFit.getUserRepositories")
         DebugLogger("gitApi: $gitApi")
         DebugLogger(token)
@@ -44,6 +53,7 @@ class GitRetrofit {
     fun getRepositoryCommits(
         username: String,
         repo: String
-    ): Observable<List<GitRepoCommits.GitRepoCommitsItem>> = gitApi.getGitRepoCommits(username, repo)
+    ): Observable<List<GitRepoCommits.GitRepoCommitsItem>> =
+        gitApi.getGitRepoCommits(username, repo)
 
 }
