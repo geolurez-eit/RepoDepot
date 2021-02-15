@@ -10,14 +10,11 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.SearchView
 import androidx.activity.viewModels
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import androidx.fragment.app.findFragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -25,9 +22,7 @@ import com.agjk.repodepot.R
 import com.agjk.repodepot.model.DepotRepository
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
-import com.agjk.repodepot.view.adapter.SearchAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
-import com.agjk.repodepot.view.fragment.SearchResultsFragment
 import com.agjk.repodepot.view.fragment.SplashScreenFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.google.android.material.button.MaterialButton
@@ -119,6 +114,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+//    FIXME: rewrite ui to stop using the activity search intent stuff, doubling up on queries
     private fun handleIntent(intent: Intent) {
         if (Intent.ACTION_SEARCH == intent.action) {
             intent.getStringExtra(SearchManager.QUERY)?.also { query ->
@@ -211,8 +207,8 @@ class MainActivity : AppCompatActivity() {
             }
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    /* no-op */
                     Log.d("TAG_B", "query -> $query")
+                    // FIXME: test this vs activity search intent
                     query?.let { doMySearch(query) }
                     return true
                 }
@@ -256,7 +252,7 @@ class MainActivity : AppCompatActivity() {
                 navigationDrawer.openDrawer(GravityCompat.START)
             }
 
-            clearSearch()
+            closeSearch()
         }
 
 //        // Toggle is used to attach the toolbar and navigation drawer
@@ -274,7 +270,7 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         when {
             searchResultsContainer.visibility == View.VISIBLE -> {
-                clearSearch()
+                closeSearch()
             }
 
             navigationDrawer.isDrawerOpen(GravityCompat.START) ->
@@ -284,9 +280,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun clearSearch() {
-        searchView.clearFocus()
+    // TODO: close search on nav item selection
+    private fun closeSearch() {
         searchView.setQuery("", false)
+        searchView.clearFocus()
+        searchView.isIconified = true
     }
 
     fun closeNavDrawer() {
