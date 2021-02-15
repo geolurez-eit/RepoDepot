@@ -12,7 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RepoDepot.NoActionBar">
 
-        <activity android:name=".view.MainActivity" android:screenOrientation="portrait">
+        <activity android:name=".view.MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified"
+            android:launchMode="singleTop">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

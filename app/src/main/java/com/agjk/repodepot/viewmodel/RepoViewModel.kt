@@ -33,6 +33,5 @@ class RepoViewModel : ViewModel() {
         DepotRepository.addUserToList(userName)
     }
 
-    fun searchUsers(stringSearch: String): LiveData<List<UserSearch.Item>> =
-        DepotRepository.getMatchingUserList(stringSearch)
+    fun searchUsers(stringSearch: String) = DepotRepository.searchForUsers(stringSearch)
 }

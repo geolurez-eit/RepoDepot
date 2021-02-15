@@ -12,26 +12,6 @@
         android:layout_height="match_parent"
         android:elevation="32dp" />
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/nav_drawer_menu_button"-->
-<!--        android:layout_width="48dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:padding="4dp"-->
-<!--        android:scaleType="fitCenter"-->
-<!--        android:backgroundTint="#FFFFFFFF"-->
-<!--        android:src="@drawable/ic_baseline_menu_24"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintBottom_toTopOf="@id/top_bar_guideline"-->
-<!--        android:layout_marginStart="4dp" />-->
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/top_bar_guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent=".075" />
-
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
@@ -43,28 +23,60 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-<!--            <androidx.appcompat.widget.Toolbar-->
-<!--                android:id="@+id/toolbar"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="?attr/actionBarSize"-->
-<!--                android:background="@color/design_default_color_primary"-->
-<!--                android:elevation="4dp"-->
-<!--                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toTopOf="parent"-->
-<!--                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
-
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/main_view_pager_2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageButton
+                android:id="@+id/nav_drawer_menu_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:backgroundTint="#FFFFFFFF"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_baseline_menu_24"
+                app:layout_constraintBottom_toTopOf="@id/top_bar_guideline"
+                app:layout_constraintEnd_toStartOf="@+id/search_end_guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/top_bar_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent=".075" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/search_end_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".125" />
+
+            <SearchView
+                android:id="@+id/search_view"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:iconifiedByDefault="false"
+                android:inputType="text"
+                android:queryHint="@string/search_hint"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/top_bar_guideline"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintStart_toStartOf="@+id/search_end_guideline"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/search_results_fragment_container"
+                android:name="com.agjk.repodepot.view.fragment.SearchResultsFragment"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/top_bar_guideline" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -77,7 +89,6 @@
             app:menu="@menu/nav_drawer_menu"
             tools:visibility="gone">
 
-
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -89,7 +100,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     app:layout_constraintGuide_percent="0.30" />
-
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_users"
@@ -108,8 +118,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
-                    android:textColor="@color/DarkGray50"
                     android:text="@string/log_out_button"
+                    android:textColor="@color/DarkGray50"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

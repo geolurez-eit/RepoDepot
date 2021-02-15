@@ -26,7 +26,7 @@ object DepotRepository {
     private val userListLiveData: MutableLiveData<List<String>> = MutableLiveData()
     private val commitLiveData: MutableLiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
         MutableLiveData()
-    private val userSearchLiveData: MutableLiveData<List<UserSearch.Item>> = MutableLiveData()
+    val userSearchLiveData: MutableLiveData<List<UserSearch.Item>> = MutableLiveData()
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val firebaseAuth = FirebaseAuth.getInstance()
 
@@ -320,7 +320,8 @@ object DepotRepository {
             .child(thisUserName).child(userName).setValue(userName)
     }
 
-    fun getMatchingUserList(stringSearch: String): MutableLiveData<List<UserSearch.Item>> {
+    // Search bar query
+    fun searchForUsers(stringSearch: String) {
         compositeDisposable.add(
             gitRetrofit.getUserSearchResults(stringSearch)
                 .subscribeOn(Schedulers.io())
@@ -335,7 +336,9 @@ object DepotRepository {
                     DebugLogger(it.localizedMessage)
                 })
         )
+    }
 
-        return userSearchLiveData
+    fun clearSearchResults() {
+        userSearchLiveData.value = listOf()
     }
 }

@@ -1,28 +1,35 @@
 package com.agjk.repodepot.view
 
 import android.app.SearchManager
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageButton
+import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.core.view.get
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.findFragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
+import com.agjk.repodepot.model.DepotRepository
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
 import com.agjk.repodepot.view.adapter.SearchAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
+import com.agjk.repodepot.view.fragment.SearchResultsFragment
 import com.agjk.repodepot.view.fragment.SplashScreenFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
-import com.agjk.repodepot.viewmodel.RepoViewModelFactory
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
@@ -31,6 +38,7 @@ import com.google.firebase.ktx.Firebase
 
 class MainActivity : AppCompatActivity() {
 
+    // for splash screen
     private var isFreshLaunch = true
 
     private lateinit var navigationDrawer: DrawerLayout
@@ -45,9 +53,12 @@ class MainActivity : AppCompatActivity() {
     private val userAdapter = UserAdapter(mutableListOf(), this)
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
 
-    private val repoViewModel: RepoViewModel by viewModels(
-        factoryProducer = { RepoViewModelFactory }
-    )
+    private val repoViewModel: RepoViewModel by viewModels()
+
+    // for search bar
+    private lateinit var searchManager: SearchManager
+    private lateinit var searchView: SearchView
+    private lateinit var searchResultsContainer: FragmentContainerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         DebugLogger("MainActivity onCreate")
@@ -67,13 +78,14 @@ class MainActivity : AppCompatActivity() {
 
                         // start this activity fresh to unload data and display splash screen
                         startActivity(Intent(this, MainActivity::class.java).also { intent ->
-                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                         })
 
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                     })
                 .setNegativeButton(getString(R.string.cancel),
-                    DialogInterface.OnClickListener() {dialog: DialogInterface, _ ->
+                    DialogInterface.OnClickListener() { dialog: DialogInterface, _ ->
                         dialog.dismiss()
                     })
                 .show()
@@ -113,14 +125,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val searchAdapter = SearchAdapter(listOf())
-
     private fun doMySearch(stringSearch: String) {
-        repoViewModel.searchUsers(stringSearch).observe(this, {
-            Log.d("TAG_A", it.toString())
-            searchAdapter.updateSuggestionList(it)
-            // TODO: add adapter to a recycler view and display
-        })
+        repoViewModel.searchUsers(stringSearch)
     }
 
     fun closeSplash() {
@@ -131,17 +137,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initMainActivity() {
-        navDrawerToolbarSetup()
+        searchViewSetup()
         viewPagerSetup()
-
-//        navMenuButton = findViewById(R.id.nav_drawer_menu_button)
-//        navMenuButton.setOnClickListener {
-//            if (navigationDrawer.isDrawerOpen(GravityCompat.START)) {
-//                navigationDrawer.closeDrawer(GravityCompat.START)
-//            } else {
-//                navigationDrawer.openDrawer(GravityCompat.START)
-//            }
-//        }
 
         // TODO: Store api call for users into userList
         // TODO: Update userAdapter with userList
@@ -157,9 +154,10 @@ class MainActivity : AppCompatActivity() {
         DebugLogger("Username -----> ${userName}")
         DebugLogger("Token -----> ${tokenSaved}")
 
-        repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved).observe( this, Observer {
-            DebugLogger("Repo size -------> ${it}")
-        })
+        repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved)
+            .observe(this, Observer {
+                DebugLogger("Repo size -------> ${it}")
+            })
 
         /*repoViewModel.getStoredCommitsForUser(
             "geolurez-eit",
@@ -191,34 +189,76 @@ class MainActivity : AppCompatActivity() {
         viewPager.currentItem = i
     }
 
-    private fun navDrawerToolbarSetup() {
-//        val toolbar: Toolbar = findViewById(R.id.toolbar)
-//        setSupportActionBar(toolbar)
+    private fun searchViewSetup() {
+        // Search bar
+        searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        searchView = findViewById(R.id.search_view)
+        searchResultsContainer = findViewById(R.id.search_results_fragment_container)
 
+        searchView.apply {
+            visibility = View.VISIBLE
+            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            setOnQueryTextFocusChangeListener { v, hasFocus ->
+                Log.d("TAG_A", "on focus change, $hasFocus")
+                if (hasFocus)
+                    searchResultsContainer.visibility = View.VISIBLE
+                else {
+                    searchResultsContainer.visibility = View.GONE
+                    DepotRepository.clearSearchResults()
+                }
+            }
+//            setOnCloseListener {
+//                Log.d("TAG_A", "on close")
+//                searchResultsContainer.visibility = View.GONE
+//                false
+//            }
+        }
+
+        // TODO: reconnect custom menu here
         navigationDrawer = findViewById(R.id.drawer_layout)
         userRecyclerView = findViewById(R.id.rv_users)
 
         userRecyclerView.adapter = userAdapter
 
-        // Toggle is used to attach the toolbar and navigation drawer
-        val toggle = ActionBarDrawerToggle(
-            this,
-            navigationDrawer,
-//            toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
-        )
+        navMenuButton = findViewById(R.id.nav_drawer_menu_button)
+        navMenuButton.setOnClickListener {
+            if (navigationDrawer.isDrawerOpen(GravityCompat.START)) {
+                navigationDrawer.closeDrawer(GravityCompat.START)
+            } else {
+                navigationDrawer.openDrawer(GravityCompat.START)
+            }
 
-        navigationDrawer.addDrawerListener(toggle)
-        toggle.syncState()  // Menu button default animation when drawer is open and closed
+            clearSearch()
+        }
+
+//        // Toggle is used to attach the toolbar and navigation drawer
+//        val toggle = ActionBarDrawerToggle(
+//            this,
+//            navigationDrawer,
+//            R.string.navigation_drawer_open,
+//            R.string.navigation_drawer_close
+//        )
+//
+//        navigationDrawer.addDrawerListener(toggle)
+//        toggle.syncState() // Menu button default animation when drawer is open and closed
     }
 
     override fun onBackPressed() {
-        if (navigationDrawer.isDrawerOpen(GravityCompat.START)) {
-            navigationDrawer.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+        when {
+            searchResultsContainer.visibility == View.VISIBLE -> {
+                clearSearch()
+            }
+
+            navigationDrawer.isDrawerOpen(GravityCompat.START) ->
+                navigationDrawer.closeDrawer(GravityCompat.START)
+
+            else -> super.onBackPressed()
         }
+    }
+
+    private fun clearSearch() {
+        searchView.clearFocus()
+        searchView.setQuery("", false)
     }
 
     fun closeNavDrawer() {
