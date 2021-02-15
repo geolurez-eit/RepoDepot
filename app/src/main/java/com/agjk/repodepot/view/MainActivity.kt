@@ -35,6 +35,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -59,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchManager: SearchManager
     private lateinit var searchView: SearchView
     private lateinit var searchResultsContainer: FragmentContainerView
+    private var searchTimer: Timer = Timer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         DebugLogger("MainActivity onCreate")
@@ -207,6 +209,33 @@ class MainActivity : AppCompatActivity() {
                     DepotRepository.clearSearchResults()
                 }
             }
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    /* no-op */
+                    Log.d("TAG_B", "query -> $query")
+                    query?.let { doMySearch(query) }
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    // TODO: start loading view here
+
+                    searchTimer.cancel()
+                    searchTimer = Timer()
+
+                    searchTimer.schedule(
+                        object : TimerTask() {
+                            override fun run() {
+                                // TODO: end loading view here
+                                Log.d("TAG_B", "$newText")
+                                newText?.let { doMySearch(newText) }
+                            }
+                        }, 1000
+                    )
+
+                    return true
+                }
+            })
 //            setOnCloseListener {
 //                Log.d("TAG_A", "on close")
 //                searchResultsContainer.visibility = View.GONE
@@ -214,7 +243,6 @@ class MainActivity : AppCompatActivity() {
 //            }
         }
 
-        // TODO: reconnect custom menu here
         navigationDrawer = findViewById(R.id.drawer_layout)
         userRecyclerView = findViewById(R.id.rv_users)
 
