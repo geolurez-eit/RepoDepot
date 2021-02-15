@@ -14,6 +14,8 @@ import com.google.firebase.database.ValueEventListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.time.LocalDateTime
+import java.util.*
 
 object DepotRepository {
     private val resultRepoList: MutableList<GitRepo.GitRepoItem> = mutableListOf()
@@ -27,6 +29,7 @@ object DepotRepository {
 
     private val gitRetrofit = GitRetrofit
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    private var is24HoursPassed = false
 
 
     init {
@@ -106,7 +109,6 @@ object DepotRepository {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    DebugLogger(".subscribe - it: $it")
                     if (it.size < 100) {
                         resultCommitList.addAll(it)
                         postCommits(it, userName, repoName)
@@ -126,6 +128,15 @@ object DepotRepository {
         DebugLogger("DepotRepository.postRepos")
         firebaseDatabase.reference.child("REPOSITORIES").child(userName)
             .setValue(repo)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            DebugLogger(LocalDateTime.now().toString())
+            firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
+                .setValue(LocalDateTime.now().toString())
+        } else {
+            DebugLogger(Calendar.getInstance().time.toString())
+            firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
+                .setValue(Calendar.getInstance().time.toString())
+        }
         DebugLogger("Repos for :${repo.first().owner?.login} added!")
     }
 
@@ -143,8 +154,10 @@ object DepotRepository {
     fun getReposForUser(username: String): LiveData<List<GitRepo.GitRepoItem>> {
         DebugLogger("DepotRepository.getReposForUser")
         // Check if it has been 24 hours
-        if (true) {
+        checkIf24Hours(username)
+        if (is24HoursPassed) {
             //Update repos for user
+            DebugLogger("Updating repos")
             saveNewRepos(username, 1)
         }
         //add user to userlist
@@ -155,6 +168,39 @@ object DepotRepository {
         //Retrieve stored repos
         return getRepositories(username)
     }
+
+    private fun checkIf24Hours(userName: String) {
+        DebugLogger("24 Hour Check")
+        firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.getValue(String::class.java)?.let {
+                        DebugLogger("Last Updated: $it")
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            DebugLogger(
+                                "Last Updated + 24: " + LocalDateTime.parse(it).plusDays(1L)
+                            )
+                            DebugLogger("Now: " + LocalDateTime.now())
+                            if (LocalDateTime.parse(it).plusDays(1L) < LocalDateTime.now()) {
+                                DebugLogger("It has been 24 hours")
+                                is24HoursPassed = true
+                            } else {
+                                DebugLogger("Still has not been 24 hours")
+                            }
+                        } else {
+                            DebugLogger("Pre Oreo")
+                            TODO("VERSION.SDK_INT < O")
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    DebugLogger(error.message)
+                }
+
+            })
+    }
+
 
     fun getCommitsForUser(
         username: String,
@@ -194,7 +240,8 @@ object DepotRepository {
     ): LiveData<List<GitRepo.GitRepoItem>> {
         DebugLogger("DepotRepository.getReposForUser")
         // Check if it has been 24 hours
-        if (true) {
+        checkIf24Hours(username + "_private")
+        if (is24HoursPassed) {
             //Update repos for user
             saveNewPrivateRepos(username, token, 1)
         }
@@ -218,9 +265,10 @@ object DepotRepository {
                     DebugLogger("onDataChange")
                     val repoList = mutableListOf<GitRepo.GitRepoItem>()
                     snapshot.children.forEach {
-                        it.getValue(GitRepo.GitRepoItem::class.java)?.let { repo ->
-                            repoList.add(repo)
-                        }
+                        if (it.value is GitRepo.GitRepoItem)
+                            it.getValue(GitRepo.GitRepoItem::class.java)?.let { repo ->
+                                repoList.add(repo)
+                            }
                     }
                     repoUserLiveData.value = repoList
                 }
