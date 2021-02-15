@@ -48,7 +48,6 @@
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="12sp" />
-
     <!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
     <!--        android:id="@+id/sign_in_Button_main"-->
     <!--        android:layout_width="wrap_content"-->
