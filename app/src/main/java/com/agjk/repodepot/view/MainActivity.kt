@@ -211,9 +211,16 @@ class MainActivity : AppCompatActivity() {
         navigationDrawer.closeDrawers()
     }
 
+    //Data methods for MainActivity
+
     private fun initFirebase() {
         repoViewModel.getUserPreferences().observe(this, {
             tokenSaved = it.gitHubAccessToken
         })
+    }
+    private fun getData(userName:String){
+        repoViewModel.addUserToList(userName)
+        repoViewModel.getStoredReposForUser(userName)
+        repoViewModel.getStoredPrivateReposForUser(userName,tokenSaved)
     }
 }
