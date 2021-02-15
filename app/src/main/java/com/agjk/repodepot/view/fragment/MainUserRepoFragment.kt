@@ -27,9 +27,7 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
     // Recycler view animation var
     private lateinit var linearLayout: LinearLayout
 
-
-
-    private var repoAdapter = RepoAdapter(mutableListOf())
+    //private var repoAdapter = RepoAdapter(mutableListOf())
     private var repoList: List<Repos> = listOf()
 
     private var dummyRepo: MutableList<Repos> = mutableListOf()
@@ -45,9 +43,12 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initalize(view)
+
+        val repoAdapter = RepoAdapter(repo)
         rvUserRepo.adapter = repoAdapter
 
         DebugLogger("Fragment Debug")
+
 
         repoAdapter.updateRepo(repo)
         DebugLogger("${repo.size} List size #1")

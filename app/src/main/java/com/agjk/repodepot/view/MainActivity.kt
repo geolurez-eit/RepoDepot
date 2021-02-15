@@ -110,7 +110,11 @@ class MainActivity : AppCompatActivity() {
             Repos("name3",  "Kotlin", 2),
             Repos("name4",  "Kotlin", 6))
 
+
         val userList: List<Users> = listOf(
+            Users("", "bladerjam7", MainUserRepoFragment(repoList)),
+            Users("", "bladerjam7", MainUserRepoFragment(repoList)),
+            Users("", "bladerjam7", MainUserRepoFragment(repoList)),
             Users("", "bladerjam7", MainUserRepoFragment(repoList))
         )
 
