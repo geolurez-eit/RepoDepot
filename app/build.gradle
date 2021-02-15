@@ -87,5 +87,9 @@ dependencies {
     // Firebase Realtime Database
     implementation 'com.google.firebase:firebase-database-ktx'
 
+    // lottie dependency
+    implementation 'com.airbnb.android:lottie:3.6.1'
+
+
 
 }
