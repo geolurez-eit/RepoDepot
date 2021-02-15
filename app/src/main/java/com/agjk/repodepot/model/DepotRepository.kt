@@ -16,7 +16,8 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 object DepotRepository {
-    private val resultRepoList: List<GitRepo.GitRepoItem> = listOf()
+    private val resultRepoList: MutableList<GitRepo.GitRepoItem> = mutableListOf()
+    private val resultCommitList: MutableList<GitRepoCommits.GitRepoCommitsItem> = mutableListOf()
     private val repoUserLiveData: MutableLiveData<List<GitRepo.GitRepoItem>> = MutableLiveData()
     private val userListLiveData: MutableLiveData<List<String>> = MutableLiveData()
     private val commitLiveData: MutableLiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
@@ -36,22 +37,30 @@ object DepotRepository {
     private fun saveNewRepos(userName: String, page: Int) {
         DebugLogger("DepotRepository - saveNewRepos")
         DebugLogger("compositeDisposable.add")
-        compositeDisposable.add(
+        val repoDisposable = CompositeDisposable()
+        repoDisposable.add(
             gitRetrofit.getUserRepositories(userName, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     //DebugLogger(".subscribe - it: $it")
-                    if (it.size < 100)
-                        postRepos(userName, it)
-                    else
-                        resultRepoList
-                    compositeDisposable.clear()
+                    DebugLogger(it.size.toString())
+                    if (it.size < 100) {
+                        resultRepoList.addAll(it)
+                        postRepos(userName, resultRepoList)
+                        repoDisposable.clear()
+                    } else {
+                        resultRepoList.addAll(it)
+                        saveNewRepos(userName, page + 1)
+                    }
                 }, {
                     DebugLogger(".subscribe Error")
                     DebugLogger(it.localizedMessage)
                 })
         )
+    }
+
+    private fun logRateLimit() {
         compositeDisposable.add(
             gitRetrofit.getRateLimit()
                 .subscribeOn(Schedulers.io())
@@ -63,47 +72,49 @@ object DepotRepository {
         )
     }
 
-    private fun saveNewPrivateRepos(userName: String, token: String) {
+    private fun saveNewPrivateRepos(userName: String, token: String, page: Int) {
         DebugLogger("DepotRepository - saveNewRepos")
         DebugLogger("compositeDisposable.add")
-        compositeDisposable.add(
-            gitRetrofit.getUserAllRepositories(token)
+        val repoDisposable = CompositeDisposable()
+        repoDisposable.add(
+            gitRetrofit.getUserAllRepositories(token, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    DebugLogger(".subscribe - it: $it")
-                    postRepos(userName + "_private", it)
-                    compositeDisposable.clear()
+                    if (it.size < 100) {
+                        resultRepoList.addAll(it)
+                        postRepos(userName + "_private", resultRepoList)
+                        repoDisposable.clear()
+                    } else {
+                        resultRepoList.addAll(it)
+                        saveNewPrivateRepos(userName, token, page + 1)
+                        repoDisposable.clear()
+                    }
                 }, {
                     DebugLogger(".subscribe Error")
                     DebugLogger(it.localizedMessage)
                 })
         )
-        compositeDisposable.add(
-            gitRetrofit.getRateLimit()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    DebugLogger(it.rate?.limit.toString())
-                    DebugLogger(it.rate?.remaining.toString())
-                    DebugLogger(it.rate?.reset.toString())
-                    DebugLogger(it.resources?.core?.remaining.toString())
-                    DebugLogger(it.resources?.core?.reset.toString())
-                }
-        )
     }
 
-    private fun saveNewCommits(userName: String, repoName: String) {
+    private fun saveNewCommits(userName: String, repoName: String, page: Int) {
         DebugLogger("DepotRepository - saveNewCommits")
         DebugLogger("compositeDisposable.add")
-        compositeDisposable.add(
-            gitRetrofit.getRepositoryCommits(userName, repoName)
+        val commitDisposable = CompositeDisposable()
+        commitDisposable.add(
+            gitRetrofit.getRepositoryCommits(userName, repoName, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     DebugLogger(".subscribe - it: $it")
-                    postCommits(it, userName, repoName)
-                    compositeDisposable.clear()
+                    if (it.size < 100) {
+                        resultCommitList.addAll(it)
+                        postCommits(it, userName, repoName)
+                        commitDisposable.clear()
+                    } else {
+                        resultCommitList.addAll(it)
+                        saveNewCommits(userName, repoName, page + 1)
+                    }
                 }, {
                     DebugLogger(".subscribe Error")
                     DebugLogger(it.localizedMessage)
@@ -139,7 +150,8 @@ object DepotRepository {
         //add user to userlist
         DebugLogger(firebaseAuth.currentUser?.displayName.toString())
         firebaseDatabase.reference.child("USERLISTS")
-            .child(firebaseAuth.currentUser?.displayName.toString()).child(username).setValue(username)
+            .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
+            .setValue(username)
         //Retrieve stored repos
         return getRepositories(username)
     }
@@ -152,7 +164,7 @@ object DepotRepository {
         // Check if it has been 24 hours
         if (true) {
             //Update commits for repo
-            saveNewCommits(username, repoName)
+            saveNewCommits(username, repoName, 1)
         }
         //Retrieve stored commits
         firebaseDatabase.reference.child("COMMITS").child(username).child(repoName)
@@ -184,12 +196,13 @@ object DepotRepository {
         // Check if it has been 24 hours
         if (true) {
             //Update repos for user
-            saveNewPrivateRepos(username, token)
+            saveNewPrivateRepos(username, token, 1)
         }
         //add user to userlist
         DebugLogger(firebaseAuth.currentUser?.displayName.toString())
         firebaseDatabase.reference.child("USERLISTS")
-            .child(firebaseAuth.currentUser?.displayName.toString()).child(username).setValue(username)
+            .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
+            .setValue(username)
         //Retrieve stored repos
         return getRepositories(username)
     }
@@ -217,7 +230,7 @@ object DepotRepository {
     }
 
     fun getUserList(): LiveData<List<String>> {
-       val thisUserName = firebaseAuth.currentUser?.displayName.toString()
+        val thisUserName = firebaseAuth.currentUser?.displayName.toString()
         firebaseDatabase.reference.child("USERLISTS")
             .child(thisUserName).child(thisUserName).setValue(thisUserName)
         firebaseDatabase.reference.child("USERLISTS")

@@ -42,17 +42,18 @@ object GitRetrofit {
         return gitApi.getRateLimit()
     }
 
-    fun getUserAllRepositories(token: String): Observable<List<GitRepo.GitRepoItem>> {
+    fun getUserAllRepositories(token: String,page:Int): Observable<List<GitRepo.GitRepoItem>> {
         DebugLogger("GitRetroFit.getUserRepositories")
         DebugLogger("gitApi: $gitApi")
         DebugLogger(token)
-        return gitApi.getGitReposPrivate("token $token")
+        return gitApi.getGitReposPrivate("token $token",page,100)
     }
 
     fun getRepositoryCommits(
         username: String,
-        repo: String
+        repo: String,
+        page:Int
     ): Observable<List<GitRepoCommits.GitRepoCommitsItem>> =
-        gitApi.getGitRepoCommits(username, repo)
+        gitApi.getGitRepoCommits(username, repo,page,100)
 
 }
