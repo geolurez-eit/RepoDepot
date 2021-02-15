@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -66,13 +65,14 @@ class MainActivity : AppCompatActivity() {
 
                         // start this activity fresh to unload data and display splash screen
                         startActivity(Intent(this, MainActivity::class.java).also { intent ->
-                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                         })
 
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                     })
                 .setNegativeButton(getString(R.string.cancel),
-                    DialogInterface.OnClickListener() {dialog: DialogInterface, _ ->
+                    DialogInterface.OnClickListener() { dialog: DialogInterface, _ ->
                         dialog.dismiss()
                     })
                 .show()
@@ -106,9 +106,10 @@ class MainActivity : AppCompatActivity() {
 
         val repoList: List<Repos> = listOf(
             Repos("name", "Kotlin", 7),
-            Repos("name2",  "Kotlin", 5),
-            Repos("name3",  "Kotlin", 2),
-            Repos("name4",  "Kotlin", 6))
+            Repos("name2", "Kotlin", 5),
+            Repos("name3", "Kotlin", 2),
+            Repos("name4", "Kotlin", 6)
+        )
 
 
         val userList: List<Users> = listOf(
@@ -135,9 +136,10 @@ class MainActivity : AppCompatActivity() {
         DebugLogger("Username -----> ${userName}")
         DebugLogger("Token -----> ${tokenSaved}")
 
-        repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved).observe( this, Observer {
-            DebugLogger("Repo size -------> ${it}")
-        })
+        repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved)
+            .observe(this, Observer {
+                DebugLogger("Repo size -------> ${it}")
+            })
 
         /*repoViewModel.getStoredCommitsForUser(
             "geolurez-eit",
