@@ -34,6 +34,7 @@ object DepotRepository {
 
     init {
         firebaseDatabase.setPersistenceEnabled(true)
+        firebaseDatabase.reference.keepSynced(true)
     }
 
 
