@@ -17,41 +17,63 @@
         android:orientation="vertical"
         android:padding="0dp">
 
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/repo_user_profil"
+            android:layout_width="33dp"
+            android:layout_height="27dp"
+            android:layout_margin="5dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:cropToPadding="true"
+            android:src="@drawable/portrait"
+            app:civ_border_color="@color/DarkGray50"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_repo_details"
+            app:layout_constraintVertical_bias="0.4" />
+
         <TextView
             android:id="@+id/tv_author_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/login_font"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/french_standard"
             android:padding="8dp"
-            android:text="Author"
-            android:textSize="22dp"
+            android:text="author_name"
+            android:textSize="15dp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/repo_user_profil"
+            app:layout_constraintTop_toBottomOf="@+id/tv_repo_details" />
 
         <TextView
             android:id="@+id/tv_repo_details"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/description_font"
+            android:fontFamily="@font/app_name_font"
             android:padding="8dp"
-            android:text="Commit message here , text text etxt etx tex"
-            android:textSize="18sp"
+            android:text="Commit message, eg fixed adapter.."
+            android:textSize="15sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_author_details" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_commit_hashcode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:fontFamily="@font/login_font"
-            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="2dp"
             android:text="9462836"
-            app:layout_constraintBottom_toBottomOf="@id/tv_repo_details"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_repo_details" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

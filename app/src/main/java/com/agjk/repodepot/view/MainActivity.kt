@@ -108,14 +108,23 @@ class MainActivity : AppCompatActivity() {
             Repos("John//repo/barber", "Kotlin", 7),
             Repos("kamel//repoDepo",  "Kotlin", 5),
             Repos("Netherland/github",  "Kotlin", 2),
+            Repos("hubgit/netherland",  "Kotlin", 6),
+            Repos("hubgit/netherland",  "Kotlin", 6),
+            Repos("hubgit/netherland",  "Kotlin", 6),
+            Repos("hubgit/netherland",  "Kotlin", 6),
+            Repos("hubgit/netherland",  "Kotlin", 6),
+            Repos("hubgit/netherland",  "Kotlin", 6),
+            Repos("hubgit/netherland",  "Kotlin", 6),
+            Repos("hubgit/netherland",  "Kotlin", 6),
+            Repos("hubgit/netherland",  "Kotlin", 6),
             Repos("hubgit/netherland",  "Kotlin", 6))
 
 
         val userList: List<Users> = listOf(
             Users("", "bladerjam7", MainUserRepoFragment(repoList)),
-            Users("", "bladerjam7", MainUserRepoFragment(repoList)),
-            Users("", "bladerjam7", MainUserRepoFragment(repoList)),
-            Users("", "bladerjam7", MainUserRepoFragment(repoList))
+            Users("", "george21", MainUserRepoFragment(repoList)),
+            Users("", "AdamLiving", MainUserRepoFragment(repoList)),
+            Users("", "JohnCena", MainUserRepoFragment(repoList))
         )
 
         mainFragmentAdapter.addFragmentToList(userList[0])
