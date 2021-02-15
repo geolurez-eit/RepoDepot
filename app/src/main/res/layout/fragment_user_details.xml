@@ -166,6 +166,7 @@
             android:layout_height="280dp"
             android:layout_margin="16dp"
             android:layout_marginTop="100dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

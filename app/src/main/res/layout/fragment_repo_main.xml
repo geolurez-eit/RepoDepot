@@ -9,13 +9,13 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:src="@drawable/maxresdefault"
-        app:layout_constraintHeight_percent="0.27"
         android:scaleType="centerCrop"
-        app:layout_constraintVertical_bias="0"
+        android:src="@drawable/maxresdefault"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/repo_user_profil"
@@ -72,20 +72,20 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.78"
-        app:layout_constraintVertical_bias="1"
+        android:layout_marginTop="165dp"
+        android:background="@drawable/cornerview"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/cornerview" >
+        app:layout_constraintVertical_bias="1">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/repo_recycler_view"
             android:layout_width="379dp"
-            android:layout_height="486dp"
+            android:layout_height="0dp"
             android:layout_margin="16dp"
-            android:layout_marginTop="100dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

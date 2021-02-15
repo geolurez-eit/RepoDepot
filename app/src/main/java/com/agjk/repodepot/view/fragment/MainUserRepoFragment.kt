@@ -29,6 +29,7 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
 
     //private var repoAdapter = RepoAdapter(mutableListOf())
     private var repoList: List<Repos> = listOf()
+    private val repoAdapter = RepoAdapter(repo)
 
     private var dummyRepo: MutableList<Repos> = mutableListOf()
 
@@ -37,6 +38,7 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         return inflater.inflate(R.layout.fragment_repo_main, container, false)
     }
 
@@ -44,7 +46,6 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initalize(view)
 
-        val repoAdapter = RepoAdapter(repo)
         rvUserRepo.adapter = repoAdapter
 
         DebugLogger("Fragment Debug")
