@@ -105,10 +105,10 @@ class MainActivity : AppCompatActivity() {
         viewPagerSetup()
 
         val repoList: List<Repos> = listOf(
-            Repos("name", "Kotlin", 7),
-            Repos("name2",  "Kotlin", 5),
-            Repos("name3",  "Kotlin", 2),
-            Repos("name4",  "Kotlin", 6))
+            Repos("John//repo/barber", "Kotlin", 7),
+            Repos("kamel//repoDepo",  "Kotlin", 5),
+            Repos("Netherland/github",  "Kotlin", 2),
+            Repos("hubgit/netherland",  "Kotlin", 6))
 
 
         val userList: List<Users> = listOf(
