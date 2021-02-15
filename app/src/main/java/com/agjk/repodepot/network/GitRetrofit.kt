@@ -32,29 +32,29 @@ object GitRetrofit {
         .build()
 
 
-    fun getUserRepositories(username: String): Observable<List<GitRepo.GitRepoItem>> {
+    fun getUserRepositories(username: String, page:Int): Observable<List<GitRepo.GitRepoItem>> {
         DebugLogger("GitRetroFit.getUserRepositories")
         DebugLogger("username: $username")
         DebugLogger("gitApi: $gitApi")
-        return  gitApi.getGitRepos(username)
+        return  gitApi.getGitReposPage(username,page,100)
     }
     fun getRateLimit():Observable<RateLimit>{
         return gitApi.getRateLimit()
     }
 
-
-    fun getUserAllRepositories(token: String): Observable<List<GitRepo.GitRepoItem>> {
+    fun getUserAllRepositories(token: String,page:Int): Observable<List<GitRepo.GitRepoItem>> {
         DebugLogger("GitRetroFit.getUserRepositories")
         DebugLogger("gitApi: $gitApi")
         DebugLogger(token)
-        return gitApi.getGitReposPrivate("token $token")
+        return gitApi.getGitReposPrivate("token $token",page,100)
     }
 
     fun getRepositoryCommits(
         username: String,
-        repo: String
+        repo: String,
+        page:Int
     ): Observable<List<GitRepoCommits.GitRepoCommitsItem>> =
-        gitApi.getGitRepoCommits(username, repo)
+        gitApi.getGitRepoCommits(username, repo,page,100)
 
     fun getUserSearchResults(stringSearch: String): Observable<UserSearch> =
         gitApi.searchUsers(stringSearch)

@@ -27,7 +27,7 @@
         android:layout_marginStart="16dp"
         android:fontFamily="@font/french_standard"
         android:textSize="20sp"
-        android:text="Username"
+        android:text="user_name"
         android:textColor="#000000"
         app:layout_constraintBottom_toBottomOf="@+id/iv_user_profile"
         app:layout_constraintStart_toEndOf="@+id/iv_user_profile"

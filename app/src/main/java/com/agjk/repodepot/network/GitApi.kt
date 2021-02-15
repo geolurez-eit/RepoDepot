@@ -34,14 +34,20 @@ interface GitApi {
     @GET(URL_PATH_COMMITS)
     fun getGitRepoCommits(
         @Path(USER_NAME_PATH) username: String,
-        @Path(REPO_PATH) repo: String
+        @Path(REPO_PATH) repo: String,@Query(PAGE_QUERY) page: Int, @Query(
+            PAGE_SIZE_QUERY
+        ) pageSize: Int
     ): Observable<List<GitRepoCommits.GitRepoCommitsItem>>
 
     @GET(URL_PATH_REPOS_PRIVATE)
-    fun getGitReposPrivate(@Header("Authorization") authHeader: String): Observable<List<GitRepo.GitRepoItem>>
+    fun getGitReposPrivate(
+        @Header("Authorization") authHeader: String, @Query(PAGE_QUERY) page: Int, @Query(
+            PAGE_SIZE_QUERY
+        ) pageSize: Int
+    ): Observable<List<GitRepo.GitRepoItem>>
 
     @GET(URL_PATH_RATE_LIMIT)
-    fun getRateLimit():Observable<RateLimit>
+    fun getRateLimit(): Observable<RateLimit>
 
     @GET(USER_SEARCH_PATH)
     fun searchUsers(@Query(USER_SEARCH_QUERY) stringSearch: String): Observable<UserSearch>

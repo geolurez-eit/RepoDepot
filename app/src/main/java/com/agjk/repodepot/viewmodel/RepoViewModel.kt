@@ -27,6 +27,12 @@ class RepoViewModel : ViewModel() {
     ): LiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
         DepotRepository.getCommitsForUser(username, repoName)
 
+    fun getUserList():LiveData<List<String>> =
+        DepotRepository.getUserList()
+    fun addUserToList(userName:String) {
+        DepotRepository.addUserToList(userName)
+    }
+
     fun searchUsers(stringSearch: String): LiveData<List<UserSearch.Item>> =
         DepotRepository.getMatchingUserList(stringSearch)
 }
