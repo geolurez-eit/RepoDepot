@@ -25,7 +25,7 @@ android {
 
     defaultConfig {
         applicationId "com.agjk.repodepot"
-        minSdkVersion 21
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -109,6 +109,9 @@ dependencies {
 
     // lottie dependency
     implementation 'com.airbnb.android:lottie:3.6.1'
+
+    // Encrypted Share Preferences
+    implementation "androidx.security:security-crypto:1.1.0-alpha03"
 
 
 

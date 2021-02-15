@@ -12,5 +12,8 @@ class Constants {
         const val PAGE_QUERY = "page"
         const val PAGE_SIZE_QUERY = "per_page"
         const val TAG_X = "TAG_X"
+
+
+        const val TOKEN_USER = "token_user"
     }
 }

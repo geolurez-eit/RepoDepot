@@ -15,7 +15,11 @@ import android.widget.TextView
 import androidx.annotation.CheckResult
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
+import androidx.security.crypto.MasterKeys
 import com.agjk.repodepot.R
+import com.agjk.repodepot.util.Constants.Companion.TOKEN_USER
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.MainActivity
 import com.airbnb.lottie.LottieAnimationView
@@ -47,6 +51,8 @@ class SplashScreenFragment : Fragment() {
     private lateinit var loginbtn: MaterialButton
 //    private lateinit var loginText: TextView
     private lateinit var progressBar: ProgressBar
+
+    private lateinit var sharedPreferences: EncryptedSharedPreferences
 
     private var tokenSaved: String = ""
 
@@ -164,7 +170,10 @@ class SplashScreenFragment : Fragment() {
                 firebaseAuth.currentUser?.updateProfile(profileUpdate)
                 tokenSaved = (it.credential as OAuthCredential).accessToken
 
-                DebugLogger("Token Log : -----> $tokenSaved")
+                createSharePreference()
+
+                sharedPreferences.edit().putString(TOKEN_USER, tokenSaved).apply()
+
 
                 (thisContext as MainActivity).saveToken(tokenSaved)
 
@@ -176,6 +185,20 @@ class SplashScreenFragment : Fragment() {
                 DebugLogger(it.localizedMessage)
                 Log.d("TAG_A", "sign in failure -> ${it.localizedMessage}")
             }
+    }
+
+    private fun createSharePreference() {
+        val masterKeyAlias = MasterKey.Builder(thisContext)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+
+        sharedPreferences = EncryptedSharedPreferences.create(
+            thisContext,
+            "token_share",
+            masterKeyAlias,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        ) as EncryptedSharedPreferences
     }
 
     private fun checkPendingResult() {

@@ -2,6 +2,7 @@ package com.agjk.repodepot.view
 
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -13,10 +14,13 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
+import androidx.security.crypto.EncryptedSharedPreferences
+import androidx.security.crypto.MasterKey
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.model.data.Users
+import com.agjk.repodepot.util.Constants.Companion.TOKEN_USER
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
@@ -39,7 +43,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
-    private var tokenSaved = ""
+    private var tokenSaved:String? = ""
+
+    private lateinit var sharedPreferences: EncryptedSharedPreferences
 
     private val userAdapter = UserAdapter(mutableListOf(), this)
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
@@ -104,6 +110,11 @@ class MainActivity : AppCompatActivity() {
         navDrawerToolbarSetup()
         viewPagerSetup()
 
+        createSharePreference()
+
+        tokenSaved = sharedPreferences.getString(TOKEN_USER, "Error")
+
+
         val repoList: List<Repos> = listOf(
             Repos("name", "Kotlin", 7),
             Repos("name2",  "Kotlin", 5),
@@ -133,16 +144,32 @@ class MainActivity : AppCompatActivity() {
 
         val userName: String = FirebaseAuth.getInstance().currentUser?.displayName.toString()
         DebugLogger("Username -----> ${userName}")
-        DebugLogger("Token -----> ${tokenSaved}")
+        DebugLogger("Token --------> ${tokenSaved}")
 
-        repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved).observe( this, Observer {
-            DebugLogger("Repo size -------> ${it}")
-        })
+        tokenSaved?.let {
+            repoViewModel.getStoredPrivateReposForUser("bladerjam7", it).observe( this, Observer {
+                DebugLogger("Repo size -------> ${it}")
+            })
+        }
 
         /*repoViewModel.getStoredCommitsForUser(
             "geolurez-eit",
             "android-kotlin-geo-fences"
         ).observe(this, Observer{ DebugLogger("Testing output for commits: $it") })*/
+    }
+
+    private fun createSharePreference() {
+        val masterKeyAlias = MasterKey.Builder(this)
+            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
+            .build()
+
+        sharedPreferences = EncryptedSharedPreferences.create(
+            this,
+            "token_share",
+            masterKeyAlias,
+            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+        ) as EncryptedSharedPreferences
     }
 
     private fun viewPagerSetup() {
