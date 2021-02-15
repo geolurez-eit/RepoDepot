@@ -105,6 +105,7 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.popBackStack()
             initFirebase()
             initMainActivity()
+            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
         }
     }
 
@@ -150,13 +151,8 @@ class MainActivity : AppCompatActivity() {
         DebugLogger("Username -----> ${userName}")
 
 
-        repoViewModel.getStoredPrivateReposForUser(
-            userName,
-            tokenSaved
-        ).observe(this, Observer {
-            // Private repo data
-            DebugLogger(it.toString())
-        })
+
+        DebugLogger(repoList.toString())
 
     }
 
