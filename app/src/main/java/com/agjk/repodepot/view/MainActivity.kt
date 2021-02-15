@@ -96,6 +96,7 @@ class MainActivity : AppCompatActivity() {
     fun closeSplash() {
         runOnUiThread {
             supportFragmentManager.popBackStack()
+            initFirebase()
             initMainActivity()
         }
     }
@@ -128,27 +129,19 @@ class MainActivity : AppCompatActivity() {
 
         // TODO: check on Observer
         //Testing viewmodel methods
-        DebugLogger("MainActivity onCreate - saveNewRepos")
-        /*//repoViewModel.getNewRepos("geolurez-eit")
-        //repoViewModel.getNewCommits("geolurez-eit","android-kotlin-geo-fences")*/
 
         val userName: String = FirebaseAuth.getInstance().currentUser?.displayName.toString()
         DebugLogger("Username -----> ${userName}")
 
-        //Getting Preferences
-        repoViewModel.getUserPreferences().observe(this,{
-            it.gitHubAccessToken
+
+        repoViewModel.getStoredPrivateReposForUser(
+            userName,
+            tokenSaved
+        ).observe(this, Observer {
+            // Private repo data
+            DebugLogger(it.toString())
         })
 
-        /*repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved)
-            .observe(this, Observer {
-                DebugLogger("Repo size -------> ${it}")
-            })*/
-
-        /*repoViewModel.getStoredCommitsForUser(
-            "geolurez-eit",
-            "android-kotlin-geo-fences"
-        ).observe(this, Observer{ DebugLogger("Testing output for commits: $it") })*/
     }
 
     private fun viewPagerSetup() {
@@ -209,11 +202,9 @@ class MainActivity : AppCompatActivity() {
         navigationDrawer.closeDrawers()
     }
 
-    fun saveToken(tokenSaved: String) {
-        this.tokenSaved = tokenSaved
+    private fun initFirebase() {
+        repoViewModel.getUserPreferences().observe(this, {
+            tokenSaved = it.gitHubAccessToken
+        })
     }
-
-    /* fun saveUsername(input: String){
-         username = input
-     }*/
 }
