@@ -74,7 +74,7 @@ class SplashScreenFragment : Fragment() {
         // Lottie  Screen vars
         splashImg = view.findViewById(R.id.img)
         lottieAnimation = view.findViewById(R.id.lottieAnimation)
-        splashImg.animate().translationY(-2400F).setDuration(1000).setStartDelay(2000)
+        splashImg.animate().translationY(-3000F).setDuration(1000).setStartDelay(2000)
         lottieAnimation.animate().translationY(1400F).setDuration(1000).setStartDelay(2000)
 
 
