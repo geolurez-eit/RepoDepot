@@ -12,4 +12,5 @@
     <string name="sign_out_alert_positive">Sign out</string>
     <string name="cancel">Cancel</string>
     <string name="sign_in_with_github">Sign in with GitHub</string>
+    <string name="search_hint">Search GitHub users</string>
 </resources>

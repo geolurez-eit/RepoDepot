@@ -12,6 +12,26 @@
         android:layout_height="match_parent"
         android:elevation="32dp" />
 
+<!--    <ImageButton-->
+<!--        android:id="@+id/nav_drawer_menu_button"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:padding="4dp"-->
+<!--        android:scaleType="fitCenter"-->
+<!--        android:backgroundTint="#FFFFFFFF"-->
+<!--        android:src="@drawable/ic_baseline_menu_24"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintBottom_toTopOf="@id/top_bar_guideline"-->
+<!--        android:layout_marginStart="4dp" />-->
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/top_bar_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".075" />
+
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
@@ -23,17 +43,17 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/design_default_color_primary"
-                android:elevation="4dp"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+<!--            <androidx.appcompat.widget.Toolbar-->
+<!--                android:id="@+id/toolbar"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="?attr/actionBarSize"-->
+<!--                android:background="@color/design_default_color_primary"-->
+<!--                android:elevation="4dp"-->
+<!--                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/main_view_pager_2"
@@ -43,9 +63,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:layout_constraintTop_toBottomOf="parent"
                 app:layout_constraintVertical_bias="1.0" />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -55,7 +74,8 @@
             android:layout_gravity="start|bottom"
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/nav_header"
-            app:menu="@menu/nav_drawer_menu">
+            app:menu="@menu/nav_drawer_menu"
+            tools:visibility="gone">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -94,13 +114,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
-
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
         </com.google.android.material.navigation.NavigationView>
-
-
     </androidx.drawerlayout.widget.DrawerLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

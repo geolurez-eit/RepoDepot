@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
+import com.agjk.repodepot.model.data.UserSearch
 import com.agjk.repodepot.network.GitRetrofit
 import com.agjk.repodepot.util.DebugLogger
 import com.google.firebase.database.DataSnapshot
@@ -18,6 +19,7 @@ object DepotRepository {
     private val repoUserLiveData: MutableLiveData<List<GitRepo.GitRepoItem>> = MutableLiveData()
     private val commitLiveData: MutableLiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
         MutableLiveData()
+    private val userSearchLiveData: MutableLiveData<List<UserSearch.Item>> = MutableLiveData()
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
 
     private val gitRetrofit = GitRetrofit
@@ -202,5 +204,24 @@ object DepotRepository {
             })
         DebugLogger("Returning from getRepositories")
         return repoUserLiveData
+    }
+
+    fun getMatchingUserList(stringSearch: String): MutableLiveData<List<UserSearch.Item>> {
+        compositeDisposable.add(
+            gitRetrofit.getUserSearchResults(stringSearch)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    it.items?.let { items ->
+                        userSearchLiveData.postValue(items)
+                    }
+                    compositeDisposable.clear()
+                }, {
+                    DebugLogger(".subscribe Error")
+                    DebugLogger(it.localizedMessage)
+                })
+        )
+
+        return userSearchLiveData
     }
 }

@@ -1,9 +1,9 @@
 package com.agjk.repodepot.network
 
-import android.annotation.SuppressLint
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
 import com.agjk.repodepot.model.data.RateLimit
+import com.agjk.repodepot.model.data.UserSearch
 import com.agjk.repodepot.util.Constants.Companion.BASE_URL
 import com.agjk.repodepot.util.DebugLogger
 import io.reactivex.Observable
@@ -55,5 +55,8 @@ object GitRetrofit {
         repo: String
     ): Observable<List<GitRepoCommits.GitRepoCommitsItem>> =
         gitApi.getGitRepoCommits(username, repo)
+
+    fun getUserSearchResults(stringSearch: String): Observable<UserSearch> =
+        gitApi.searchUsers(stringSearch)
 
 }

@@ -3,6 +3,7 @@ package com.agjk.repodepot.network
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
 import com.agjk.repodepot.model.data.RateLimit
+import com.agjk.repodepot.model.data.UserSearch
 import com.agjk.repodepot.util.Constants.Companion.PAGE_QUERY
 import com.agjk.repodepot.util.Constants.Companion.PAGE_SIZE_QUERY
 import com.agjk.repodepot.util.Constants.Companion.REPO_PATH
@@ -10,7 +11,9 @@ import com.agjk.repodepot.util.Constants.Companion.URL_PATH_COMMITS
 import com.agjk.repodepot.util.Constants.Companion.URL_PATH_RATE_LIMIT
 import com.agjk.repodepot.util.Constants.Companion.URL_PATH_REPOS
 import com.agjk.repodepot.util.Constants.Companion.URL_PATH_REPOS_PRIVATE
+import com.agjk.repodepot.util.Constants.Companion.USER_SEARCH_QUERY
 import com.agjk.repodepot.util.Constants.Companion.USER_NAME_PATH
+import com.agjk.repodepot.util.Constants.Companion.USER_SEARCH_PATH
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -39,4 +42,7 @@ interface GitApi {
 
     @GET(URL_PATH_RATE_LIMIT)
     fun getRateLimit():Observable<RateLimit>
+
+    @GET(USER_SEARCH_PATH)
+    fun searchUsers(@Query(USER_SEARCH_QUERY) stringSearch: String): Observable<UserSearch>
 }

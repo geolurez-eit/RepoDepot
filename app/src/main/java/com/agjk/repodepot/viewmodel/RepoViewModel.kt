@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.agjk.repodepot.model.DepotRepository
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
+import com.agjk.repodepot.model.data.UserSearch
 
 class RepoViewModel : ViewModel() {
 
@@ -26,4 +27,6 @@ class RepoViewModel : ViewModel() {
     ): LiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
         DepotRepository.getCommitsForUser(username, repoName)
 
+    fun searchUsers(stringSearch: String): LiveData<List<UserSearch.Item>> =
+        DepotRepository.getMatchingUserList(stringSearch)
 }

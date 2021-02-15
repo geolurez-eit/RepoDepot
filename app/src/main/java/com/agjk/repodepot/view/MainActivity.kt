@@ -1,13 +1,14 @@
 package com.agjk.repodepot.view
 
+import android.app.SearchManager
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.ImageButton
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -17,6 +18,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
+import com.agjk.repodepot.view.adapter.SearchAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
 import com.agjk.repodepot.view.fragment.SplashScreenFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
@@ -32,8 +34,10 @@ class MainActivity : AppCompatActivity() {
     private var isFreshLaunch = true
 
     private lateinit var navigationDrawer: DrawerLayout
+    private lateinit var navMenuButton: ImageButton
     private lateinit var userRecyclerView: RecyclerView
     private lateinit var viewPager: ViewPager2
+
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
     private var tokenSaved = ""
@@ -90,6 +94,35 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+        Log.d("TAG_A", "on new intent")
+
+        intent?.let {
+            setIntent(it)
+            handleIntent(it)
+        }
+    }
+
+    private fun handleIntent(intent: Intent) {
+        if (Intent.ACTION_SEARCH == intent.action) {
+            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
+                doMySearch(query)
+            }
+        }
+    }
+
+    private val searchAdapter = SearchAdapter(listOf())
+
+    private fun doMySearch(stringSearch: String) {
+        repoViewModel.searchUsers(stringSearch).observe(this, {
+            Log.d("TAG_A", it.toString())
+            searchAdapter.updateSuggestionList(it)
+            // TODO: add adapter to a recycler view and display
+        })
+    }
+
     fun closeSplash() {
         runOnUiThread {
             supportFragmentManager.popBackStack()
@@ -100,6 +133,15 @@ class MainActivity : AppCompatActivity() {
     private fun initMainActivity() {
         navDrawerToolbarSetup()
         viewPagerSetup()
+
+//        navMenuButton = findViewById(R.id.nav_drawer_menu_button)
+//        navMenuButton.setOnClickListener {
+//            if (navigationDrawer.isDrawerOpen(GravityCompat.START)) {
+//                navigationDrawer.closeDrawer(GravityCompat.START)
+//            } else {
+//                navigationDrawer.openDrawer(GravityCompat.START)
+//            }
+//        }
 
         // TODO: Store api call for users into userList
         // TODO: Update userAdapter with userList
@@ -150,8 +192,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navDrawerToolbarSetup() {
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+//        val toolbar: Toolbar = findViewById(R.id.toolbar)
+//        setSupportActionBar(toolbar)
 
         navigationDrawer = findViewById(R.id.drawer_layout)
         userRecyclerView = findViewById(R.id.rv_users)
@@ -162,7 +204,7 @@ class MainActivity : AppCompatActivity() {
         val toggle = ActionBarDrawerToggle(
             this,
             navigationDrawer,
-            toolbar,
+//            toolbar,
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
