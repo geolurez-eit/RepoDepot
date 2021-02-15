@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -15,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
+import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.model.data.Users
 import com.agjk.repodepot.util.DebugLogger
@@ -39,7 +39,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
+
     private var tokenSaved = ""
+    private var repoList: List<GitRepo.GitRepoItem> = listOf()
+    private var repoListPrivate: List<GitRepo.GitRepoItem> = listOf()
+    private var userList: List<String> = listOf()
+
+    private var firebaseAuth = FirebaseAuth.getInstance()
 
     private val userAdapter = UserAdapter(mutableListOf(), this)
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
@@ -108,18 +114,19 @@ class MainActivity : AppCompatActivity() {
 
         val repoList: List<Repos> = listOf(
             Repos("John//repo/barber", "Kotlin", 7),
-            Repos("kamel//repoDepo",  "Kotlin", 5),
-            Repos("Netherland/github",  "Kotlin", 2),
-            Repos("hubgit/netherland",  "Kotlin", 6),
-            Repos("hubgit/netherland",  "Kotlin", 6),
-            Repos("hubgit/netherland",  "Kotlin", 6),
-            Repos("hubgit/netherland",  "Kotlin", 6),
-            Repos("hubgit/netherland",  "Kotlin", 6),
-            Repos("hubgit/netherland",  "Kotlin", 6),
-            Repos("hubgit/netherland",  "Kotlin", 6),
-            Repos("hubgit/netherland",  "Kotlin", 6),
-            Repos("hubgit/netherland",  "Kotlin", 6),
-            Repos("hubgit/netherland",  "Kotlin", 6))
+            Repos("kamel//repoDepo", "Kotlin", 5),
+            Repos("Netherland/github", "Kotlin", 2),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6)
+        )
 
 
         val userList: List<Users> = listOf(
@@ -218,9 +225,20 @@ class MainActivity : AppCompatActivity() {
             tokenSaved = it.gitHubAccessToken
         })
     }
-    private fun getData(userName:String){
+
+    private fun getData(userName: String) {
         repoViewModel.addUserToList(userName)
-        repoViewModel.getStoredReposForUser(userName)
-        repoViewModel.getStoredPrivateReposForUser(userName,tokenSaved)
+        repoViewModel.getUserList().observe(this,{
+            userList = it
+        })
+        if (userName != firebaseAuth.currentUser?.displayName) {
+            repoViewModel.getStoredReposForUser(userName).observe(this, {
+                repoList = it
+            })
+        } else {
+            repoViewModel.getStoredPrivateReposForUser(userName, tokenSaved).observe(this, {
+                repoListPrivate = it
+            })
+        }
     }
 }
