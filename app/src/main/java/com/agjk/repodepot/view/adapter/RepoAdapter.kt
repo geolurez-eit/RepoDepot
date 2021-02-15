@@ -16,11 +16,11 @@ import com.agjk.repodepot.util.DebugLogger
 class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
 
     inner class UserRepoViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        val repoDetailCard: CardView = itemView.findViewById(R.id.cv_repo_detail_card)
+        val repoDetailCard: CardView = itemView.findViewById(R.id.cv_repo_card)
         val repoTitle: TextView = itemView.findViewById(R.id.tv_repo_name)
         //val repoDescription: TextView = itemView.findViewById(R.id.tv_repo_description)
         val repoLanguage: TextView = itemView.findViewById(R.id.tv_repo_language)
-        val repoRating: TextView = itemView.findViewById(R.id.tv_rating_count)
+        val repoRating: TextView = itemView.findViewById(R.id.tv_rating)
     }
 
 
