@@ -15,9 +15,12 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
+import com.agjk.repodepot.model.data.Repos
+import com.agjk.repodepot.model.data.Users
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
+import com.agjk.repodepot.view.fragment.MainUserRepoFragment
 import com.agjk.repodepot.view.fragment.SplashScreenFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.agjk.repodepot.viewmodel.RepoViewModelFactory
@@ -100,6 +103,19 @@ class MainActivity : AppCompatActivity() {
     private fun initMainActivity() {
         navDrawerToolbarSetup()
         viewPagerSetup()
+
+        val repoList: List<Repos> = listOf(
+            Repos("name", "Kotlin", 7),
+            Repos("name2",  "Kotlin", 5),
+            Repos("name3",  "Kotlin", 2),
+            Repos("name4",  "Kotlin", 6))
+
+        val userList: List<Users> = listOf(
+            Users("", "bladerjam7", MainUserRepoFragment(repoList))
+        )
+
+        mainFragmentAdapter.addFragmentToList(userList[0])
+        userAdapter.updateUsers(userList)
 
         // TODO: Store api call for users into userList
         // TODO: Update userAdapter with userList

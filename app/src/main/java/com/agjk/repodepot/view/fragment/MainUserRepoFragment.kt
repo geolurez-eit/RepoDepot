@@ -49,15 +49,8 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
 
         DebugLogger("Fragment Debug")
 
-
-
-        dummyRepo.add(Repos("name", "Kotlin", 7))
-        dummyRepo.add(Repos("name2",  "Kotlin", 5))
-        dummyRepo.add(Repos("name3",  "Kotlin", 2))
-        dummyRepo.add(Repos("name4",  "Kotlin", 6))
-
-        repoAdapter.updateRepo(dummyRepo)
-        DebugLogger("${repoList.size} List size #1")
+        repoAdapter.updateRepo(repo)
+        DebugLogger("${repo.size} List size #1")
 
 
         // Recycler view animation
@@ -79,7 +72,7 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
             tvDetail = findViewById(R.id.tv_light_details)
 
             // recycler container
-            linearLayout = findViewById(R.id.linearLayout_repo)
+            //linearLayout = findViewById(R.id.linearLayout_repo)
 
 
         }
