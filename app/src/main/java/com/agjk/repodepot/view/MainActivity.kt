@@ -134,12 +134,16 @@ class MainActivity : AppCompatActivity() {
 
         val userName: String = FirebaseAuth.getInstance().currentUser?.displayName.toString()
         DebugLogger("Username -----> ${userName}")
-        DebugLogger("Token -----> ${tokenSaved}")
 
-        repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved)
+        //Getting Preferences
+        repoViewModel.getUserPreferences().observe(this,{
+            it.gitHubAccessToken
+        })
+
+        /*repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved)
             .observe(this, Observer {
                 DebugLogger("Repo size -------> ${it}")
-            })
+            })*/
 
         /*repoViewModel.getStoredCommitsForUser(
             "geolurez-eit",
