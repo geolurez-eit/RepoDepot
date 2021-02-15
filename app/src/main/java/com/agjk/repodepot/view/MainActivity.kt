@@ -66,13 +66,14 @@ class MainActivity : AppCompatActivity() {
 
                         // start this activity fresh to unload data and display splash screen
                         startActivity(Intent(this, MainActivity::class.java).also { intent ->
-                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                         })
 
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                     })
                 .setNegativeButton(getString(R.string.cancel),
-                    DialogInterface.OnClickListener() {dialog: DialogInterface, _ ->
+                    DialogInterface.OnClickListener() { dialog: DialogInterface, _ ->
                         dialog.dismiss()
                     })
                 .show()
@@ -144,14 +145,15 @@ class MainActivity : AppCompatActivity() {
         DebugLogger("Username -----> ${userName}")
         DebugLogger("Token -----> ${tokenSaved}")
 
-        repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved).observe( this, Observer {
-            DebugLogger("Repo size -------> ${it}")
+
+        repoViewModel.getStoredPrivateReposForUser(
+            userName,
+            tokenSaved
+        ).observe(this, Observer {
+            // Private repo data
+            DebugLogger(it.toString())
         })
 
-        /*repoViewModel.getStoredCommitsForUser(
-            "geolurez-eit",
-            "android-kotlin-geo-fences"
-        ).observe(this, Observer{ DebugLogger("Testing output for commits: $it") })*/
     }
 
     private fun viewPagerSetup() {
