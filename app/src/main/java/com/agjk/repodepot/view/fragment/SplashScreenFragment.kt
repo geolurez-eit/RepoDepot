@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.agjk.repodepot.R
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.MainActivity
+import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -36,6 +37,10 @@ class SplashScreenFragment : Fragment() {
 
     private val SPLASH_TIME: Long = 500
 
+    private lateinit var splashImg : ImageView
+    private lateinit var lottieAnimation : LottieAnimationView
+
+
     private lateinit var sloganTextView: TextView
     private lateinit var logoImageView: ImageView
     private lateinit var loginbtn: FloatingActionButton
@@ -52,7 +57,7 @@ class SplashScreenFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? =
-        inflater.inflate(R.layout.splash_screen_fragment, container, false)
+        inflater.inflate(R.layout.updated_splash_screen, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,6 +67,13 @@ class SplashScreenFragment : Fragment() {
         loginbtn = view.findViewById(R.id.sign_in_Button_main)
         loginText = view.findViewById(R.id.login_text)
         progressBar = view.findViewById(R.id.progress_bar)
+
+        // Lottie  Screen vars
+        splashImg = view.findViewById(R.id.img)
+        lottieAnimation = view.findViewById(R.id.lottieAnimation)
+        splashImg.animate().translationY(-2400F).setDuration(1000).setStartDelay(2000)
+        lottieAnimation.animate().translationY(1400F).setDuration(1000).setStartDelay(2000)
+
 
         //// OAUTH
         // Target specific email with login hint.
@@ -75,12 +87,12 @@ class SplashScreenFragment : Fragment() {
 
         // Logo animation
         logoImageView.visibility = View.VISIBLE
-        val animationRotate = AnimationUtils.loadAnimation(thisContext, R.anim.rotate_text)
+        val animationRotate = AnimationUtils.loadAnimation(thisContext, R.anim.text_fade_in)
         logoImageView.startAnimation(animationRotate)
 
         // Slogan animation
         sloganTextView.visibility = View.VISIBLE
-        val animationZoomIn = AnimationUtils.loadAnimation(thisContext, R.anim.zoom_in_text)
+        val animationZoomIn = AnimationUtils.loadAnimation(thisContext, R.anim.text_fade_in)
         sloganTextView.startAnimation(animationZoomIn)
 
         // Login text animation
@@ -94,7 +106,7 @@ class SplashScreenFragment : Fragment() {
         } ?: {
             // Animation for the login button
             loginbtn.visibility = View.VISIBLE
-            val animationSlideDown = AnimationUtils.loadAnimation(thisContext, R.anim.slide_down_text)
+            val animationSlideDown = AnimationUtils.loadAnimation(thisContext, R.anim.text_fade_in)
             loginbtn.startAnimation(animationSlideDown)
 
             // OAUTH GO!
