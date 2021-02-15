@@ -4,15 +4,7 @@
     tools:showIn="navigation_view">
 
     <group>
-        <item
-            android:id="@+id/add_user"
-            android:title="Add User"
-            android:icon="@drawable/ic_baseline_add_circle_outline_24"/>
 
-        <item
-            android:id="@+id/my_repo"
-            android:title="My Repo"
-            android:icon="@drawable/ic_baseline_supervised_user_circle_24"/>
     </group>
 
     <item android:title="Users">
