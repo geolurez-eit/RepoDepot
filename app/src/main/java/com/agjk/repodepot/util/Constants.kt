@@ -7,6 +7,7 @@ class Constants {
         const val REPO_PATH = "repo"
         const val URL_PATH_REPOS = "/users/{$USER_NAME_PATH}/repos"
         const val URL_PATH_REPOS_PRIVATE = "/user/repos"
+        const val URL_PATH_USERS = "/users/{$USER_NAME_PATH}"
         const val URL_PATH_RATE_LIMIT = "/rate_limit"
         const val URL_PATH_COMMITS = "/repos/{$USER_NAME_PATH}/{$REPO_PATH}/commits"
         const val PAGE_QUERY = "page"

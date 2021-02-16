@@ -20,7 +20,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
-import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.model.data.Users
 import com.agjk.repodepot.model.DepotRepository
@@ -52,9 +51,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainUserRepoFragment: Fragment
 
     private var tokenSaved = ""
-    private var repoList: List<GitRepo.GitRepoItem> = listOf()
-    private var repoListPrivate: List<GitRepo.GitRepoItem> = listOf()
-    private var userList: List<String> = listOf()
+    private var repoList: List<Repos> = listOf()
+    private var repoListPrivate: List<Repos> = listOf()
+    private var usersToReturn = mutableListOf<Users>()
+
 
     private var firebaseAuth = FirebaseAuth.getInstance()
 
@@ -124,8 +124,9 @@ class MainActivity : AppCompatActivity() {
         runOnUiThread {
             supportFragmentManager.popBackStack()
             initFirebase()
-            initMainActivity()
             getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
+            initMainActivity()
+
         }
     }
 
@@ -133,32 +134,8 @@ class MainActivity : AppCompatActivity() {
         searchViewSetup()
         viewPagerSetup()
 
-        val repoList: List<Repos> = listOf(
-            Repos("John//repo/barber", "", "Kotlin"),
-            Repos("kamel//repoDepo", "","Kotlin"),
-            Repos("Netherland/github", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin")
-        )
 
-
-        val userList: List<Users> = listOf(
-            Users("", "bladerjam7", MainUserRepoFragment(repoList)),
-            Users("", "george21", MainUserRepoFragment(repoList)),
-            Users("", "AdamLiving", MainUserRepoFragment(repoList)),
-            Users("", "JohnCena", MainUserRepoFragment(repoList))
-        )
-
-        mainFragmentAdapter.addFragmentToList(userList[0])
-        userAdapter.updateUsers(userList)
+        //mainFragmentAdapter.addFragmentToList(userList[0])
 
         // TODO: Store api call for users into userList
         // TODO: Update userAdapter with userList
@@ -169,14 +146,6 @@ class MainActivity : AppCompatActivity() {
 
         val userName: String = FirebaseAuth.getInstance().currentUser?.displayName.toString()
         DebugLogger("Username -----> ${userName}")
-
-
-        repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved)
-            .observe(this, Observer {
-                DebugLogger("Repo size -------> ${it}")
-            })
-
-        DebugLogger(repoList.toString())
 
     }
 
@@ -329,19 +298,69 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getData(userName: String) {
-        repoViewModel.addUserToList(userName)
-        repoViewModel.getUserList().observe(this,{
-            userList = it
-        })
-        if (userName != firebaseAuth.currentUser?.displayName) {
-            repoViewModel.getStoredReposForUser(userName).observe(this, {
+        //repoViewModel.getProfile(userName)
+        //repoViewModel.addUserToList("bladerjam7")
+        repoViewModel.getUserList(userName).observe(this, { userget ->
+            DebugLogger("userGET SIZE -> ${userget.size}")
+            if (userget.isNotEmpty()) {
+                userget.forEach { user ->
+                    if (user.login != firebaseAuth.currentUser?.displayName) {
+                        repoViewModel.getStoredReposForUser(user.login.toString())
+                            .observe(this, { gitrepos ->
+                                val listToSet = mutableListOf<Repos>()
+                                for (repo in gitrepos) {
+                                    listToSet.add(
+                                        Repos(
+                                            repo.name.toString(),
+                                            repo.description.toString(),
+                                            repo.language.toString()
+                                        )
+                                    )
+                                }
+                                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
+                                usersToReturn.add(
+                                    Users(
+                                        user.avatar_url.toString(),
+                                        user.login.toString(),
+                                        MainUserRepoFragment(listToSet)
+                                    )
+                                )
+                                DebugLogger("usersToReturn: ------> $usersToReturn")
+                                DebugLogger("listToSet: ------> $listToSet")
+                                userAdapter.updateUsers(usersToReturn)
+                                mainFragmentAdapter.addFragmentToList(usersToReturn)
+                            })
 
-                repoList = it
-            })
-        } else {
-            repoViewModel.getStoredPrivateReposForUser(userName, tokenSaved).observe(this, {
-                repoListPrivate = it
-            })
-        }
+
+
+                    } else {
+                        repoViewModel.getStoredPrivateReposForUser(userName, tokenSaved)
+                            .observe(this, { gitrepos ->
+                                val listToSet = mutableListOf<Repos>()
+                                for (repo in gitrepos) {
+                                    listToSet.add(
+                                        Repos(
+                                            repo.name.toString(),
+                                            repo.description.toString(),
+                                            repo.language.toString()
+                                        )
+                                    )
+                                }
+                                val usersToReturnTwo: MutableList<Users> = mutableListOf()
+                                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
+                                DebugLogger("userstoRETURN -----> ${usersToReturnTwo}")
+                                usersToReturnTwo.add(Users(user.avatar_url.toString(),
+                                        user.login.toString(),
+                                        MainUserRepoFragment(listToSet)))
+
+                                userAdapter.updateUsers(usersToReturnTwo)
+                                mainFragmentAdapter.addFragmentToList(usersToReturnTwo)
+                            }
+                            )
+                    }
+                }
+            } else
+                repoViewModel.addUserToList(userName)
+        })
     }
 }

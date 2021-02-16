@@ -7,6 +7,7 @@ import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
 import com.agjk.repodepot.model.data.UserSearch
 import com.agjk.repodepot.model.data.Preferences
+import com.agjk.repodepot.model.data.*
 
 class RepoViewModel : ViewModel() {
 
@@ -28,12 +29,14 @@ class RepoViewModel : ViewModel() {
     ): LiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
         DepotRepository.getCommitsForUser(username, repoName)
 
-    fun getUserList(): LiveData<List<String>> =
-        DepotRepository.getUserList()
+    fun getUserList(userName:String): LiveData<List<GitUser>> =
+        DepotRepository.getUserList(userName)
 
     fun addUserToList(userName: String) {
         DepotRepository.addUserToList(userName)
     }
+
+    fun getProfile(userName: String):GitUser = DepotRepository.getUserProfile(userName)
 
     fun searchUsers(stringSearch: String) = DepotRepository.searchForUsers(stringSearch)
 

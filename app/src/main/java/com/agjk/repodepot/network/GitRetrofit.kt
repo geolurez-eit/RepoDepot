@@ -2,6 +2,7 @@ package com.agjk.repodepot.network
 
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
+import com.agjk.repodepot.model.data.GitUser
 import com.agjk.repodepot.model.data.RateLimit
 import com.agjk.repodepot.model.data.UserSearch
 import com.agjk.repodepot.util.Constants.Companion.BASE_URL
@@ -56,6 +57,7 @@ object GitRetrofit {
     ): Observable<List<GitRepoCommits.GitRepoCommitsItem>> =
         gitApi.getGitRepoCommits(username, repo,page,100)
 
+    fun getUserProfile(username:String): Observable<GitUser> = gitApi.getUserProfile(username)
     fun getUserSearchResults(stringSearch: String): Observable<UserSearch> =
         gitApi.searchUsers(stringSearch)
 
