@@ -2,6 +2,10 @@ package com.agjk.repodepot.model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.agjk.repodepot.model.data.GitRepo
+import com.agjk.repodepot.model.data.GitRepoCommits
+import com.agjk.repodepot.model.data.Preferences
+import com.agjk.repodepot.model.data.UserSearch
 import com.agjk.repodepot.model.data.*
 import com.agjk.repodepot.network.GitRetrofit
 import com.agjk.repodepot.util.DebugLogger
@@ -28,6 +32,7 @@ object DepotRepository {
     var prefLiveData: MutableLiveData<Preferences> = MutableLiveData()
     private var userProfile: GitUser = GitUser()
 
+    val userSearchLiveData: MutableLiveData<List<UserSearch.Item>> = MutableLiveData()
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val firebaseAuth = FirebaseAuth.getInstance()
 
@@ -363,5 +368,29 @@ object DepotRepository {
                 })
         )
         return userProfile
+    }
+
+    // Search bar query
+    fun searchForUsers(stringSearch: String) {
+
+        if (stringSearch.isEmpty()) {
+            userSearchLiveData.postValue(listOf())
+            return
+        }
+
+        compositeDisposable.add(
+            gitRetrofit.getUserSearchResults(stringSearch)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    it.items?.let { items ->
+                        userSearchLiveData.postValue(items)
+                    }
+                    compositeDisposable.clear()
+                }, {
+                    DebugLogger(".subscribe Error")
+                    DebugLogger(it.localizedMessage)
+                })
+        )
     }
 }

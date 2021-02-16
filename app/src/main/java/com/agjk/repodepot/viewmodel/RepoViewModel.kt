@@ -3,6 +3,10 @@ package com.agjk.repodepot.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.agjk.repodepot.model.DepotRepository
+import com.agjk.repodepot.model.data.GitRepo
+import com.agjk.repodepot.model.data.GitRepoCommits
+import com.agjk.repodepot.model.data.UserSearch
+import com.agjk.repodepot.model.data.Preferences
 import com.agjk.repodepot.model.data.*
 
 class RepoViewModel : ViewModel() {
@@ -33,6 +37,8 @@ class RepoViewModel : ViewModel() {
     }
 
     fun getProfile(userName: String):GitUser = DepotRepository.getUserProfile(userName)
+
+    fun searchUsers(stringSearch: String) = DepotRepository.searchForUsers(stringSearch)
 
     fun addUserPreferences(preferences: Preferences) {
         DepotRepository.addUserPreferences(preferences)
