@@ -1,10 +1,10 @@
 package com.agjk.repodepot.model
 
-import android.os.Debug
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
+import com.agjk.repodepot.model.data.Preferences
 import com.agjk.repodepot.model.data.UserSearch
 import com.agjk.repodepot.network.GitRetrofit
 import com.agjk.repodepot.util.DebugLogger
@@ -26,6 +26,7 @@ object DepotRepository {
     private val userListLiveData: MutableLiveData<List<String>> = MutableLiveData()
     private val commitLiveData: MutableLiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
         MutableLiveData()
+    var prefLiveData: MutableLiveData<Preferences> = MutableLiveData()
     val userSearchLiveData: MutableLiveData<List<UserSearch.Item>> = MutableLiveData()
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val firebaseAuth = FirebaseAuth.getInstance()
@@ -163,7 +164,7 @@ object DepotRepository {
             //Update repos for user
             DebugLogger("Updating repos")
             saveNewRepos(username, 1)
-        }else{
+        } else {
             DebugLogger("Unable to update repos")
         }
         //add user to userlist
@@ -180,7 +181,7 @@ object DepotRepository {
         firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    snapshot.getValue(String::class.java).runCatching{
+                    snapshot.getValue(String::class.java).runCatching {
                         DebugLogger("Last Updated: $this")
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                             DebugLogger(
@@ -203,7 +204,7 @@ object DepotRepository {
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    DebugLogger("24 Hour Check on Cancelled: "+error.message)
+                    DebugLogger("24 Hour Check on Cancelled: " + error.message)
                 }
 
             })
@@ -252,7 +253,7 @@ object DepotRepository {
         if (is24HoursPassed) {
             //Update repos for user
             saveNewPrivateRepos(username, token, 1)
-        }else{
+        } else {
             DebugLogger("Unable to update repos")
         }
         //add user to userlist
@@ -312,6 +313,27 @@ object DepotRepository {
                     }
                 })
         return userListLiveData
+    }
+
+    fun addUserPreferences(preferences: Preferences) {
+        firebaseDatabase.reference.child("USER_PREFERENCES")
+            .child(firebaseAuth.currentUser?.displayName.toString())
+            .setValue(preferences)
+    }
+
+    fun getUserPreferences(): LiveData<Preferences> {
+        firebaseDatabase.reference.child("USER_PREFERENCES")
+            .child(firebaseAuth.currentUser?.displayName.toString())
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    prefLiveData.value = snapshot.getValue(Preferences::class.java)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    DebugLogger("Error ${error.message}")
+                }
+            })
+        return prefLiveData
     }
 
     fun addUserToList(userName: String) {

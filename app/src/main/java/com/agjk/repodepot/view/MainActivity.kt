@@ -19,10 +19,14 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
+import com.agjk.repodepot.model.data.GitRepo
+import com.agjk.repodepot.model.data.Repos
+import com.agjk.repodepot.model.data.Users
 import com.agjk.repodepot.model.DepotRepository
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
+import com.agjk.repodepot.view.fragment.MainUserRepoFragment
 import com.agjk.repodepot.view.fragment.SplashScreenFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.google.android.material.button.MaterialButton
@@ -45,7 +49,13 @@ class MainActivity : AppCompatActivity() {
 
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
+
     private var tokenSaved = ""
+    private var repoList: List<GitRepo.GitRepoItem> = listOf()
+    private var repoListPrivate: List<GitRepo.GitRepoItem> = listOf()
+    private var userList: List<String> = listOf()
+
+    private var firebaseAuth = FirebaseAuth.getInstance()
 
     private val userAdapter = UserAdapter(mutableListOf(), this)
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
@@ -112,7 +122,9 @@ class MainActivity : AppCompatActivity() {
     fun closeSplash() {
         runOnUiThread {
             supportFragmentManager.popBackStack()
+            initFirebase()
             initMainActivity()
+            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
         }
     }
 
@@ -120,29 +132,51 @@ class MainActivity : AppCompatActivity() {
         searchViewSetup()
         viewPagerSetup()
 
+        val repoList: List<Repos> = listOf(
+            Repos("John//repo/barber", "", "Kotlin"),
+            Repos("kamel//repoDepo", "","Kotlin"),
+            Repos("Netherland/github", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin")
+        )]
+
+
+        val userList: List<Users> = listOf(
+            Users("", "bladerjam7", MainUserRepoFragment(repoList)),
+            Users("", "george21", MainUserRepoFragment(repoList)),
+            Users("", "AdamLiving", MainUserRepoFragment(repoList)),
+            Users("", "JohnCena", MainUserRepoFragment(repoList))
+        )
+
+        mainFragmentAdapter.addFragmentToList(userList[0])
+        userAdapter.updateUsers(userList)
+
         // TODO: Store api call for users into userList
         // TODO: Update userAdapter with userList
         // TODO: Add user to MainFragmentAdapter.addFragmentToList(userList.fragment)
 
         // TODO: check on Observer
         //Testing viewmodel methods
-        DebugLogger("MainActivity onCreate - saveNewRepos")
-        /*//repoViewModel.getNewRepos("geolurez-eit")
-        //repoViewModel.getNewCommits("geolurez-eit","android-kotlin-geo-fences")*/
 
         val userName: String = FirebaseAuth.getInstance().currentUser?.displayName.toString()
         DebugLogger("Username -----> ${userName}")
-        DebugLogger("Token -----> ${tokenSaved}")
+
 
         repoViewModel.getStoredPrivateReposForUser("bladerjam7", tokenSaved)
             .observe(this, Observer {
                 DebugLogger("Repo size -------> ${it}")
             })
 
-        /*repoViewModel.getStoredCommitsForUser(
-            "geolurez-eit",
-            "android-kotlin-geo-fences"
-        ).observe(this, Observer{ DebugLogger("Testing output for commits: $it") })*/
+        DebugLogger(repoList.toString())
+
     }
 
     private fun viewPagerSetup() {
@@ -273,11 +307,28 @@ class MainActivity : AppCompatActivity() {
         navigationDrawer.closeDrawers()
     }
 
-    fun saveToken(tokenSaved: String) {
-        this.tokenSaved = tokenSaved
+    //Data methods for MainActivity
+
+    private fun initFirebase() {
+        repoViewModel.getUserPreferences().observe(this, {
+            tokenSaved = it.gitHubAccessToken
+        })
     }
 
-    /* fun saveUsername(input: String){
-         username = input
-     }*/
+    private fun getData(userName: String) {
+        repoViewModel.addUserToList(userName)
+        repoViewModel.getUserList().observe(this,{
+            userList = it
+        })
+        if (userName != firebaseAuth.currentUser?.displayName) {
+            repoViewModel.getStoredReposForUser(userName).observe(this, {
+
+                repoList = it
+            })
+        } else {
+            repoViewModel.getStoredPrivateReposForUser(userName, tokenSaved).observe(this, {
+                repoListPrivate = it
+            })
+        }
+    }
 }

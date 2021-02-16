@@ -1,4 +1,10 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+ext {
+    ksp = 'eit1785'
+    ksf = '../repotdepot.keystore'
+    ka = 'repot_depot'
+    kap = 'dalo4EVER'
+    kad = 'repot_depot_debug'
+}// Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext.kotlin_version = "1.4.30"
     repositories {

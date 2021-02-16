@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
@@ -25,45 +26,39 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
     private lateinit var tvDetail: TextView
 
     // Recycler view animation var
-    private lateinit var linearLayout: LinearLayout
+    private lateinit var constraintLayout: ConstraintLayout
 
-
-
-    private var repoAdapter = RepoAdapter(mutableListOf())
+    //private var repoAdapter = RepoAdapter(mutableListOf())
     private var repoList: List<Repos> = listOf()
+    private val repoAdapter = RepoAdapter(repo)
 
-    private var dummyRepo: MutableList<Repos> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         return inflater.inflate(R.layout.fragment_repo_main, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initalize(view)
+
         rvUserRepo.adapter = repoAdapter
 
         DebugLogger("Fragment Debug")
 
 
-
-        dummyRepo.add(Repos("name", "Kotlin", 7))
-        dummyRepo.add(Repos("name2",  "Kotlin", 5))
-        dummyRepo.add(Repos("name3",  "Kotlin", 2))
-        dummyRepo.add(Repos("name4",  "Kotlin", 6))
-
-        repoAdapter.updateRepo(dummyRepo)
-        DebugLogger("${repoList.size} List size #1")
+        repoAdapter.updateRepo(repo)
+        DebugLogger("${repo.size} List size #1")
 
 
         // Recycler view animation
-      /*  linearLayout.visibility = View.VISIBLE
+        /*constraintLayout.visibility = View.VISIBLE
         val animationFadeScale = AnimationUtils.loadAnimation(this.context, R.anim.fade_scale_repo_recycler)
-        linearLayout.startAnimation(animationFadeScale)*/
+        constraintLayout.startAnimation(animationFadeScale)*/
 
 
 
@@ -79,7 +74,7 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
             tvDetail = findViewById(R.id.tv_light_details)
 
             // recycler container
-            linearLayout = findViewById(R.id.linearLayout_repo)
+            //constraintLayout = findViewById(R.id.constraint_container)
 
 
         }
