@@ -262,7 +262,7 @@ object DepotRepository {
             .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
             .setValue(username)*/
         //Retrieve stored repos
-        return getRepositories(username)
+        return getRepositories(username+"_private")
     }
 
     private fun getRepositories(username: String): MutableLiveData<List<GitRepo.GitRepoItem>> {

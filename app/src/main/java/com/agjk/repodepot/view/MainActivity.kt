@@ -202,6 +202,7 @@ class MainActivity : AppCompatActivity() {
         //repoViewModel.getProfile(userName)
         //repoViewModel.addUserToList("bladerjam7")
         repoViewModel.getUserList(userName).observe(this, { userget ->
+            DebugLogger("userGET SIZE -> ${userget.size}")
             if (userget.isNotEmpty()) {
                 userget.forEach { user ->
                     if (user.login != firebaseAuth.currentUser?.displayName) {
@@ -217,6 +218,7 @@ class MainActivity : AppCompatActivity() {
                                         )
                                     )
                                 }
+                                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
                                 usersToReturn.add(
                                     Users(
                                         user.avatar_url.toString(),
@@ -245,16 +247,17 @@ class MainActivity : AppCompatActivity() {
                                         )
                                     )
                                 }
-                                usersToReturn.add(Users(user.avatar_url.toString(),
+                                val usersToReturnTwo: MutableList<Users> = mutableListOf()
+                                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
+                                DebugLogger("userstoRETURN -----> ${usersToReturnTwo}")
+                                usersToReturnTwo.add(Users(user.avatar_url.toString(),
                                         user.login.toString(),
                                         MainUserRepoFragment(listToSet)))
 
-                                userAdapter.updateUsers(usersToReturn)
-                                mainFragmentAdapter.addFragmentToList(usersToReturn)
+                                userAdapter.updateUsers(usersToReturnTwo)
+                                mainFragmentAdapter.addFragmentToList(usersToReturnTwo)
                             }
                             )
-
-                        DebugLogger("getData user list : $usersToReturn")
                     }
                 }
             } else
