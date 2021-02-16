@@ -55,7 +55,7 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
             repoTitle.text = repo.repoName
             //repoDescription.text = repo.repoDescription
             repoLanguage.text = repo.repoLanguage
-            repoRating.text = repo.repoStarNum.toString()
+            repoRating.text = "1"
 
             repoDetailCard.setOnClickListener {
                 // TODO: transition to detail fragment

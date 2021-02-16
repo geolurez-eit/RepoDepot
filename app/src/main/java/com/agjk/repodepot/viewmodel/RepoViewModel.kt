@@ -3,9 +3,7 @@ package com.agjk.repodepot.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.agjk.repodepot.model.DepotRepository
-import com.agjk.repodepot.model.data.GitRepo
-import com.agjk.repodepot.model.data.GitRepoCommits
-import com.agjk.repodepot.model.data.Preferences
+import com.agjk.repodepot.model.data.*
 
 class RepoViewModel : ViewModel() {
 
@@ -27,12 +25,14 @@ class RepoViewModel : ViewModel() {
     ): LiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
         DepotRepository.getCommitsForUser(username, repoName)
 
-    fun getUserList(): LiveData<List<String>> =
-        DepotRepository.getUserList()
+    fun getUserList(userName:String): LiveData<List<GitUser>> =
+        DepotRepository.getUserList(userName)
 
     fun addUserToList(userName: String) {
         DepotRepository.addUserToList(userName)
     }
+
+    fun getProfile(userName: String):GitUser = DepotRepository.getUserProfile(userName)
 
     fun addUserPreferences(preferences: Preferences) {
         DepotRepository.addUserPreferences(preferences)

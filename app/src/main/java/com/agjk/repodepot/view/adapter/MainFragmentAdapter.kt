@@ -5,7 +5,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.agjk.repodepot.model.data.Users
 import com.agjk.repodepot.view.MainActivity
 
-class MainFragmentAdapter (var userList : MutableList<Users>, mainActivity: MainActivity) : FragmentStateAdapter(mainActivity){
+class MainFragmentAdapter (var userList : List<Users>, mainActivity: MainActivity) : FragmentStateAdapter(mainActivity){
 
 
     override fun getItemCount(): Int = userList.size
@@ -19,8 +19,8 @@ class MainFragmentAdapter (var userList : MutableList<Users>, mainActivity: Main
         //notifyDataSetChanged()
     //}
 
-    fun addFragmentToList(newUser: Users) {
-        userList.add(newUser)
+    fun addFragmentToList(newUserList: List<Users>) {
+        userList = newUserList
         notifyItemInserted(userList.size)
         // update nav drawer with new item?
     }
