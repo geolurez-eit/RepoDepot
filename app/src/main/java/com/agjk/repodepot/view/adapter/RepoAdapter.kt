@@ -10,10 +10,12 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.util.DebugLogger
+import com.agjk.repodepot.view.fragment.UserDetailsFragment
 
 class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
 
@@ -56,7 +58,7 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
             repoLanguage.text = repo.repoLanguage
 
             repoDetailCard.setOnClickListener {
-                // TODO: transition to detail fragment
+
             }
         }
         holder.constraintLayout.visibility = View.VISIBLE

@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Repos
@@ -30,7 +31,7 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
 
     //private var repoAdapter = RepoAdapter(mutableListOf())
     private var repoList: List<Repos> = listOf()
-    private val repoAdapter = RepoAdapter(repo)
+    private val repoAdapter = RepoAdapter(repo, parentFragmentManager)
 
 
     override fun onCreateView(
