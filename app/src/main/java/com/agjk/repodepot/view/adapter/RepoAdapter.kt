@@ -24,7 +24,6 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
         val repoTitle: TextView = itemView.findViewById(R.id.tv_repo_name)
         //val repoDescription: TextView = itemView.findViewById(R.id.tv_repo_description)
         val repoLanguage: TextView = itemView.findViewById(R.id.tv_repo_language)
-        val repoRating: TextView = itemView.findViewById(R.id.tv_rating)
 
         // animation container
         val constraintLayout: ConstraintLayout = itemView.findViewById(R.id.constraint_container)
@@ -55,7 +54,6 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
             repoTitle.text = repo.repoName
             //repoDescription.text = repo.repoDescription
             repoLanguage.text = repo.repoLanguage
-            repoRating.text = "1"
 
             repoDetailCard.setOnClickListener {
                 // TODO: transition to detail fragment

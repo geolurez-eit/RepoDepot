@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -104,12 +105,8 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.popBackStack()
             initFirebase()
             getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
-            //repoViewModel.getStoredReposForUser("bladerjam7")
-            //repoViewModel.addUserToList("bladerjam7")
-            /*repoViewModel.getUserList("bladerjam7").observe(this, {
-                DebugLogger("USER LIST SIZE ______> ${it.size}")
-            })*/
             initMainActivity()
+
         }
     }
 
