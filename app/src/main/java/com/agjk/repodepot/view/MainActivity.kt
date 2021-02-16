@@ -298,13 +298,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getData(userName: String) {
-        //repoViewModel.getProfile(userName)
-        //repoViewModel.addUserToList("bladerjam7")
         repoViewModel.getUserList(userName).observe(this, { userget ->
-            DebugLogger("userGET SIZE -> ${userget.size}")
             if (userget.isNotEmpty()) {
                 userget.forEach { user ->
+                    DebugLogger("getData "+user.login+" compare to "+firebaseAuth.currentUser?.displayName)
                     if (user.login != firebaseAuth.currentUser?.displayName) {
+                        DebugLogger("getData Public Repo Get")
                         repoViewModel.getStoredReposForUser(user.login.toString())
                             .observe(this, { gitrepos ->
                                 val listToSet = mutableListOf<Repos>()
@@ -317,7 +316,6 @@ class MainActivity : AppCompatActivity() {
                                         )
                                     )
                                 }
-                                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
                                 usersToReturn.add(
                                     Users(
                                         user.avatar_url.toString(),
@@ -325,8 +323,6 @@ class MainActivity : AppCompatActivity() {
                                         MainUserRepoFragment(listToSet)
                                     )
                                 )
-                                DebugLogger("usersToReturn: ------> $usersToReturn")
-                                DebugLogger("listToSet: ------> $listToSet")
                                 userAdapter.updateUsers(usersToReturn)
                                 mainFragmentAdapter.addFragmentToList(usersToReturn)
                             })
@@ -334,6 +330,7 @@ class MainActivity : AppCompatActivity() {
 
 
                     } else {
+                        DebugLogger("getData Private Repo Get")
                         repoViewModel.getStoredPrivateReposForUser(userName, tokenSaved)
                             .observe(this, { gitrepos ->
                                 val listToSet = mutableListOf<Repos>()
@@ -347,8 +344,6 @@ class MainActivity : AppCompatActivity() {
                                     )
                                 }
                                 val usersToReturnTwo: MutableList<Users> = mutableListOf()
-                                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
-                                DebugLogger("userstoRETURN -----> ${usersToReturnTwo}")
                                 usersToReturnTwo.add(Users(user.avatar_url.toString(),
                                         user.login.toString(),
                                         MainUserRepoFragment(listToSet)))

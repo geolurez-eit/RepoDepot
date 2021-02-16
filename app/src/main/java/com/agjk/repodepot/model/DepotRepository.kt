@@ -2,14 +2,9 @@ package com.agjk.repodepot.model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.agjk.repodepot.model.data.GitRepo
-import com.agjk.repodepot.model.data.GitRepoCommits
-import com.agjk.repodepot.model.data.Preferences
-import com.agjk.repodepot.model.data.UserSearch
 import com.agjk.repodepot.model.data.*
 import com.agjk.repodepot.network.GitRetrofit
 import com.agjk.repodepot.util.DebugLogger
-import com.agjk.repodepot.view.fragment.MainUserRepoFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -19,7 +14,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.time.LocalDateTime
-import java.util.*
 
 object DepotRepository {
     private val resultRepoList: MutableList<GitRepo.GitRepoItem> = mutableListOf()
@@ -138,15 +132,9 @@ object DepotRepository {
         DebugLogger("DepotRepository.postRepos")
         firebaseDatabase.reference.child("REPOSITORIES").child(userName)
             .setValue(repo)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            DebugLogger(LocalDateTime.now().toString())
-            firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
-                .setValue(LocalDateTime.now().toString())
-        } else {
-            DebugLogger(Calendar.getInstance().time.toString())
-            firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
-                .setValue(Calendar.getInstance().time.toString())
-        }
+        DebugLogger(LocalDateTime.now().toString())
+        firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
+            .setValue(LocalDateTime.now().toString())
         DebugLogger("Repos for :${repo.first().owner?.login} added!")
     }
 
@@ -164,8 +152,7 @@ object DepotRepository {
     fun getReposForUser(username: String): LiveData<List<GitRepo.GitRepoItem>> {
         DebugLogger("DepotRepository.getReposForUser")
         // Check if it has been 24 hours
-        checkIf24Hours(username)
-        if (true) {
+        if (checkIf24Hours(username)) {
             //Update repos for user
             DebugLogger("Updating repos")
             saveNewRepos(username, 1)
@@ -181,38 +168,35 @@ object DepotRepository {
         return getRepositories(username)
     }
 
-    private fun checkIf24Hours(userName: String) {
+    private fun checkIf24Hours(userName: String): Boolean {
         DebugLogger("24 Hour Check")
         firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.getValue(String::class.java).runCatching {
                         DebugLogger("Last Updated: $this")
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                            DebugLogger(
-                                "Last Updated + 24: " + LocalDateTime.parse(this).plusDays(1L)
-                            )
-                            DebugLogger("Now: " + LocalDateTime.now())
-                            if (LocalDateTime.parse(this).plusDays(1L) < LocalDateTime.now()) {
-                                DebugLogger("It has been 24 hours")
-                                is24HoursPassed = true
-                            } else {
-                                DebugLogger("Still has not been 24 hours")
-                            }
+                        DebugLogger(
+                            "Last Updated + 24: " + LocalDateTime.parse(this).plusDays(1L)
+                        )
+                        DebugLogger("Now: " + LocalDateTime.now())
+                        if (LocalDateTime.parse(this).plusDays(1L) < LocalDateTime.now()) {
+                            DebugLogger("It has been 24 hours")
+                            is24HoursPassed = true
                         } else {
-                            DebugLogger("Pre Oreo")
-                            TODO("VERSION.SDK_INT < O")
+                            DebugLogger("Still has not been 24 hours")
                         }
                     }.getOrElse {
                         is24HoursPassed = true
                     }
+
                 }
 
                 override fun onCancelled(error: DatabaseError) {
                     DebugLogger("24 Hour Check on Cancelled: " + error.message)
                 }
-
-            })
+            }).run {
+                return is24HoursPassed
+            }
     }
 
 
@@ -254,8 +238,7 @@ object DepotRepository {
     ): LiveData<List<GitRepo.GitRepoItem>> {
         DebugLogger("DepotRepository.getReposForUser")
         // Check if it has been 24 hours
-        checkIf24Hours(username + "_private")
-        if (true) {
+        if (checkIf24Hours(username+"_private")) {
             //Update repos for user
             saveNewPrivateRepos(username, token, 1)
         } else {
@@ -267,7 +250,7 @@ object DepotRepository {
             .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
             .setValue(username)*/
         //Retrieve stored repos
-        return getRepositories(username+"_private")
+        return getRepositories(username + "_private")
     }
 
     private fun getRepositories(username: String): MutableLiveData<List<GitRepo.GitRepoItem>> {
@@ -294,16 +277,16 @@ object DepotRepository {
         return repoUserLiveData
     }
 
-    fun getUserList(thisUserName:String): LiveData<List<GitUser>> {
+    fun getUserList(thisUserName: String): LiveData<List<GitUser>> {
         firebaseDatabase.reference.child("USERLISTS")
             .child(thisUserName)
             .addValueEventListener(
                 object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val usersList = mutableListOf<GitUser>()
-                        snapshot.children.forEach{
+                        snapshot.children.forEach {
                             it.getValue(GitUser::class.java).let { user ->
-                                DebugLogger("getUserList user: "+user.toString())
+                                DebugLogger("getUserList user: " + user.toString())
                                 user?.let { it1 -> usersList.add(it1) }
                             }
                         }
@@ -350,7 +333,7 @@ object DepotRepository {
                     firebaseDatabase.reference.child("USERLISTS")
                         .child(thisUserName).child(it.login.toString()).setValue(it)
                 }, {
-                    DebugLogger("Error within addUserToList "+it.message)
+                    DebugLogger("Error within addUserToList " + it.message)
                 })
         )
     }
