@@ -310,8 +310,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // TODO: close search on nav item selection
-    private fun closeSearch() {
+    fun closeSearch() {
         searchView.setQuery("", false)
         searchView.clearFocus()
         searchView.isIconified = true

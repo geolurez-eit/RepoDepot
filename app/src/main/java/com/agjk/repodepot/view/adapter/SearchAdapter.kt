@@ -1,5 +1,6 @@
 package com.agjk.repodepot.view.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.TouchDelegate
 import android.view.View
@@ -33,8 +34,6 @@ class SearchAdapter(var suggestionList: List<UserSearch.Item>, val delegate: res
         holder.apply {
             result.text = user
             itemView.setOnClickListener{
-                // TODO: get user data and display user fragment
-//                DepotRepository.getReposForUser(user)
                 delegate.displayUserResult()
             }
         }
