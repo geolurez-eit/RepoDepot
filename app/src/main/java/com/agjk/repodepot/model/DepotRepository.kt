@@ -365,8 +365,4 @@ object DepotRepository {
                 })
         )
     }
-
-    fun clearSearchResults() {
-        userSearchLiveData.value = listOf()
-    }
 }

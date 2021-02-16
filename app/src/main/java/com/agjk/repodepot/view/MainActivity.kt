@@ -146,7 +146,7 @@ class MainActivity : AppCompatActivity() {
             Repos("hubgit/netherland", "","Kotlin"),
             Repos("hubgit/netherland", "","Kotlin"),
             Repos("hubgit/netherland", "","Kotlin")
-        )]
+        )
 
 
         val userList: List<Users> = listOf(
@@ -203,11 +203,14 @@ class MainActivity : AppCompatActivity() {
         viewPager.currentItem = i
     }
 
+    private lateinit var blankView: View
+
     private fun searchViewSetup() {
         // Search bar
         searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         searchView = findViewById(R.id.search_view)
         searchResultsContainer = findViewById(R.id.search_results_fragment_container)
+        blankView = findViewById(R.id.blank_view)
 
         loadingSpinner = findViewById(R.id.results_loading_spinner)
         loadingSpinner.hide()
@@ -217,11 +220,14 @@ class MainActivity : AppCompatActivity() {
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
             setOnQueryTextFocusChangeListener { v, hasFocus ->
                 Log.d("TAG_A", "on focus change, $hasFocus")
-                if (hasFocus)
+                if (hasFocus) {
                     searchResultsContainer.visibility = View.VISIBLE
+                    blankView.visibility = View.GONE
+                }
                 else {
                     searchResultsContainer.visibility = View.GONE
-                    DepotRepository.clearSearchResults()
+                    blankView.visibility = View.VISIBLE
+                    DepotRepository.searchForUsers("")
                 }
             }
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {

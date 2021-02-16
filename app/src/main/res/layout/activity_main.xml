@@ -32,10 +32,12 @@
                 android:id="@+id/nav_drawer_menu_button"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:backgroundTint="#FFFFFFFF"
+                android:background="@null"
+                android:elevation="4dp"
                 android:padding="10dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_baseline_menu_24"
+                android:tint="@color/white"
                 app:layout_constraintBottom_toTopOf="@id/top_bar_guideline"
                 app:layout_constraintEnd_toStartOf="@+id/search_end_guideline"
                 app:layout_constraintStart_toStartOf="parent"
@@ -55,27 +57,37 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent=".125" />
 
+            <View
+                android:id="@+id/blank_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintHorizontal_weight=".85"
+                app:layout_constraintBottom_toBottomOf="@+id/search_view"
+                app:layout_constraintEnd_toStartOf="@id/search_view"
+                app:layout_constraintStart_toStartOf="@id/search_end_guideline"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <SearchView
                 android:id="@+id/search_view"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:iconifiedByDefault="true"
+                android:elevation="4dp"
                 android:inputType="text"
+                android:queryBackground="@color/DarkGray50"
                 android:queryHint="@string/search_hint"
-                android:visibility="gone"
+                android:theme="@style/SearchView"
                 app:layout_constraintBottom_toTopOf="@id/top_bar_guideline"
+                app:layout_constraintStart_toEndOf="@id/blank_view"
+                app:layout_constraintHorizontal_weight=".15"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/search_results_fragment_container"
                 android:name="com.agjk.repodepot.view.fragment.SearchResultsFragment"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/top_bar_guideline" />
+                android:layout_height="match_parent"
+                android:visibility="gone" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
