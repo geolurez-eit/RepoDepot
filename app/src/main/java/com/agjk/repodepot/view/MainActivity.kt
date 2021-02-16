@@ -27,6 +27,7 @@ import com.agjk.repodepot.view.fragment.SplashScreenFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchManager: SearchManager
     private lateinit var searchView: SearchView
     private lateinit var searchResultsContainer: FragmentContainerView
+    private lateinit var loadingSpinner: CircularProgressIndicator
     private var searchTimer: Timer = Timer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,27 +105,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-
-        Log.d("TAG_A", "on new intent")
-
-        intent?.let {
-            setIntent(it)
-            handleIntent(it)
-        }
-    }
-
-//    FIXME: rewrite ui to stop using the activity search intent stuff, doubling up on queries
-    private fun handleIntent(intent: Intent) {
-        if (Intent.ACTION_SEARCH == intent.action) {
-            intent.getStringExtra(SearchManager.QUERY)?.also { query ->
-                doMySearch(query)
-            }
-        }
-    }
-
-    private fun doMySearch(stringSearch: String) {
+    private fun performUserSearch(stringSearch: String) {
         repoViewModel.searchUsers(stringSearch)
     }
 
@@ -193,6 +175,9 @@ class MainActivity : AppCompatActivity() {
         searchView = findViewById(R.id.search_view)
         searchResultsContainer = findViewById(R.id.search_results_fragment_container)
 
+        loadingSpinner = findViewById(R.id.results_loading_spinner)
+        loadingSpinner.hide()
+
         searchView.apply {
             visibility = View.VISIBLE
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
@@ -208,35 +193,32 @@ class MainActivity : AppCompatActivity() {
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     Log.d("TAG_B", "query -> $query")
-                    // FIXME: test this vs activity search intent
-                    query?.let { doMySearch(query) }
+                    query?.let { performUserSearch(query) }
                     return true
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
-                    // TODO: start loading view here
-
                     searchTimer.cancel()
                     searchTimer = Timer()
+                    loadingSpinner.show()
 
-                    searchTimer.schedule(
-                        object : TimerTask() {
+                    searchTimer.schedule(object : TimerTask() {
                             override fun run() {
-                                // TODO: end loading view here
                                 Log.d("TAG_B", "$newText")
-                                newText?.let { doMySearch(newText) }
+                                newText?.let { performUserSearch(newText) }
+
+                                // HACK for timing - maybe okay, maybe not.
+                                Thread.sleep(300)
+
+                                runOnUiThread {
+                                    loadingSpinner.hide()
+                                }
                             }
-                        }, 1000
-                    )
+                        }, 1000)
 
                     return true
                 }
             })
-//            setOnCloseListener {
-//                Log.d("TAG_A", "on close")
-//                searchResultsContainer.visibility = View.GONE
-//                false
-//            }
         }
 
         navigationDrawer = findViewById(R.id.drawer_layout)

@@ -322,6 +322,12 @@ object DepotRepository {
 
     // Search bar query
     fun searchForUsers(stringSearch: String) {
+
+        if (stringSearch.isEmpty()) {
+            userSearchLiveData.postValue(listOf())
+            return
+        }
+
         compositeDisposable.add(
             gitRetrofit.getUserSearchResults(stringSearch)
                 .subscribeOn(Schedulers.io())
