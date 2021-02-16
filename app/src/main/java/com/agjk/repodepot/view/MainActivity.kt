@@ -198,7 +198,9 @@ class MainActivity : AppCompatActivity() {
         //repoViewModel.getProfile(userName)
         repoViewModel.addUserToList("bladerjam7")
         repoViewModel.getUserList(userName).observe(this, { userget ->
+            DebugLogger("getData userName: "+userName)
             if (userget.isNotEmpty()) {
+                DebugLogger("getData userget: "+userget.toString())
                 for (user in userget) {
                     if (user.login != firebaseAuth.currentUser?.displayName) {
                         repoViewModel.getStoredReposForUser(user.login.toString())

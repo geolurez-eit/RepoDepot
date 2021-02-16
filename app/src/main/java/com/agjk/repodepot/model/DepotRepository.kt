@@ -290,30 +290,18 @@ object DepotRepository {
     }
 
     fun getUserList(thisUserName:String): LiveData<List<GitUser>> {
-         /*val user = getUserProfile(thisUserName)
-        DebugLogger()
         firebaseDatabase.reference.child("USERLISTS")
-            .child(thisUserName).child(thisUserName).setValue(Users(user.avatar_url.toString(),
-                user.login.toString(),MainUserRepoFragment(
-                listOf())))*/
-        firebaseDatabase.reference.child("USERLISTS")
-            .child(thisUserName)
+            .child("bladerjam7")
             .addValueEventListener(
                 object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val usersList = mutableListOf<GitUser>()
-                        snapshot.getValue(GitUser::class.java).let { user ->
-                            if (user!=null){
-                                usersList.add(user)
+                        snapshot.children.forEach{
+                            it.getValue(GitUser::class.java).let { user ->
+                                DebugLogger("getUserList user: "+user.toString())
                             }
                         }
-                        /*snapshot.children.forEach {
-                            it.getValue(GitUser::class.java).let { user ->
-                                if (user != null) {
-                                    usersList.add(user)
-                                }
-                            }
-                        }*/
+
                         userListLiveData.value = usersList
                     }
 
