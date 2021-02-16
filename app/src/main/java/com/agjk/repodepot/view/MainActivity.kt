@@ -115,20 +115,20 @@ class MainActivity : AppCompatActivity() {
         viewPagerSetup()
 
         val repoList: List<Repos> = listOf(
-            Repos("John//repo/barber", "Kotlin", 7),
-            Repos("kamel//repoDepo", "Kotlin", 5),
-            Repos("Netherland/github", "Kotlin", 2),
-            Repos("hubgit/netherland", "Kotlin", 6),
-            Repos("hubgit/netherland", "Kotlin", 6),
-            Repos("hubgit/netherland", "Kotlin", 6),
-            Repos("hubgit/netherland", "Kotlin", 6),
-            Repos("hubgit/netherland", "Kotlin", 6),
-            Repos("hubgit/netherland", "Kotlin", 6),
-            Repos("hubgit/netherland", "Kotlin", 6),
-            Repos("hubgit/netherland", "Kotlin", 6),
-            Repos("hubgit/netherland", "Kotlin", 6),
-            Repos("hubgit/netherland", "Kotlin", 6)
-        )
+            Repos("John//repo/barber", "", "Kotlin"),
+            Repos("kamel//repoDepo", "","Kotlin"),
+            Repos("Netherland/github", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin"),
+            Repos("hubgit/netherland", "","Kotlin")
+        )]
 
 
         val userList: List<Users> = listOf(
@@ -230,6 +230,7 @@ class MainActivity : AppCompatActivity() {
         })
         if (userName != firebaseAuth.currentUser?.displayName) {
             repoViewModel.getStoredReposForUser(userName).observe(this, {
+
                 repoList = it
             })
         } else {
