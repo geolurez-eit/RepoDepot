@@ -53,7 +53,6 @@ class MainActivity : AppCompatActivity() {
     private var tokenSaved = ""
     private var repoList: List<Repos> = listOf()
     private var repoListPrivate: List<Repos> = listOf()
-    private var usersToReturn = mutableListOf<Users>()
 
 
     private var firebaseAuth = FirebaseAuth.getInstance()
@@ -124,8 +123,8 @@ class MainActivity : AppCompatActivity() {
         runOnUiThread {
             supportFragmentManager.popBackStack()
             initFirebase()
-            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
             initMainActivity()
+            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
 
         }
     }
@@ -317,6 +316,7 @@ class MainActivity : AppCompatActivity() {
                                         )
                                     )
                                 }
+                                val usersToReturn: MutableList<Users> = mutableListOf()
                                 DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
                                 usersToReturn.add(
                                     Users(
