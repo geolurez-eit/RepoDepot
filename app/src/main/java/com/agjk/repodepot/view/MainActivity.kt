@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.SearchView
 import androidx.activity.viewModels
@@ -222,10 +223,17 @@ class MainActivity : AppCompatActivity() {
                 Log.d("TAG_A", "on focus change, $hasFocus")
                 if (hasFocus) {
                     searchResultsContainer.visibility = View.VISIBLE
+                    val animFadeScale = AnimationUtils.loadAnimation(context, R.anim.search_page_anim_in)
+                    searchResultsContainer.startAnimation(animFadeScale)
+
+                    // TODO: animate this too! :)
                     blankView.visibility = View.GONE
                 }
                 else {
                     searchResultsContainer.visibility = View.GONE
+                    val animFadeScale = AnimationUtils.loadAnimation(context, R.anim.search_page_anim_out)
+                    searchResultsContainer.startAnimation(animFadeScale)
+
                     blankView.visibility = View.VISIBLE
                     DepotRepository.searchForUsers("")
                 }
