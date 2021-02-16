@@ -11,10 +11,11 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
+import com.agjk.repodepot.model.data.Commits
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.model.data.Users
@@ -114,6 +115,7 @@ class MainActivity : AppCompatActivity() {
         navDrawerToolbarSetup()
         viewPagerSetup()
 
+        // Dummy variables for testing the repo fragment
         val repoList: List<Repos> = listOf(
             Repos("John//repo/barber", "", "Kotlin"),
             Repos("kamel//repoDepo", "","Kotlin"),
@@ -128,15 +130,20 @@ class MainActivity : AppCompatActivity() {
             Repos("hubgit/netherland", "","Kotlin"),
             Repos("hubgit/netherland", "","Kotlin"),
             Repos("hubgit/netherland", "","Kotlin")
-        )]
+        )
 
 
+        // Dummy variables for testing the users fragment
         val userList: List<Users> = listOf(
             Users("", "bladerjam7", MainUserRepoFragment(repoList)),
             Users("", "george21", MainUserRepoFragment(repoList)),
             Users("", "AdamLiving", MainUserRepoFragment(repoList)),
             Users("", "JohnCena", MainUserRepoFragment(repoList))
         )
+        // Dummy variables for testing the details fragment
+
+
+
 
         mainFragmentAdapter.addFragmentToList(userList[0])
         userAdapter.updateUsers(userList)

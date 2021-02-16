@@ -1,6 +1,7 @@
 package com.agjk.repodepot.view.adapter
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,14 +11,19 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.add
 import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.util.DebugLogger
+import com.agjk.repodepot.view.fragment.UserDetailsFragment
 
-class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
+class RepoAdapter(var repoList: List<Repos>, val delegate:Delegate) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
 
-
+    interface Delegate{
+        fun returntoFrag()
+    }
 
     inner class UserRepoViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val repoDetailCard: CardView = itemView.findViewById(R.id.cv_repo_card)
@@ -56,7 +62,8 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
             repoLanguage.text = repo.repoLanguage
 
             repoDetailCard.setOnClickListener {
-                // TODO: transition to detail fragment
+                // Open the details fragment with some random animation
+                delegate.returntoFrag()
             }
         }
         holder.constraintLayout.visibility = View.VISIBLE
