@@ -104,7 +104,11 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.popBackStack()
             initFirebase()
             getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
-            //repoViewModel.getStoredReposForUser("geolurez-eit")
+            //repoViewModel.getStoredReposForUser("bladerjam7")
+            //repoViewModel.addUserToList("bladerjam7")
+            /*repoViewModel.getUserList("bladerjam7").observe(this, {
+                DebugLogger("USER LIST SIZE ______> ${it.size}")
+            })*/
             initMainActivity()
         }
     }
@@ -196,12 +200,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun getData(userName: String) {
         //repoViewModel.getProfile(userName)
-        repoViewModel.addUserToList("bladerjam7")
+        //repoViewModel.addUserToList("bladerjam7")
         repoViewModel.getUserList(userName).observe(this, { userget ->
-            DebugLogger("getData userName: "+userName)
             if (userget.isNotEmpty()) {
-                DebugLogger("getData userget: "+userget.toString())
-                for (user in userget) {
+                userget.forEach { user ->
                     if (user.login != firebaseAuth.currentUser?.displayName) {
                         repoViewModel.getStoredReposForUser(user.login.toString())
                             .observe(this, { gitrepos ->
@@ -218,11 +220,18 @@ class MainActivity : AppCompatActivity() {
                                 usersToReturn.add(
                                     Users(
                                         user.avatar_url.toString(),
-                                        user.login.toString(), MainUserRepoFragment(listToSet)
+                                        user.login.toString(),
+                                        MainUserRepoFragment(listToSet)
                                     )
                                 )
+                                DebugLogger("usersToReturn: ------> $usersToReturn")
+                                DebugLogger("listToSet: ------> $listToSet")
+                                userAdapter.updateUsers(usersToReturn)
+                                mainFragmentAdapter.addFragmentToList(usersToReturn)
                             })
-                        userAdapter.updateUsers(usersToReturn)
+
+
+
                     } else {
                         repoViewModel.getStoredPrivateReposForUser(userName, tokenSaved)
                             .observe(this, { gitrepos ->
@@ -239,10 +248,12 @@ class MainActivity : AppCompatActivity() {
                                 usersToReturn.add(Users(user.avatar_url.toString(),
                                         user.login.toString(),
                                         MainUserRepoFragment(listToSet)))
+
+                                userAdapter.updateUsers(usersToReturn)
+                                mainFragmentAdapter.addFragmentToList(usersToReturn)
                             }
                             )
-                        userAdapter.updateUsers(usersToReturn)
-                        mainFragmentAdapter.addFragmentToList(usersToReturn)
+
                         DebugLogger("getData user list : $usersToReturn")
                     }
                 }

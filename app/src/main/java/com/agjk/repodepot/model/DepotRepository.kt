@@ -291,7 +291,7 @@ object DepotRepository {
 
     fun getUserList(thisUserName:String): LiveData<List<GitUser>> {
         firebaseDatabase.reference.child("USERLISTS")
-            .child("bladerjam7")
+            .child(thisUserName)
             .addValueEventListener(
                 object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
@@ -299,6 +299,7 @@ object DepotRepository {
                         snapshot.children.forEach{
                             it.getValue(GitUser::class.java).let { user ->
                                 DebugLogger("getUserList user: "+user.toString())
+                                user?.let { it1 -> usersList.add(it1) }
                             }
                         }
 
