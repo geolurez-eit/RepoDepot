@@ -135,7 +135,7 @@ object DepotRepository {
         DebugLogger(LocalDateTime.now().toString())
         firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
             .setValue(LocalDateTime.now().toString())
-        DebugLogger("Repos for :${repo.first().owner?.login} added!")
+        DebugLogger("Repos for :${userName} added!")
     }
 
     private fun postCommits(
@@ -151,26 +151,8 @@ object DepotRepository {
 
     fun getReposForUser(username: String): LiveData<List<GitRepo.GitRepoItem>> {
         DebugLogger("DepotRepository.getReposForUser")
-        // Check if it has been 24 hours
-        if (checkIf24Hours(username)) {
-            //Update repos for user
-            DebugLogger("Updating repos")
-            saveNewRepos(username, 1)
-        } else {
-            DebugLogger("Unable to update repos")
-        }
-        //add user to userlist
-        DebugLogger(firebaseAuth.currentUser?.displayName.toString())
-        /*firebaseDatabase.reference.child("USERLISTS")
-            .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
-            .setValue(username)*/
-        //Retrieve stored repos
-        return getRepositories(username)
-    }
-
-    private fun checkIf24Hours(userName: String): Boolean {
         DebugLogger("24 Hour Check")
-        firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
+        firebaseDatabase.reference.child("REPOSITORIES").child(username).child("lastUpdated")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.getValue(String::class.java).runCatching {
@@ -181,24 +163,29 @@ object DepotRepository {
                         DebugLogger("Now: " + LocalDateTime.now())
                         if (LocalDateTime.parse(this).plusDays(1L) < LocalDateTime.now()) {
                             DebugLogger("It has been 24 hours")
-                            is24HoursPassed = true
-                        } else {
-                            DebugLogger("Still has not been 24 hours")
-                        }
+                            DebugLogger("Updating repos")
+                            saveNewRepos(username, 1)
+                        } else
+                            DebugLogger("Still has not been 24 hours, unable to update repos")
                     }.getOrElse {
-                        is24HoursPassed = true
+                        DebugLogger("checkIf24Hours.onDataChange.runCatching.getOrElse")
+                        DebugLogger(it.message)
+                        DebugLogger("Updating repos")
+                        saveNewRepos(username, 1)
                     }
-
                 }
-
-                override fun onCancelled(error: DatabaseError) {
+                override fun onCancelled(error: DatabaseError) =
                     DebugLogger("24 Hour Check on Cancelled: " + error.message)
-                }
-            }).run {
-                return is24HoursPassed
-            }
-    }
 
+            })
+        //add user to userlist
+        DebugLogger(firebaseAuth.currentUser?.displayName.toString())
+        /*firebaseDatabase.reference.child("USERLISTS")
+            .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
+            .setValue(username)*/
+        //Retrieve stored repos
+        return getRepositories(username)
+    }
 
     fun getCommitsForUser(
         username: String,
@@ -236,14 +223,34 @@ object DepotRepository {
         username: String,
         token: String
     ): LiveData<List<GitRepo.GitRepoItem>> {
-        DebugLogger("DepotRepository.getReposForUser")
-        // Check if it has been 24 hours
-        if (checkIf24Hours(username+"_private")) {
-            //Update repos for user
-            saveNewPrivateRepos(username, token, 1)
-        } else {
-            DebugLogger("Unable to update repos")
-        }
+        DebugLogger("DepotRepository.getReposForUserPrivate")
+        DebugLogger("24 Hour Check")
+        firebaseDatabase.reference.child("REPOSITORIES").child(username + "_private").child("lastUpdated")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.getValue(String::class.java).runCatching {
+                        DebugLogger("Last Updated: $this")
+                        DebugLogger(
+                            "Last Updated + 24: " + LocalDateTime.parse(this).plusDays(1L)
+                        )
+                        DebugLogger("Now: " + LocalDateTime.now())
+                        if (LocalDateTime.parse(this).plusDays(1L) < LocalDateTime.now()) {
+                            DebugLogger("It has been 24 hours")
+                            DebugLogger("Updating repos")
+                            saveNewPrivateRepos(username, token,1)
+                        } else
+                            DebugLogger("Still has not been 24 hours, unable to update repos")
+                    }.getOrElse {
+                        DebugLogger("checkIf24Hours.onDataChange.runCatching.getOrElse")
+                        DebugLogger(it.message)
+                        DebugLogger("Updating repos")
+                        saveNewPrivateRepos(username, token,1)
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) =
+                    DebugLogger("24 Hour Check on Cancelled: " + error.message)
+
+            })
         //add user to userlist
         DebugLogger(firebaseAuth.currentUser?.displayName.toString())
         /*firebaseDatabase.reference.child("USERLISTS")
