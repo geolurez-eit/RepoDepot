@@ -14,24 +14,22 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.CheckResult
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
-import androidx.security.crypto.MasterKeys
 import com.agjk.repodepot.R
-import com.agjk.repodepot.util.Constants.Companion.TOKEN_USER
+import com.agjk.repodepot.model.data.Preferences
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.MainActivity
+import com.agjk.repodepot.viewmodel.RepoViewModel
+import com.agjk.repodepot.viewmodel.RepoViewModelFactory
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.*
-import com.google.firebase.auth.ktx.userProfileChangeRequest
-import kotlinx.coroutines.*
-import java.util.*
-import kotlin.math.log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SplashScreenFragment : Fragment() {
 
@@ -42,19 +40,20 @@ class SplashScreenFragment : Fragment() {
 
     private val SPLASH_TIME: Long = 500
 
-    private lateinit var splashImg : ImageView
-    private lateinit var lottieAnimation : LottieAnimationView
+    private lateinit var splashImg: ImageView
+    private lateinit var lottieAnimation: LottieAnimationView
 
 
     private lateinit var sloganTextView: TextView
     private lateinit var logoImageView: ImageView
     private lateinit var loginbtn: MaterialButton
-//    private lateinit var loginText: TextView
+
+    //    private lateinit var loginText: TextView
     private lateinit var progressBar: ProgressBar
 
-    private lateinit var sharedPreferences: EncryptedSharedPreferences
-
-    private var tokenSaved: String = ""
+    private val repoViewModel: RepoViewModel by viewModels(
+        factoryProducer = { RepoViewModelFactory }
+    )
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -110,7 +109,6 @@ class SplashScreenFragment : Fragment() {
 //        loginText.startAnimation(animationFadeIn)
 
 
-
         // Only show login buttons if no 'currentUser'
         firebaseAuth.currentUser?.let {
             closeSplashToMainActivity()
@@ -127,7 +125,7 @@ class SplashScreenFragment : Fragment() {
             }
         }()
     }
-    
+
     private fun closeSplashToMainActivity() {
         //(thisContext as MainActivity).saveUsername(username)
 
@@ -146,7 +144,8 @@ class SplashScreenFragment : Fragment() {
         lifecycleScope.launch(context = Dispatchers.Default) {
             delay(SPLASH_TIME)
             logoImageView.animation?.let {
-                while (!it.hasEnded()) { /* no-op */ }
+                while (!it.hasEnded()) { /* no-op */
+                }
             }
             (context as MainActivity).closeSplash()
         }
@@ -155,28 +154,17 @@ class SplashScreenFragment : Fragment() {
     private fun startSignIn() {
 
         firebaseAuth
-            .startActivityForSignInWithProvider( /* activity= */(context as MainActivity), provider.build())
+            .startActivityForSignInWithProvider( /* activity= */(context as MainActivity),
+                provider.build()
+            )
             .addOnSuccessListener {
-                // User is signed in.
-                // IdP data available in
-                // authResult.getAdditionalUserInfo().getProfile().
-                // The OAuth access token can also be retrieved:
-                // authResult.getCredential().getAccessToken().
-                DebugLogger(it.credential?.provider.toString())
-
+                //Update firebase displayname to match github username
                 val profileUpdate = UserProfileChangeRequest.Builder()
                     .setDisplayName(it.additionalUserInfo?.username.toString())
                     .build()
                 firebaseAuth.currentUser?.updateProfile(profileUpdate)
-                tokenSaved = (it.credential as OAuthCredential).accessToken
-
-                createSharePreference()
-
-                sharedPreferences.edit().putString(TOKEN_USER, tokenSaved).apply()
-
-
-                (thisContext as MainActivity).saveToken(tokenSaved)
-
+                //Store github token in firebase
+                repoViewModel.addUserPreferences(Preferences(gitHubAccessToken = (it.credential as OAuthCredential).accessToken))
                 Log.d("TAG_A", "sign in success")
                 closeSplashToMainActivity()
             }
@@ -187,20 +175,6 @@ class SplashScreenFragment : Fragment() {
             }
     }
 
-    private fun createSharePreference() {
-        val masterKeyAlias = MasterKey.Builder(thisContext)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
-
-        sharedPreferences = EncryptedSharedPreferences.create(
-            thisContext,
-            "token_share",
-            masterKeyAlias,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        ) as EncryptedSharedPreferences
-    }
-
     private fun checkPendingResult() {
         val pendingResultTask: Task<AuthResult>? = firebaseAuth.pendingAuthResult
         if (pendingResultTask != null) {
@@ -208,11 +182,13 @@ class SplashScreenFragment : Fragment() {
             pendingResultTask
                 .addOnSuccessListener(
                     OnSuccessListener {
-                        // User is signed in.
-                        // IdP data available in
-                        // authResult.getAdditionalUserInfo().getProfile().
-                        // The OAuth access token can also be retrieved:
-                        // authResult.getCredential().getAccessToken().
+                        //Update firebase displayname to match github username
+                        val profileUpdate = UserProfileChangeRequest.Builder()
+                            .setDisplayName(it.additionalUserInfo?.username.toString())
+                            .build()
+                        firebaseAuth.currentUser?.updateProfile(profileUpdate)
+                        //Store github token in firebase
+                        repoViewModel.addUserPreferences(Preferences(gitHubAccessToken = (it.credential as OAuthCredential).accessToken))
 
                         Log.d("TAG_A", "pending result success")
                         closeSplashToMainActivity()

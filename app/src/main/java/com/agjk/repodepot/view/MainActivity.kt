@@ -2,7 +2,6 @@ package com.agjk.repodepot.view
 
 import android.content.DialogInterface
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -14,13 +13,11 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
+import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.model.data.Users
-import com.agjk.repodepot.util.Constants.Companion.TOKEN_USER
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
@@ -43,9 +40,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
-    private var tokenSaved:String? = ""
 
-    private lateinit var sharedPreferences: EncryptedSharedPreferences
+    private var tokenSaved = ""
+    private var repoList: List<GitRepo.GitRepoItem> = listOf()
+    private var repoListPrivate: List<GitRepo.GitRepoItem> = listOf()
+    private var userList: List<String> = listOf()
+
+    private var firebaseAuth = FirebaseAuth.getInstance()
 
     private val userAdapter = UserAdapter(mutableListOf(), this)
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
@@ -72,13 +73,14 @@ class MainActivity : AppCompatActivity() {
 
                         // start this activity fresh to unload data and display splash screen
                         startActivity(Intent(this, MainActivity::class.java).also { intent ->
-                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            intent.flags =
+                                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
                         })
 
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
                     })
                 .setNegativeButton(getString(R.string.cancel),
-                    DialogInterface.OnClickListener() {dialog: DialogInterface, _ ->
+                    DialogInterface.OnClickListener() { dialog: DialogInterface, _ ->
                         dialog.dismiss()
                     })
                 .show()
@@ -102,7 +104,9 @@ class MainActivity : AppCompatActivity() {
     fun closeSplash() {
         runOnUiThread {
             supportFragmentManager.popBackStack()
+            initFirebase()
             initMainActivity()
+            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
         }
     }
 
@@ -110,23 +114,28 @@ class MainActivity : AppCompatActivity() {
         navDrawerToolbarSetup()
         viewPagerSetup()
 
-        createSharePreference()
-
-        tokenSaved = sharedPreferences.getString(TOKEN_USER, "Error")
-
-
         val repoList: List<Repos> = listOf(
-            Repos("name", "Kotlin", 7),
-            Repos("name2",  "Kotlin", 5),
-            Repos("name3",  "Kotlin", 2),
-            Repos("name4",  "Kotlin", 6))
+            Repos("John//repo/barber", "Kotlin", 7),
+            Repos("kamel//repoDepo", "Kotlin", 5),
+            Repos("Netherland/github", "Kotlin", 2),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6),
+            Repos("hubgit/netherland", "Kotlin", 6)
+        )
 
 
         val userList: List<Users> = listOf(
             Users("", "bladerjam7", MainUserRepoFragment(repoList)),
-            Users("", "bladerjam7", MainUserRepoFragment(repoList)),
-            Users("", "bladerjam7", MainUserRepoFragment(repoList)),
-            Users("", "bladerjam7", MainUserRepoFragment(repoList))
+            Users("", "george21", MainUserRepoFragment(repoList)),
+            Users("", "AdamLiving", MainUserRepoFragment(repoList)),
+            Users("", "JohnCena", MainUserRepoFragment(repoList))
         )
 
         mainFragmentAdapter.addFragmentToList(userList[0])
@@ -138,38 +147,14 @@ class MainActivity : AppCompatActivity() {
 
         // TODO: check on Observer
         //Testing viewmodel methods
-        DebugLogger("MainActivity onCreate - saveNewRepos")
-        /*//repoViewModel.getNewRepos("geolurez-eit")
-        //repoViewModel.getNewCommits("geolurez-eit","android-kotlin-geo-fences")*/
 
         val userName: String = FirebaseAuth.getInstance().currentUser?.displayName.toString()
         DebugLogger("Username -----> ${userName}")
-        DebugLogger("Token --------> ${tokenSaved}")
 
-        tokenSaved?.let {
-            repoViewModel.getStoredPrivateReposForUser("bladerjam7", it).observe( this, Observer {
-                DebugLogger("Repo size -------> ${it}")
-            })
-        }
 
-        /*repoViewModel.getStoredCommitsForUser(
-            "geolurez-eit",
-            "android-kotlin-geo-fences"
-        ).observe(this, Observer{ DebugLogger("Testing output for commits: $it") })*/
-    }
 
-    private fun createSharePreference() {
-        val masterKeyAlias = MasterKey.Builder(this)
-            .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
-            .build()
+        DebugLogger(repoList.toString())
 
-        sharedPreferences = EncryptedSharedPreferences.create(
-            this,
-            "token_share",
-            masterKeyAlias,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        ) as EncryptedSharedPreferences
     }
 
     private fun viewPagerSetup() {
@@ -230,11 +215,27 @@ class MainActivity : AppCompatActivity() {
         navigationDrawer.closeDrawers()
     }
 
-    fun saveToken(tokenSaved: String) {
-        this.tokenSaved = tokenSaved
+    //Data methods for MainActivity
+
+    private fun initFirebase() {
+        repoViewModel.getUserPreferences().observe(this, {
+            tokenSaved = it.gitHubAccessToken
+        })
     }
 
-    /* fun saveUsername(input: String){
-         username = input
-     }*/
+    private fun getData(userName: String) {
+        repoViewModel.addUserToList(userName)
+        repoViewModel.getUserList().observe(this,{
+            userList = it
+        })
+        if (userName != firebaseAuth.currentUser?.displayName) {
+            repoViewModel.getStoredReposForUser(userName).observe(this, {
+                repoList = it
+            })
+        } else {
+            repoViewModel.getStoredPrivateReposForUser(userName, tokenSaved).observe(this, {
+                repoListPrivate = it
+            })
+        }
+    }
 }
