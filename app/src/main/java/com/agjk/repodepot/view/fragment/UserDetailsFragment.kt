@@ -58,33 +58,10 @@ class UserDetailsFragment(val avatarUrl: String,
             tvStarCount = findViewById(R.id.tv_rating_count)
             tvForkCount = findViewById(R.id.tv_forks_count)
 
-
-
-            Glide.with(view.context)
-                .load(avatarUrl)
-                .placeholder(R.drawable.portrait)
-                .into(ivAvatarUrl)
-
-            tvRepoName.text = repoName
-            if(repoDescription.length == 0){
-                tvRepoBio.text = "No Description"
-            } else {
-                tvRepoBio.text = repoDescription
-            }
-
-            if(repoUrl.length > stringSize) {
-                val s = "${repoUrl.substring(0, stringSize)}\n${repoUrl.substring(stringSize)}"
-                tvRepoLink.text = s
-            }else{
-                tvRepoLink.text = repoUrl
-            }
-
-            tvStarCount.text = repoStartCount
-            tvForkCount.text = repoForkCount
+            initRepoDetails(view)
         }
 
         //val italicSpan= UnderlineSpan()
-
 
         tvRepoLink.setOnClickListener {
             gotoUrl(repoUrl)
@@ -92,6 +69,32 @@ class UserDetailsFragment(val avatarUrl: String,
 
         tvRepoBio.movementMethod = ScrollingMovementMethod()
 
+
+
+    }
+
+    private fun initRepoDetails(view: View) {
+        Glide.with(view.context)
+            .load(avatarUrl)
+            .placeholder(R.drawable.portrait)
+            .into(ivAvatarUrl)
+
+        tvRepoName.text = repoName
+        if (repoDescription.length == 0) {
+            tvRepoBio.text = "No Description"
+        } else {
+            tvRepoBio.text = repoDescription
+        }
+
+        if (repoUrl.length > stringSize) {
+            val s = "${repoUrl.substring(0, stringSize)}\n${repoUrl.substring(stringSize)}"
+            tvRepoLink.text = s
+        } else {
+            tvRepoLink.text = repoUrl
+        }
+
+        tvStarCount.text = repoStartCount
+        tvForkCount.text = repoForkCount
     }
 
     private fun gotoUrl(s: String) {

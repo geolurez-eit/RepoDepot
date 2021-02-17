@@ -334,7 +334,7 @@ class MainActivity : AppCompatActivity() {
                                     repo.name.toString(),
                                     repo.language.toString(),
                                     repo.stargazers_count.toString(),
-                                    repo.url.toString(),
+                                    repo.html_url.toString(),
                                     repo.description.toString(),
                                     repo.forks_count.toString()
                                 )
@@ -356,9 +356,6 @@ class MainActivity : AppCompatActivity() {
                             )
                         )
                 }
-
-                //DebugLogger("usersToReturn: ------> $usersToReturn")
-                //DebugLogger("listToSet: ------> $listToSet")
                 userAdapter.updateUsers(usersToReturn)
                 mainFragmentAdapter.addFragmentToList(usersToReturn)
             })
