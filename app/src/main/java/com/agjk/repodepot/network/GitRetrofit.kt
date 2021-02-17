@@ -37,7 +37,7 @@ object GitRetrofit {
         DebugLogger("GitRetroFit.getUserRepositories")
         DebugLogger("username: $username")
         DebugLogger("gitApi: $gitApi")
-        return  gitApi.getGitReposPage(username,page,100)
+        return  gitApi.getGitRepos(username,page,100)
     }
     fun getRateLimit():Observable<RateLimit>{
         return gitApi.getRateLimit()
