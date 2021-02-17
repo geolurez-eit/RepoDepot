@@ -2,14 +2,9 @@ package com.agjk.repodepot.model
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.agjk.repodepot.model.data.GitRepo
-import com.agjk.repodepot.model.data.GitRepoCommits
-import com.agjk.repodepot.model.data.Preferences
-import com.agjk.repodepot.model.data.UserSearch
 import com.agjk.repodepot.model.data.*
 import com.agjk.repodepot.network.GitRetrofit
 import com.agjk.repodepot.util.DebugLogger
-import com.agjk.repodepot.view.fragment.MainUserRepoFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -22,30 +17,81 @@ import java.time.LocalDateTime
 import java.util.*
 
 object DepotRepository {
+
+    // Firebase variables
+    private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private val firebaseAuth = FirebaseAuth.getInstance()
+    private val gitRetrofit = GitRetrofit
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+
+    //
     private val resultRepoList: MutableList<GitRepo.GitRepoItem> = mutableListOf()
     private val resultCommitList: MutableList<GitRepoCommits.GitRepoCommitsItem> = mutableListOf()
 
+    // LiveData
     private val repoUserLiveData: MutableLiveData<List<GitRepo.GitRepoItem>> = MutableLiveData()
     private val userListLiveData: MutableLiveData<List<GitUser>> = MutableLiveData()
     private val commitLiveData: MutableLiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
         MutableLiveData()
     var prefLiveData: MutableLiveData<Preferences> = MutableLiveData()
     private var userProfile: GitUser = GitUser()
-
     val userSearchLiveData: MutableLiveData<List<UserSearch.Item>> = MutableLiveData()
-    private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
-    private val firebaseAuth = FirebaseAuth.getInstance()
 
-    private val gitRetrofit = GitRetrofit
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+    // 24 Hour Check
     private var is24HoursPassed = false
 
-
+    //////////////////////
+    // Database Init
+    //////////////////////
     init {
         firebaseDatabase.setPersistenceEnabled(true)
         firebaseDatabase.reference.keepSynced(true)
     }
 
+    ///////////////////////
+    // Repository Functions
+    ///////////////////////
+    fun getReposForUser(username: String): LiveData<List<GitRepo.GitRepoItem>> {
+        DebugLogger("DepotRepository.getReposForUser")
+        // Check if it has been 24 hours
+        checkIf24Hours(username)
+        if (true) {
+            //Update repos for user
+            DebugLogger("Updating repos")
+            saveNewRepos(username, 1)
+        } else {
+            DebugLogger("Unable to update repos")
+        }
+        //add user to userlist
+        DebugLogger(firebaseAuth.currentUser?.displayName.toString())
+        /*firebaseDatabase.reference.child("USERLISTS")
+            .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
+            .setValue(username)*/
+        //Retrieve stored repos
+        return getRepositories(username)
+    }
+
+    fun getReposForUserPrivate(
+        username: String,
+        token: String
+    ): LiveData<List<GitRepo.GitRepoItem>> {
+        DebugLogger("DepotRepository.getReposForUser")
+        // Check if it has been 24 hours
+        checkIf24Hours(username + "_private")
+        if (true) {
+            //Update repos for user
+            saveNewPrivateRepos(username, token, 1)
+        } else {
+            DebugLogger("Unable to update repos")
+        }
+        //add user to userlist
+        DebugLogger(firebaseAuth.currentUser?.displayName.toString())
+        /*firebaseDatabase.reference.child("USERLISTS")
+            .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
+            .setValue(username)*/
+        //Retrieve stored repos
+        return getRepositories(username + "_private")
+    }
 
     private fun saveNewRepos(userName: String, page: Int) {
         DebugLogger("DepotRepository - saveNewRepos")
@@ -71,18 +117,6 @@ object DepotRepository {
                     DebugLogger("saveNewRepos .subscribe Error")
                     DebugLogger(it.localizedMessage)
                 })
-        )
-    }
-
-    private fun logRateLimit() {
-        compositeDisposable.add(
-            gitRetrofit.getRateLimit()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    DebugLogger("Remaining calls: " + it.resources?.core?.remaining.toString())
-                    DebugLogger("Remaining time: " + (it.resources?.core?.reset.toString()))
-                }
         )
     }
 
@@ -112,30 +146,6 @@ object DepotRepository {
         )
     }
 
-    private fun saveNewCommits(userName: String, repoName: String, page: Int) {
-        DebugLogger("DepotRepository - saveNewCommits")
-        DebugLogger("compositeDisposable.add")
-        val commitDisposable = CompositeDisposable()
-        commitDisposable.add(
-            gitRetrofit.getRepositoryCommits(userName, repoName, page)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    if (it.size < 100) {
-                        resultCommitList.addAll(it)
-                        postCommits(it, userName, repoName)
-                        commitDisposable.clear()
-                    } else {
-                        resultCommitList.addAll(it)
-                        saveNewCommits(userName, repoName, page + 1)
-                    }
-                }, {
-                    DebugLogger(".subscribe Error")
-                    DebugLogger(it.localizedMessage)
-                })
-        )
-    }
-
     private fun postRepos(userName: String, repo: List<GitRepo.GitRepoItem>) {
         DebugLogger("DepotRepository.postRepos")
         firebaseDatabase.reference.child("REPOSITORIES").child(userName)
@@ -152,35 +162,29 @@ object DepotRepository {
         DebugLogger("Repos for :${repo.first().owner?.login} added!")
     }
 
-    private fun postCommits(
-        commits: List<GitRepoCommits.GitRepoCommitsItem>,
-        userName: String,
-        repoName: String
-    ) {
-        DebugLogger("DepotRepository.postCommits")
-        firebaseDatabase.reference.child("COMMITS").child(userName).child(repoName)
-            .setValue(commits)
-        DebugLogger("Commits for :${repoName} added!")
-    }
+    private fun getRepositories(username: String): MutableLiveData<List<GitRepo.GitRepoItem>> {
+        firebaseDatabase.reference.child("REPOSITORIES").child(username)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(error: DatabaseError) {
+                    DebugLogger("Error ${error.message}")
+                }
 
-    fun getReposForUser(username: String): LiveData<List<GitRepo.GitRepoItem>> {
-        DebugLogger("DepotRepository.getReposForUser")
-        // Check if it has been 24 hours
-        checkIf24Hours(username)
-        if (true) {
-            //Update repos for user
-            DebugLogger("Updating repos")
-            saveNewRepos(username, 1)
-        } else {
-            DebugLogger("Unable to update repos")
-        }
-        //add user to userlist
-        DebugLogger(firebaseAuth.currentUser?.displayName.toString())
-        /*firebaseDatabase.reference.child("USERLISTS")
-            .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
-            .setValue(username)*/
-        //Retrieve stored repos
-        return getRepositories(username)
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    DebugLogger("onDataChange")
+                    val repoList = mutableListOf<GitRepo.GitRepoItem>()
+                    snapshot.children.forEach {
+                        if (it.key != "lastUpdated") {
+                            it.getValue(GitRepo.GitRepoItem::class.java)?.let { repo ->
+                                if (repo.owner?.login == username || repo.owner?.login + "_private" == username)
+                                    repoList.add(repo)
+                            }
+                        }
+                    }
+                    repoUserLiveData.value = repoList
+                }
+            })
+        DebugLogger("Returning from getRepositories")
+        return repoUserLiveData
     }
 
     private fun checkIf24Hours(userName: String) {
@@ -217,7 +221,9 @@ object DepotRepository {
             })
     }
 
-
+    //////////////////////
+    // Commit Functions
+    //////////////////////
     fun getCommitsForUser(
         username: String,
         repoName: String
@@ -250,63 +256,54 @@ object DepotRepository {
         return commitLiveData
     }
 
-    fun getReposForUserPrivate(
-        username: String,
-        token: String
-    ): LiveData<List<GitRepo.GitRepoItem>> {
-        DebugLogger("DepotRepository.getReposForUser")
-        // Check if it has been 24 hours
-        checkIf24Hours(username + "_private")
-        if (true) {
-            //Update repos for user
-            saveNewPrivateRepos(username, token, 1)
-        } else {
-            DebugLogger("Unable to update repos")
-        }
-        //add user to userlist
-        DebugLogger(firebaseAuth.currentUser?.displayName.toString())
-        /*firebaseDatabase.reference.child("USERLISTS")
-            .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
-            .setValue(username)*/
-        //Retrieve stored repos
-        return getRepositories(username+"_private")
-    }
-
-    private fun getRepositories(username: String): MutableLiveData<List<GitRepo.GitRepoItem>> {
-        firebaseDatabase.reference.child("REPOSITORIES").child(username)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(error: DatabaseError) {
-                    DebugLogger("Error ${error.message}")
-                }
-
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    DebugLogger("onDataChange")
-                    val repoList = mutableListOf<GitRepo.GitRepoItem>()
-                    snapshot.children.forEach {
-                        if (it.key != "lastUpdated") {
-                            it.getValue(GitRepo.GitRepoItem::class.java)?.let { repo ->
-                                if(repo.owner?.login == username || repo.owner?.login +"_private" == username)
-                                repoList.add(repo)
-                            }
-                        }
+    private fun saveNewCommits(userName: String, repoName: String, page: Int) {
+        DebugLogger("DepotRepository - saveNewCommits")
+        DebugLogger("compositeDisposable.add")
+        val commitDisposable = CompositeDisposable()
+        commitDisposable.add(
+            gitRetrofit.getRepositoryCommits(userName, repoName, page)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    if (it.size < 100) {
+                        resultCommitList.addAll(it)
+                        postCommits(it, userName, repoName)
+                        commitDisposable.clear()
+                    } else {
+                        resultCommitList.addAll(it)
+                        saveNewCommits(userName, repoName, page + 1)
                     }
-                    repoUserLiveData.value = repoList
-                }
-            })
-        DebugLogger("Returning from getRepositories")
-        return repoUserLiveData
+                }, {
+                    DebugLogger(".subscribe Error")
+                    DebugLogger(it.localizedMessage)
+                })
+        )
     }
 
-    fun getUserList(thisUserName:String): LiveData<List<GitUser>> {
+    private fun postCommits(
+        commits: List<GitRepoCommits.GitRepoCommitsItem>,
+        userName: String,
+        repoName: String
+    ) {
+        DebugLogger("DepotRepository.postCommits")
+        firebaseDatabase.reference.child("COMMITS").child(userName).child(repoName)
+            .setValue(commits)
+        DebugLogger("Commits for :${repoName} added!")
+    }
+
+    //////////////////////
+    // Userlist Functions
+    //////////////////////
+    fun getUserList(thisUserName: String): LiveData<List<GitUser>> {
         firebaseDatabase.reference.child("USERLISTS")
             .child(thisUserName)
             .addValueEventListener(
                 object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         val usersList = mutableListOf<GitUser>()
-                        snapshot.children.forEach{
+                        snapshot.children.forEach {
                             it.getValue(GitUser::class.java).let { user ->
-                                DebugLogger("getUserList user: "+user.toString())
+                                DebugLogger("getUserList user: " + user.toString())
                                 user?.let { it1 -> usersList.add(it1) }
                             }
                         }
@@ -321,6 +318,25 @@ object DepotRepository {
         return userListLiveData
     }
 
+    fun addUserToList(userName: String) {
+        val thisUserName = firebaseAuth.currentUser?.displayName.toString()
+        val userDisposable = CompositeDisposable()
+        userDisposable.add(
+            gitRetrofit.getUserProfile(userName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    firebaseDatabase.reference.child("USERLISTS")
+                        .child(thisUserName).child(it.login.toString()).setValue(it)
+                }, {
+                    DebugLogger("Error within addUserToList " + it.message)
+                })
+        )
+    }
+
+    ////////////////////////
+    // Preferences Functions
+    ////////////////////////
     fun addUserPreferences(preferences: Preferences) {
         firebaseDatabase.reference.child("USER_PREFERENCES")
             .child(firebaseAuth.currentUser?.displayName.toString())
@@ -342,24 +358,9 @@ object DepotRepository {
         return prefLiveData
     }
 
-    fun addUserToList(userName: String) {
-        val thisUserName = firebaseAuth.currentUser?.displayName.toString()
-        val userDisposable = CompositeDisposable()
-        userDisposable.add(
-            gitRetrofit.getUserProfile(userName)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    firebaseDatabase.reference.child("USERLISTS")
-                        .child(thisUserName).child(it.login.toString()).setValue(it)
-                }, {
-                    DebugLogger("Error within addUserToList "+it.message)
-                })
-        )
-    }
-
+    // GitHub User Profile
     fun getUserProfile(userName: String): GitUser {
-        var userDisposable = CompositeDisposable()
+        val userDisposable = CompositeDisposable()
         userDisposable.add(
             gitRetrofit.getUserProfile(userName)
                 .subscribeOn(Schedulers.io())
@@ -396,4 +397,17 @@ object DepotRepository {
                 })
         )
     }
+
+    private fun logRateLimit() {
+        compositeDisposable.add(
+            gitRetrofit.getRateLimit()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    DebugLogger("Remaining calls: " + it.resources?.core?.remaining.toString())
+                    DebugLogger("Remaining time: " + (it.resources?.core?.reset.toString()))
+                }
+        )
+    }
+
 }
