@@ -1,9 +1,13 @@
 package com.agjk.repodepot.view.fragment
 
+import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -13,9 +17,10 @@ import com.agjk.repodepot.model.data.Commits
 import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.RepoAdapter
+import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 
-class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
+class MainUserRepoFragment(var repo: List<Repos>, var avatarUrl: String, var userName: String, var userBio: String) : Fragment() {
 
     private lateinit var profilePicture: CircleImageView
     private lateinit var rvUserRepo: RecyclerView
@@ -25,10 +30,10 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
 
 
     private lateinit var detailList: List<Commits>
+    private lateinit var thisContext: Context
 
     //private var repoAdapter = RepoAdapter(mutableListOf())
-    private var repoList: List<Repos> = listOf()
-  //  private val repoAdapter = RepoAdapter(repo, this)
+    private val repoAdapter = RepoAdapter(repo)
 
 
     override fun onCreateView(
@@ -44,68 +49,32 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initalize(view)
 
-        //rvUserRepo.adapter = repoAdapter
+        Glide.with(thisContext)
+            .load(avatarUrl)
+            .placeholder(R.drawable.portrait)
+            .into(profilePicture)
 
-        DebugLogger("Fragment Debug")
+        tvUsername.text = userName
+        tvDetail.text = userBio
 
-
-        detailList = listOf(
-            Commits("", "JohnClaude","Updated the user fragment", "475jfr4"),
-            Commits("", "JohnClaude","Updated the user fragment", "475jfr4"),
-            Commits("", "JohnClaude","Updated the user fragment", "475jfr4"),
-            Commits("", "JohnClaude","Updated the user fragment", "475jfr4"),
-            Commits("", "JohnClaude","Updated the user fragment", "475jfr4"),
-            Commits("", "JohnClaude","Updated the user fragment", "475jfr4"),
-            Commits("", "JohnClaude","Updated the user fragment", "475jfr4"),
-            Commits("", "JohnClaude","Updated the user fragment", "475jfr4"),
-            Commits("", "JohnClaude","Updated the user fragment", "475jfr4")
-        )
-
-
-       // repoAdapter.updateRepo(repo)
-        DebugLogger("${repo.size} List size #1")
-
-
-
-
+        rvUserRepo.adapter = repoAdapter
+        repoAdapter.updateRepo(repo)
     }
 
     private fun initalize(view: View) {
 
         view.apply {
-            profilePicture = findViewById(R.id.details_user_profil)
+            profilePicture = findViewById(R.id.repo_user_profil)
             rvUserRepo = findViewById(R.id.repo_recycler_view)
-            tvName = findViewById(R.id.repo_user_name)
             tvUsername = findViewById(R.id.repo_user_userName)
-            tvDetail = findViewById(R.id.tv_light_details)
-
-
-
+            tvDetail = findViewById(R.id.repo_bio)
         }
 
     }
 
-/*    override fun returntoFrag() {
-
-        val fragment = UserDetailsFragment(detailList)
-        parentFragmentManager.beginTransaction().setCustomAnimations(
-            R.anim.slide_in_bottom,
-            R.anim.fast_fade_out
-        )
-            .add(R.id.repo_container, fragment )
-            .addToBackStack(fragment.tag)
-            .commit()
-
-    }*/
-
-
-
-
-    /*  fun updateRepoList(repo: List<Repos>) {
-          repoList = repo
-          DebugLogger("${repoList.size} List size #2")
-          repoAdapter.updateRepo(repoList)
-      }
-  */
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        thisContext = context
+    }
 
 }

@@ -187,7 +187,7 @@ class SplashScreenFragment : Fragment() {
                             .setDisplayName(it.additionalUserInfo?.username.toString())
                             .build()
                         firebaseAuth.currentUser?.updateProfile(profileUpdate)
-                        //Store github token in firebase
+                            //Store github token in firebase
                         repoViewModel.addUserPreferences(Preferences(gitHubAccessToken = (it.credential as OAuthCredential).accessToken))
 
                         Log.d("TAG_A", "pending result success")
