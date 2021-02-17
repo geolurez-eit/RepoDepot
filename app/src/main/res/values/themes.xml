@@ -36,4 +36,13 @@
         <item name="android:foregroundTint">@color/white</item>
     </style>
 
+    <array name="autisize_text_sizes">
+        <item>8sp</item>
+        <item>10sp</item>
+        <item>12sp</item>
+        <item>20sp</item>
+        <item>25sp</item>
+
+    </array>
+
 </resources>

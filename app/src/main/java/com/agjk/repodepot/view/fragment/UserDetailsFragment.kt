@@ -1,6 +1,12 @@
 package com.agjk.repodepot.view.fragment
 
+import android.content.Intent
+import android.graphics.Typeface
+import android.net.Uri
 import android.os.Bundle
+import android.text.method.ScrollingMovementMethod
+import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -58,6 +64,21 @@ class UserDetailsFragment(val avatarUrl: String,
             tvRepoLink.text = repoUrl
             tvStarCount.text = repoStartCount
         }
+
+        //val italicSpan= UnderlineSpan()
+
+
+        tvRepoLink.setOnClickListener {
+            gotoUrl(repoUrl)
+        }
+
+        tvRepoBio.movementMethod = ScrollingMovementMethod()
+
+    }
+
+    private fun gotoUrl(s: String) {
+        val uri: Uri = Uri.parse(s)
+        startActivity(Intent(Intent.ACTION_VIEW, uri))
     }
 
 }

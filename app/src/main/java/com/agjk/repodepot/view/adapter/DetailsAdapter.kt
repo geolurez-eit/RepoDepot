@@ -22,15 +22,15 @@ class DetailsAdapter(var commitList: List<Commits>) : RecyclerView.Adapter<Detai
 
 
     inner class UserDetailsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        val detailsCard: CardView = itemView.findViewById(R.id.cv_detail_card)
-        val userImage : CircleImageView = itemView.findViewById(R.id.details_user_profil)
-        val authorName : TextView = itemView.findViewById(R.id.author_details)
-        val commitMessage : TextView= itemView.findViewById(R.id.commit_message)
+        val detailsCard: CardView = itemView.findViewById(R.id.cv_repo_detail_card)
+        val userImage : CircleImageView = itemView.findViewById(R.id.repo_user_profil)
+        val authorName : TextView = itemView.findViewById(R.id.tv_author_details)
+        val commitMessage : TextView= itemView.findViewById(R.id.tv_repo_details)
         val commitCode: TextView = itemView.findViewById(R.id.tv_commit_hashcode) // (this is the sha in the api
 
 
         // animation container
-        val constraintLayout: ConstraintLayout = itemView.findViewById(R.id.d_linearLayout)
+        val constraintLayout: ConstraintLayout = itemView.findViewById(R.id.linearLayout)
     }
     private lateinit var mycontext: Context
 
@@ -61,6 +61,9 @@ class DetailsAdapter(var commitList: List<Commits>) : RecyclerView.Adapter<Detai
             commitMessage.text = commit.commitMessage
             commitCode.text = commit.commitCode
         }
+
+
+
         holder.constraintLayout.visibility = View.VISIBLE
         val animationFadeScale = AnimationUtils.loadAnimation(mycontext, R.anim.fade_scale_repo_recycler)
         holder.constraintLayout.startAnimation(animationFadeScale)

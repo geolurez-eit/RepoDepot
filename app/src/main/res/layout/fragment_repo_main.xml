@@ -46,10 +46,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="16dp"
-        android:fontFamily="@font/french_standard"
+        android:fontFamily="@font/arvoboldttf"
         android:text="Username"
         android:textColor="@color/Gray50"
         android:textSize="25sp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/repo_user_profil"
         app:layout_constraintTop_toTopOf="@+id/repo_user_profil" />
