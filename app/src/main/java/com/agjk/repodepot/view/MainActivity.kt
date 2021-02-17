@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchView: SearchView
     private lateinit var searchResultsContainer: FragmentContainerView
     private lateinit var loadingSpinner: CircularProgressIndicator
+    private lateinit var blankView: View
     private var searchTimer: Timer = Timer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,8 +141,6 @@ class MainActivity : AppCompatActivity() {
             initFirebase()
             getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
             initMainActivity()
-
-
         }
     }
 
@@ -188,14 +187,17 @@ class MainActivity : AppCompatActivity() {
         viewPager.currentItem = i
     }
 
-    private lateinit var blankView: View
-
     private fun searchViewSetup() {
         // Search bar
         searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         searchView = findViewById(R.id.search_view)
         searchResultsContainer = findViewById(R.id.search_results_fragment_container)
         blankView = findViewById(R.id.blank_view)
+
+        // search view fade in
+        val animFadeIn = AnimationUtils.loadAnimation(this, R.anim.fast_fade_in)
+        searchView.visibility = View.VISIBLE
+        searchView.startAnimation(animFadeIn)
 
         loadingSpinner = findViewById(R.id.results_loading_spinner)
         loadingSpinner.hide()
@@ -269,16 +271,9 @@ class MainActivity : AppCompatActivity() {
             closeSearch()
         }
 
-//        // Toggle is used to attach the toolbar and navigation drawer
-//        val toggle = ActionBarDrawerToggle(
-//            this,
-//            navigationDrawer,
-//            R.string.navigation_drawer_open,
-//            R.string.navigation_drawer_close
-//        )
-//
-//        navigationDrawer.addDrawerListener(toggle)
-//        toggle.syncState() // Menu button default animation when drawer is open and closed
+        // menu button fade in
+        navMenuButton.visibility = View.VISIBLE
+        navMenuButton.startAnimation(animFadeIn)
     }
 
     override fun onBackPressed() {

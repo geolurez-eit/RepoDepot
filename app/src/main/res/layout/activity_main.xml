@@ -47,7 +47,9 @@
                 app:layout_constraintBottom_toTopOf="@id/top_bar_guideline"
                 app:layout_constraintEnd_toStartOf="@+id/search_end_guideline"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="invisible"
+                tools:visibility="visible"/>
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/top_bar_guideline"
@@ -86,7 +88,9 @@
                 app:layout_constraintStart_toEndOf="@id/blank_view"
                 app:layout_constraintHorizontal_weight=".15"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="invisible"
+                tools:visibility="visible" />
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/search_results_fragment_container"
