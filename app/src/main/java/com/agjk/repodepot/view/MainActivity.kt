@@ -16,22 +16,19 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
-import com.agjk.repodepot.model.data.Repos
-import com.agjk.repodepot.model.data.Users
 import com.agjk.repodepot.model.DepotRepository
 import com.agjk.repodepot.model.data.Commits
 import com.agjk.repodepot.model.data.GitUser
+import com.agjk.repodepot.model.data.Repos
+import com.agjk.repodepot.model.data.Users
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
-import com.agjk.repodepot.view.adapter.RepoAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
 import com.agjk.repodepot.view.fragment.MainUserRepoFragment
 import com.agjk.repodepot.view.fragment.SplashScreenFragment
-import com.agjk.repodepot.view.fragment.UserDetailsFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -126,8 +123,6 @@ class MainActivity : AppCompatActivity() {
         //commit.add(Commits("", "kamel khbr",  "testing the commit fragment","49495"))
 
 
-
-
     }
 
     private fun performUserSearch(stringSearch: String) {
@@ -207,15 +202,16 @@ class MainActivity : AppCompatActivity() {
                 Log.d("TAG_A", "on focus change, $hasFocus")
                 if (hasFocus) {
                     searchResultsContainer.visibility = View.VISIBLE
-                    val animFadeScale = AnimationUtils.loadAnimation(context, R.anim.search_page_anim_in)
+                    val animFadeScale =
+                        AnimationUtils.loadAnimation(context, R.anim.search_page_anim_in)
                     searchResultsContainer.startAnimation(animFadeScale)
 
                     // TODO: animate this too! :)
                     blankView.visibility = View.GONE
-                }
-                else {
+                } else {
                     searchResultsContainer.visibility = View.GONE
-                    val animFadeScale = AnimationUtils.loadAnimation(context, R.anim.search_page_anim_out)
+                    val animFadeScale =
+                        AnimationUtils.loadAnimation(context, R.anim.search_page_anim_out)
                     searchResultsContainer.startAnimation(animFadeScale)
 
                     blankView.visibility = View.VISIBLE
@@ -235,18 +231,18 @@ class MainActivity : AppCompatActivity() {
                     loadingSpinner.show()
 
                     searchTimer.schedule(object : TimerTask() {
-                            override fun run() {
-                                Log.d("TAG_B", "$newText")
-                                newText?.let { performUserSearch(newText) }
+                        override fun run() {
+                            Log.d("TAG_B", "$newText")
+                            newText?.let { performUserSearch(newText) }
 
-                                // HACK for timing - maybe okay, maybe not.
-                                Thread.sleep(300)
+                            // HACK for timing - maybe okay, maybe not.
+                            Thread.sleep(300)
 
-                                runOnUiThread {
-                                    loadingSpinner.hide()
-                                }
+                            runOnUiThread {
+                                loadingSpinner.hide()
                             }
-                        }, 1000)
+                        }
+                    }, 1000)
 
                     return true
                 }
@@ -318,7 +314,7 @@ class MainActivity : AppCompatActivity() {
             DebugLogger("userGET SIZE -> ${currentUserList.size}")
             if (currentUserList.isNotEmpty()) {
                 currentUserList.forEach { user ->
-                        getRepos(user)
+                    getRepos(user)
                 }
             } else
                 repoViewModel.addUserToList(userName)
@@ -342,13 +338,19 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
                 DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
-                usersToReturn.add(
-                    Users(
-                        user.avatar_url.toString(),
-                        user.login.toString(),
-                        MainUserRepoFragment(listToSet, user.avatar_url.toString(), user.login.toString(), user.bio.toString())
+                if (!checkUserListForDupes(usersToReturn, user))
+                    usersToReturn.add(
+                        Users(
+                            user.avatar_url.toString(),
+                            user.login.toString(),
+                            MainUserRepoFragment(
+                                listToSet,
+                                user.avatar_url.toString(),
+                                user.login.toString(),
+                                user.bio.toString()
+                            )
+                        )
                     )
-                )
                 //DebugLogger("usersToReturn: ------> $usersToReturn")
                 //DebugLogger("listToSet: ------> $listToSet")
                 userAdapter.updateUsers(usersToReturn)
@@ -356,14 +358,22 @@ class MainActivity : AppCompatActivity() {
             })
     }
 
-  /*  override fun passDataToDetailsFragment() {
-        //val bundle= Bundle()
-        //bundle.putString("message”,repoUrl)
-        val transaction = this.supportFragmentManager.beginTransaction()
-        val detailsFragment= UserDetailsFragment(commit)
-        //fragmentB.arguments = bundle
-        transaction.replace(R.id.splash_fragment_container, detailsFragment)
-        transaction.commit()
+    private fun checkUserListForDupes(list: MutableList<Users>, user: GitUser): Boolean {
+        list.forEach {
+            if (it.username == user.login)
+                return true
+        }
+        return false
+    }
 
-    }*/
+    /*  override fun passDataToDetailsFragment() {
+          //val bundle= Bundle()
+          //bundle.putString("message”,repoUrl)
+          val transaction = this.supportFragmentManager.beginTransaction()
+          val detailsFragment= UserDetailsFragment(commit)
+          //fragmentB.arguments = bundle
+          transaction.replace(R.id.splash_fragment_container, detailsFragment)
+          transaction.commit()
+
+      }*/
 }
