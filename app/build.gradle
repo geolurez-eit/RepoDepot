@@ -112,6 +112,9 @@ dependencies {
     // Encrypted Share Preferences
     implementation "androidx.security:security-crypto:1.1.0-alpha03"
 
+    // Expandable textview library
+    implementation 'com.ms-square:expandableTextView:0.1.4'
+
 
 
 }
