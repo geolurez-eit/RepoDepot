@@ -19,7 +19,11 @@ import org.w3c.dom.Text
 class RepoAdapter(var repoList: List<Repos>, val repoDelegate:RepoDelegate) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
 
     interface RepoDelegate{
-        fun openDetailFragment(repoName: String, repoUrl: String, repoStar: String, repoDescription: String)
+        fun openDetailFragment(repoName: String,
+                               repoUrl: String,
+                               repoStar: String,
+                               repoDescription: String,
+                               repoForkCount: String)
     }
 
 
@@ -51,9 +55,6 @@ class RepoAdapter(var repoList: List<Repos>, val repoDelegate:RepoDelegate) : Re
     override fun onBindViewHolder(holder: UserRepoViewHolder, position: Int) {
         val repo = repoList[position]
 
-
-
-
         holder.apply {
             repoTitle.text = repo.repoName
             repoLanguage.text = repo.repoLanguage
@@ -61,7 +62,7 @@ class RepoAdapter(var repoList: List<Repos>, val repoDelegate:RepoDelegate) : Re
 
             repoDetailCard.setOnClickListener {
                 // TODO: transition to detail fragment
-                repoDelegate.openDetailFragment(repo.repoName, repo.repoUrl, repo.repoStarGazer, repo.repoDescription)
+                repoDelegate.openDetailFragment(repo.repoName, repo.repoUrl, repo.repoStarGazer, repo.repoDescription, repo.repoForkCount)
             }
 
             holder.constraintLayout.visibility = View.VISIBLE

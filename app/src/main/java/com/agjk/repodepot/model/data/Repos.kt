@@ -5,6 +5,7 @@ data class Repos (
     val repoLanguage: String,
     val repoStarGazer: String,
     val repoUrl: String,
-    val repoDescription: String
+    val repoDescription: String,
+    val repoForkCount: String,
 
 )

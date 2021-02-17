@@ -17,13 +17,15 @@ class UserDetailsFragment(val avatarUrl: String,
                           val repoName: String,
                           val repoUrl: String,
                           val repoStartCount: String,
-                          val repoDescription: String) : Fragment() {
+                          val repoDescription: String,
+                          val repoForkCount: String) : Fragment() {
 
     private lateinit var ivAvatarUrl: CircleImageView
     private lateinit var tvRepoName: TextView
     private lateinit var tvRepoBio: TextView
     private lateinit var tvRepoLink: TextView
     private lateinit var tvStarCount: TextView
+    private lateinit var tvForkCount: TextView
 
     private val stringSize = 60
 
@@ -48,6 +50,7 @@ class UserDetailsFragment(val avatarUrl: String,
             tvRepoBio = findViewById(R.id.tv_repo_description)
             tvRepoLink = findViewById(R.id.tv_repo_link)
             tvStarCount = findViewById(R.id.tv_rating_count)
+            tvForkCount = findViewById(R.id.tv_forks_count)
 
 
 
@@ -71,6 +74,7 @@ class UserDetailsFragment(val avatarUrl: String,
             }
 
             tvStarCount.text = repoStartCount
+            tvForkCount.text = repoForkCount
         }
     }
 
