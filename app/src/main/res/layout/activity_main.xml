@@ -28,29 +28,71 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/design_default_color_primary"
-                android:elevation="4dp"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/main_view_pager_2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageButton
+                android:id="@+id/nav_drawer_menu_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@null"
+                android:elevation="4dp"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_baseline_menu_24"
+                android:tint="@color/white"
+                app:layout_constraintBottom_toTopOf="@id/top_bar_guideline"
+                app:layout_constraintEnd_toStartOf="@+id/search_end_guideline"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/top_bar_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent=".075" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/search_end_guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent=".125" />
+
+            <View
+                android:id="@+id/blank_view"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintHorizontal_weight=".85"
+                app:layout_constraintBottom_toBottomOf="@+id/search_view"
+                app:layout_constraintEnd_toStartOf="@id/search_view"
+                app:layout_constraintStart_toStartOf="@id/search_end_guideline"
+                app:layout_constraintTop_toTopOf="parent" />
 
+            <SearchView
+                android:id="@+id/search_view"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:elevation="4dp"
+                android:inputType="text"
+                android:queryBackground="@color/DarkGray50"
+                android:queryHint="@string/search_hint"
+                android:theme="@style/SearchView"
+                app:layout_constraintBottom_toTopOf="@id/top_bar_guideline"
+                app:layout_constraintStart_toEndOf="@id/blank_view"
+                app:layout_constraintHorizontal_weight=".15"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/search_results_fragment_container"
+                android:name="com.agjk.repodepot.view.fragment.SearchResultsFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -60,8 +102,8 @@
             android:layout_gravity="start|bottom"
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/nav_header"
-            app:menu="@menu/nav_drawer_menu">
-
+            app:menu="@menu/nav_drawer_menu"
+            tools:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -74,7 +116,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     app:layout_constraintGuide_percent="0.30" />
-
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rv_users"
@@ -93,19 +134,14 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
-                    android:textColor="@color/DarkGray50"
                     android:text="@string/log_out_button"
+                    android:textColor="@color/DarkGray50"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
-
             </androidx.constraintlayout.widget.ConstraintLayout>
-
-
         </com.google.android.material.navigation.NavigationView>
-
-
     </androidx.drawerlayout.widget.DrawerLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
