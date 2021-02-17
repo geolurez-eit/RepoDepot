@@ -15,7 +15,7 @@ import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.RepoAdapter
 import de.hdodenhof.circleimageview.CircleImageView
 
-class MainUserRepoFragment(var repo: List<Repos>) : Fragment(), RepoAdapter.Delegate {
+class MainUserRepoFragment(var repo: List<Repos>) : Fragment() {
 
     private lateinit var profilePicture: CircleImageView
     private lateinit var rvUserRepo: RecyclerView
@@ -28,7 +28,7 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment(), RepoAdapter.Dele
 
     //private var repoAdapter = RepoAdapter(mutableListOf())
     private var repoList: List<Repos> = listOf()
-    private val repoAdapter = RepoAdapter(repo, this)
+  //  private val repoAdapter = RepoAdapter(repo, this)
 
 
     override fun onCreateView(
@@ -44,7 +44,7 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment(), RepoAdapter.Dele
         super.onViewCreated(view, savedInstanceState)
         initalize(view)
 
-        rvUserRepo.adapter = repoAdapter
+        //rvUserRepo.adapter = repoAdapter
 
         DebugLogger("Fragment Debug")
 
@@ -62,7 +62,7 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment(), RepoAdapter.Dele
         )
 
 
-        repoAdapter.updateRepo(repo)
+       // repoAdapter.updateRepo(repo)
         DebugLogger("${repo.size} List size #1")
 
 
@@ -85,7 +85,7 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment(), RepoAdapter.Dele
 
     }
 
-    override fun returntoFrag() {
+/*    override fun returntoFrag() {
 
         val fragment = UserDetailsFragment(detailList)
         parentFragmentManager.beginTransaction().setCustomAnimations(
@@ -96,7 +96,9 @@ class MainUserRepoFragment(var repo: List<Repos>) : Fragment(), RepoAdapter.Dele
             .addToBackStack(fragment.tag)
             .commit()
 
-    }
+    }*/
+
+
 
 
     /*  fun updateRepoList(repo: List<Repos>) {

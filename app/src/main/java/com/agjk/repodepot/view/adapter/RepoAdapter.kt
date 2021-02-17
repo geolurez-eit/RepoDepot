@@ -19,10 +19,10 @@ import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.fragment.UserDetailsFragment
 
-class RepoAdapter(var repoList: List<Repos>, val delegate:Delegate) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
+class RepoAdapter(var repoList: List<Repos>, val delegate: Delegate ) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
 
     interface Delegate{
-        fun returntoFrag()
+        fun passDataToDetailsFragment()
     }
 
     inner class UserRepoViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -63,7 +63,7 @@ class RepoAdapter(var repoList: List<Repos>, val delegate:Delegate) : RecyclerVi
 
             repoDetailCard.setOnClickListener {
                 // Open the details fragment with some random animation
-                delegate.returntoFrag()
+                delegate.passDataToDetailsFragment()
             }
         }
         holder.constraintLayout.visibility = View.VISIBLE

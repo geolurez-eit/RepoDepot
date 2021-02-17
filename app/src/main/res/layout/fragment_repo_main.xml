@@ -63,8 +63,33 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/details_user_profil"
             app:layout_constraintTop_toBottomOf="@+id/repo_user_name" />
+<!--
 
-        <TextView
+        <com.ms.square.android.expandabletextview.ExpandableTextView
+            android:id="@+id/expandable_textLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/details_user_profil"
+            app:layout_constraintTop_toBottomOf="@+id/repo_user_userName">
+
+            <TextView
+                android:id="@+id/expandable_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="24dp"
+                android:fontFamily="@font/names_font"
+                android:text="Details expandable"
+                android:textColor="@color/Gray50"/>
+
+
+        </com.ms.square.android.expandabletextview.ExpandableTextView>
+-->
+
+    <TextView
             android:id="@+id/tv_light_details"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

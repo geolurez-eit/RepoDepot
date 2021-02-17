@@ -17,17 +17,21 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.model.data.Users
 import com.agjk.repodepot.model.DepotRepository
+import com.agjk.repodepot.model.data.Commits
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
+import com.agjk.repodepot.view.adapter.RepoAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
 import com.agjk.repodepot.view.fragment.MainUserRepoFragment
 import com.agjk.repodepot.view.fragment.SplashScreenFragment
+import com.agjk.repodepot.view.fragment.UserDetailsFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -37,10 +41,13 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), RepoAdapter.Delegate {
 
     // for splash screen
     private var isFreshLaunch = true
+
+
+    lateinit var commit: List<Commits>
 
     private lateinit var navigationDrawer: DrawerLayout
     private lateinit var navMenuButton: ImageButton
@@ -112,6 +119,15 @@ class MainActivity : AppCompatActivity() {
 
             isFreshLaunch = false
         }
+
+
+        // List of dummy vars to be passed to details fragment
+
+        //commit.add(Commits("", "kamel khbr",  "testing the commit fragment","49495"))
+
+
+
+
     }
 
     private fun performUserSearch(stringSearch: String) {
@@ -361,5 +377,16 @@ class MainActivity : AppCompatActivity() {
             } else
                 repoViewModel.addUserToList(userName)
         })
+    }
+
+    override fun passDataToDetailsFragment() {
+        //val bundle= Bundle()
+        //bundle.putString("message”,repoUrl)
+        val transaction = this.supportFragmentManager.beginTransaction()
+        val detailsFragment= UserDetailsFragment(commit)
+        //fragmentB.arguments = bundle
+        transaction.replace(R.id.splash_fragment_container, detailsFragment)
+        transaction.commit()
+
     }
 }
