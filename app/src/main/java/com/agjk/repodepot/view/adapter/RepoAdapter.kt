@@ -19,7 +19,7 @@ import org.w3c.dom.Text
 class RepoAdapter(var repoList: List<Repos>, val repoDelegate:RepoDelegate) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
 
     interface RepoDelegate{
-        fun openDetailFragment(repoName: String, repoUrl: String, repoStar: String)
+        fun openDetailFragment(repoName: String, repoUrl: String, repoStar: String, repoDescription: String)
     }
 
 
@@ -61,7 +61,7 @@ class RepoAdapter(var repoList: List<Repos>, val repoDelegate:RepoDelegate) : Re
 
             repoDetailCard.setOnClickListener {
                 // TODO: transition to detail fragment
-                repoDelegate.openDetailFragment(repo.repoName, repo.repoUrl, repo.repoStarGazer)
+                repoDelegate.openDetailFragment(repo.repoName, repo.repoUrl, repo.repoStarGazer, repo.repoDescription)
             }
 
             holder.constraintLayout.visibility = View.VISIBLE

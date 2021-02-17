@@ -15,15 +15,17 @@ import de.hdodenhof.circleimageview.CircleImageView
 // This fragment will show  details about repos
 class UserDetailsFragment(val avatarUrl: String,
                           val repoName: String,
-                          val userBio: String,
                           val repoUrl: String,
-                          val repoStartCount: String) : Fragment() {
+                          val repoStartCount: String,
+                          val repoDescription: String) : Fragment() {
 
     private lateinit var ivAvatarUrl: CircleImageView
     private lateinit var tvRepoName: TextView
     private lateinit var tvRepoBio: TextView
     private lateinit var tvRepoLink: TextView
     private lateinit var tvStarCount: TextView
+
+    private val stringSize = 60
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,14 +50,26 @@ class UserDetailsFragment(val avatarUrl: String,
             tvStarCount = findViewById(R.id.tv_rating_count)
 
 
+
             Glide.with(view.context)
                 .load(avatarUrl)
                 .placeholder(R.drawable.portrait)
                 .into(ivAvatarUrl)
 
             tvRepoName.text = repoName
-            tvRepoBio.text = userBio
-            tvRepoLink.text = repoUrl
+            if(repoDescription.length == 0){
+                tvRepoBio.text = "No Description"
+            } else {
+                tvRepoBio.text = repoDescription
+            }
+
+            if(repoUrl.length > stringSize) {
+                val s = "${repoUrl.substring(0, stringSize)}\n${repoUrl.substring(stringSize)}"
+                tvRepoLink.text = s
+            }else{
+                tvRepoLink.text = repoUrl
+            }
+
             tvStarCount.text = repoStartCount
         }
     }

@@ -326,7 +326,8 @@ class MainActivity : AppCompatActivity() {
                             repo.name.toString(),
                             repo.language.toString(),
                             repo.stargazers_count.toString(),
-                            repo.url.toString()
+                            repo.url.toString(),
+                            repo.description.toString()
                         )
                     )
                 }
@@ -357,7 +358,8 @@ class MainActivity : AppCompatActivity() {
                             repo.name.toString(),
                             repo.language.toString(),
                             repo.stargazers_count.toString(),
-                            repo.url.toString()
+                            repo.url.toString(),
+                            repo.description.toString()
                         )
                     )
                 }

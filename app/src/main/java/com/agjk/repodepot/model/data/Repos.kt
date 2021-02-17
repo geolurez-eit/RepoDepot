@@ -4,6 +4,7 @@ data class Repos (
     val repoName: String,
     val repoLanguage: String,
     val repoStarGazer: String,
-    val repoUrl: String
+    val repoUrl: String,
+    val repoDescription: String
 
 )
