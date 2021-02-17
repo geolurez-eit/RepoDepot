@@ -13,13 +13,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
+import com.agjk.repodepot.model.data.Commits
+import com.agjk.repodepot.util.DebugLogger
+import com.agjk.repodepot.view.adapter.CommitAdapter
+import com.agjk.repodepot.viewmodel.RepoViewModel
+import com.agjk.repodepot.viewmodel.RepoViewModelFactory
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 
 
 // This fragment will show  details about repos
-class UserDetailsFragment(val avatarUrl: String,
+class UserDetailsFragment(val owner: String,
+                          val avatarUrl: String,
                           val repoName: String,
                           val repoUrl: String,
                           val repoStartCount: String,
@@ -32,6 +40,13 @@ class UserDetailsFragment(val avatarUrl: String,
     private lateinit var tvRepoLink: TextView
     private lateinit var tvStarCount: TextView
     private lateinit var tvForkCount: TextView
+    private lateinit var commitRV: RecyclerView
+
+    private val commitAdapter = CommitAdapter(mutableListOf())
+
+    private val repoViewModel: RepoViewModel by viewModels(
+        factoryProducer = { RepoViewModelFactory }
+    )
 
     private val stringSize = 60
 
@@ -57,7 +72,11 @@ class UserDetailsFragment(val avatarUrl: String,
             tvRepoLink = findViewById(R.id.tv_repo_link)
             tvStarCount = findViewById(R.id.tv_rating_count)
             tvForkCount = findViewById(R.id.tv_forks_count)
+            commitRV = findViewById(R.id.rv_user_details)
 
+            commitRV.adapter = commitAdapter
+
+            initCommitData()
             initRepoDetails(view)
         }
 
@@ -68,9 +87,6 @@ class UserDetailsFragment(val avatarUrl: String,
         }
 
         tvRepoBio.movementMethod = ScrollingMovementMethod()
-
-
-
     }
 
     private fun initRepoDetails(view: View) {
@@ -95,6 +111,25 @@ class UserDetailsFragment(val avatarUrl: String,
 
         tvStarCount.text = repoStartCount
         tvForkCount.text = repoForkCount
+    }
+
+    private fun initCommitData() {
+
+        //DebugLogger("CHECKING USERNAME _____>   ${owner}")
+        repoViewModel.getStoredCommitsForUser(owner, repoName).observe(viewLifecycleOwner, {
+            val commitList: MutableList<Commits> = mutableListOf()
+            it.forEach { commit ->
+                val authorImageUrl = commit.author?.avatar_url
+                val authorName = commit.author?.login
+                val commintMessage = commit.commit?.message
+                val commitHashCode = commit.hashCode()
+                commitList.add(Commits(authorImageUrl, authorName, commintMessage, commitHashCode.toString()))
+            }
+
+            commitAdapter.updateDetails(commitList)
+        })
+
+
     }
 
     private fun gotoUrl(s: String) {
