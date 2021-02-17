@@ -1,60 +1,72 @@
 package com.agjk.repodepot.view
 
+import android.app.SearchManager
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.view.animation.AnimationUtils
+import android.widget.ImageButton
+import android.widget.SearchView
 import androidx.activity.viewModels
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.observe
+import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
-import com.agjk.repodepot.model.data.Commits
-import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.model.data.Users
+import com.agjk.repodepot.model.DepotRepository
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
 import com.agjk.repodepot.view.fragment.MainUserRepoFragment
 import com.agjk.repodepot.view.fragment.SplashScreenFragment
 import com.agjk.repodepot.viewmodel.RepoViewModel
-import com.agjk.repodepot.viewmodel.RepoViewModelFactory
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    // for splash screen
     private var isFreshLaunch = true
 
     private lateinit var navigationDrawer: DrawerLayout
+    private lateinit var navMenuButton: ImageButton
     private lateinit var userRecyclerView: RecyclerView
     private lateinit var viewPager: ViewPager2
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
 
     private var tokenSaved = ""
-    private var repoList: List<GitRepo.GitRepoItem> = listOf()
-    private var repoListPrivate: List<GitRepo.GitRepoItem> = listOf()
-    private var userList: List<String> = listOf()
+    private var repoList: List<Repos> = listOf()
+    private var repoListPrivate: List<Repos> = listOf()
+
 
     private var firebaseAuth = FirebaseAuth.getInstance()
 
     private val userAdapter = UserAdapter(mutableListOf(), this)
     private lateinit var mainFragmentAdapter: MainFragmentAdapter
 
-    private val repoViewModel: RepoViewModel by viewModels(
-        factoryProducer = { RepoViewModelFactory }
-    )
+    private val repoViewModel: RepoViewModel by viewModels()
+
+    // for search bar
+    private lateinit var searchManager: SearchManager
+    private lateinit var searchView: SearchView
+    private lateinit var searchResultsContainer: FragmentContainerView
+    private lateinit var loadingSpinner: CircularProgressIndicator
+    private var searchTimer: Timer = Timer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         DebugLogger("MainActivity onCreate")
@@ -102,51 +114,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun performUserSearch(stringSearch: String) {
+        repoViewModel.searchUsers(stringSearch)
+    }
+
     fun closeSplash() {
         runOnUiThread {
             supportFragmentManager.popBackStack()
             initFirebase()
             initMainActivity()
             getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
+
         }
     }
 
     private fun initMainActivity() {
-        navDrawerToolbarSetup()
+        searchViewSetup()
         viewPagerSetup()
 
-        // Dummy variables for testing the repo fragment
-        val repoList: List<Repos> = listOf(
-            Repos("John//repo/barber", "", "Kotlin"),
-            Repos("kamel//repoDepo", "","Kotlin"),
-            Repos("Netherland/github", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin"),
-            Repos("hubgit/netherland", "","Kotlin")
-        )
 
-
-        // Dummy variables for testing the users fragment
-        val userList: List<Users> = listOf(
-            Users("", "bladerjam7", MainUserRepoFragment(repoList)),
-            Users("", "george21", MainUserRepoFragment(repoList)),
-            Users("", "AdamLiving", MainUserRepoFragment(repoList)),
-            Users("", "JohnCena", MainUserRepoFragment(repoList))
-        )
-        // Dummy variables for testing the details fragment
-
-
-
-
-        mainFragmentAdapter.addFragmentToList(userList[0])
-        userAdapter.updateUsers(userList)
+        //mainFragmentAdapter.addFragmentToList(userList[0])
 
         // TODO: Store api call for users into userList
         // TODO: Update userAdapter with userList
@@ -157,10 +144,6 @@ class MainActivity : AppCompatActivity() {
 
         val userName: String = FirebaseAuth.getInstance().currentUser?.displayName.toString()
         DebugLogger("Username -----> ${userName}")
-
-
-
-        DebugLogger(repoList.toString())
 
     }
 
@@ -188,34 +171,116 @@ class MainActivity : AppCompatActivity() {
         viewPager.currentItem = i
     }
 
-    private fun navDrawerToolbarSetup() {
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+    private lateinit var blankView: View
+
+    private fun searchViewSetup() {
+        // Search bar
+        searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        searchView = findViewById(R.id.search_view)
+        searchResultsContainer = findViewById(R.id.search_results_fragment_container)
+        blankView = findViewById(R.id.blank_view)
+
+        loadingSpinner = findViewById(R.id.results_loading_spinner)
+        loadingSpinner.hide()
+
+        searchView.apply {
+            visibility = View.VISIBLE
+            setSearchableInfo(searchManager.getSearchableInfo(componentName))
+            setOnQueryTextFocusChangeListener { v, hasFocus ->
+                Log.d("TAG_A", "on focus change, $hasFocus")
+                if (hasFocus) {
+                    searchResultsContainer.visibility = View.VISIBLE
+                    val animFadeScale = AnimationUtils.loadAnimation(context, R.anim.search_page_anim_in)
+                    searchResultsContainer.startAnimation(animFadeScale)
+
+                    // TODO: animate this too! :)
+                    blankView.visibility = View.GONE
+                }
+                else {
+                    searchResultsContainer.visibility = View.GONE
+                    val animFadeScale = AnimationUtils.loadAnimation(context, R.anim.search_page_anim_out)
+                    searchResultsContainer.startAnimation(animFadeScale)
+
+                    blankView.visibility = View.VISIBLE
+                    DepotRepository.searchForUsers("")
+                }
+            }
+            setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    Log.d("TAG_B", "query -> $query")
+                    query?.let { performUserSearch(query) }
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    searchTimer.cancel()
+                    searchTimer = Timer()
+                    loadingSpinner.show()
+
+                    searchTimer.schedule(object : TimerTask() {
+                            override fun run() {
+                                Log.d("TAG_B", "$newText")
+                                newText?.let { performUserSearch(newText) }
+
+                                // HACK for timing - maybe okay, maybe not.
+                                Thread.sleep(300)
+
+                                runOnUiThread {
+                                    loadingSpinner.hide()
+                                }
+                            }
+                        }, 1000)
+
+                    return true
+                }
+            })
+        }
 
         navigationDrawer = findViewById(R.id.drawer_layout)
         userRecyclerView = findViewById(R.id.rv_users)
 
         userRecyclerView.adapter = userAdapter
 
-        // Toggle is used to attach the toolbar and navigation drawer
-        val toggle = ActionBarDrawerToggle(
-            this,
-            navigationDrawer,
-            toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
-        )
+        navMenuButton = findViewById(R.id.nav_drawer_menu_button)
+        navMenuButton.setOnClickListener {
+            if (navigationDrawer.isDrawerOpen(GravityCompat.START)) {
+                navigationDrawer.closeDrawer(GravityCompat.START)
+            } else {
+                navigationDrawer.openDrawer(GravityCompat.START)
+            }
 
-        navigationDrawer.addDrawerListener(toggle)
-        toggle.syncState()  // Menu button default animation when drawer is open and closed
+            closeSearch()
+        }
+
+//        // Toggle is used to attach the toolbar and navigation drawer
+//        val toggle = ActionBarDrawerToggle(
+//            this,
+//            navigationDrawer,
+//            R.string.navigation_drawer_open,
+//            R.string.navigation_drawer_close
+//        )
+//
+//        navigationDrawer.addDrawerListener(toggle)
+//        toggle.syncState() // Menu button default animation when drawer is open and closed
     }
 
     override fun onBackPressed() {
-        if (navigationDrawer.isDrawerOpen(GravityCompat.START)) {
-            navigationDrawer.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+        when {
+            searchResultsContainer.visibility == View.VISIBLE -> {
+                closeSearch()
+            }
+
+            navigationDrawer.isDrawerOpen(GravityCompat.START) ->
+                navigationDrawer.closeDrawer(GravityCompat.START)
+
+            else -> super.onBackPressed()
         }
+    }
+
+    fun closeSearch() {
+        searchView.setQuery("", false)
+        searchView.clearFocus()
+        searchView.isIconified = true
     }
 
     fun closeNavDrawer() {
@@ -231,19 +296,70 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getData(userName: String) {
-        repoViewModel.addUserToList(userName)
-        repoViewModel.getUserList().observe(this,{
-            userList = it
-        })
-        if (userName != firebaseAuth.currentUser?.displayName) {
-            repoViewModel.getStoredReposForUser(userName).observe(this, {
+        //repoViewModel.getProfile(userName)
+        //repoViewModel.addUserToList("bladerjam7")
+        repoViewModel.getUserList(userName).observe(this, { userget ->
+            DebugLogger("userGET SIZE -> ${userget.size}")
+            if (userget.isNotEmpty()) {
+                userget.forEach { user ->
+                    if (user.login != firebaseAuth.currentUser?.displayName) {
+                        repoViewModel.getStoredReposForUser(user.login.toString())
+                            .observe(this, { gitrepos ->
+                                val listToSet = mutableListOf<Repos>()
+                                for (repo in gitrepos) {
+                                    listToSet.add(
+                                        Repos(
+                                            repo.name.toString(),
+                                            repo.description.toString(),
+                                            repo.language.toString()
+                                        )
+                                    )
+                                }
+                                val usersToReturn: MutableList<Users> = mutableListOf()
+                                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
+                                usersToReturn.add(
+                                    Users(
+                                        user.avatar_url.toString(),
+                                        user.login.toString(),
+                                        MainUserRepoFragment(listToSet)
+                                    )
+                                )
+                                DebugLogger("usersToReturn: ------> $usersToReturn")
+                                DebugLogger("listToSet: ------> $listToSet")
+                                userAdapter.updateUsers(usersToReturn)
+                                mainFragmentAdapter.addFragmentToList(usersToReturn)
+                            })
 
-                repoList = it
-            })
-        } else {
-            repoViewModel.getStoredPrivateReposForUser(userName, tokenSaved).observe(this, {
-                repoListPrivate = it
-            })
-        }
+
+
+                    } else {
+                        repoViewModel.getStoredPrivateReposForUser(userName, tokenSaved)
+                            .observe(this, { gitrepos ->
+                                val listToSet = mutableListOf<Repos>()
+                                for (repo in gitrepos) {
+                                    listToSet.add(
+                                        Repos(
+                                            repo.name.toString(),
+                                            repo.description.toString(),
+                                            repo.language.toString()
+                                        )
+                                    )
+                                }
+                                val usersToReturnTwo: MutableList<Users> = mutableListOf()
+                                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
+                                DebugLogger("userstoRETURN -----> ${usersToReturnTwo}")
+                                usersToReturnTwo.add(Users(user.avatar_url.toString(),
+                                        user.login.toString(),
+                                        MainUserRepoFragment(listToSet)))
+
+                                userAdapter.updateUsers(usersToReturnTwo)
+                                mainFragmentAdapter.addFragmentToList(usersToReturnTwo)
+                            }
+                            )
+                    }
+                }
+            } else
+                repoViewModel.addUserToList(userName)
+        })
     }
 }

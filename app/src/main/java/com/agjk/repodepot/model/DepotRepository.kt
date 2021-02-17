@@ -5,8 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import com.agjk.repodepot.model.data.GitRepo
 import com.agjk.repodepot.model.data.GitRepoCommits
 import com.agjk.repodepot.model.data.Preferences
+import com.agjk.repodepot.model.data.UserSearch
+import com.agjk.repodepot.model.data.*
 import com.agjk.repodepot.network.GitRetrofit
 import com.agjk.repodepot.util.DebugLogger
+import com.agjk.repodepot.view.fragment.MainUserRepoFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,11 +24,15 @@ import java.util.*
 object DepotRepository {
     private val resultRepoList: MutableList<GitRepo.GitRepoItem> = mutableListOf()
     private val resultCommitList: MutableList<GitRepoCommits.GitRepoCommitsItem> = mutableListOf()
+
     private val repoUserLiveData: MutableLiveData<List<GitRepo.GitRepoItem>> = MutableLiveData()
-    private val userListLiveData: MutableLiveData<List<String>> = MutableLiveData()
+    private val userListLiveData: MutableLiveData<List<GitUser>> = MutableLiveData()
     private val commitLiveData: MutableLiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
         MutableLiveData()
     var prefLiveData: MutableLiveData<Preferences> = MutableLiveData()
+    private var userProfile: GitUser = GitUser()
+
+    val userSearchLiveData: MutableLiveData<List<UserSearch.Item>> = MutableLiveData()
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val firebaseAuth = FirebaseAuth.getInstance()
 
@@ -42,7 +49,7 @@ object DepotRepository {
 
     private fun saveNewRepos(userName: String, page: Int) {
         DebugLogger("DepotRepository - saveNewRepos")
-        DebugLogger("compositeDisposable.add")
+        DebugLogger("repoDisposable.add")
         val repoDisposable = CompositeDisposable()
         repoDisposable.add(
             gitRetrofit.getUserRepositories(userName, page)
@@ -60,7 +67,7 @@ object DepotRepository {
                         saveNewRepos(userName, page + 1)
                     }
                 }, {
-                    DebugLogger(".subscribe Error")
+                    DebugLogger("saveNewRepos .subscribe Error")
                     DebugLogger(it.localizedMessage)
                 })
         )
@@ -158,7 +165,7 @@ object DepotRepository {
         DebugLogger("DepotRepository.getReposForUser")
         // Check if it has been 24 hours
         checkIf24Hours(username)
-        if (is24HoursPassed) {
+        if (true) {
             //Update repos for user
             DebugLogger("Updating repos")
             saveNewRepos(username, 1)
@@ -167,9 +174,9 @@ object DepotRepository {
         }
         //add user to userlist
         DebugLogger(firebaseAuth.currentUser?.displayName.toString())
-        firebaseDatabase.reference.child("USERLISTS")
+        /*firebaseDatabase.reference.child("USERLISTS")
             .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
-            .setValue(username)
+            .setValue(username)*/
         //Retrieve stored repos
         return getRepositories(username)
     }
@@ -248,7 +255,7 @@ object DepotRepository {
         DebugLogger("DepotRepository.getReposForUser")
         // Check if it has been 24 hours
         checkIf24Hours(username + "_private")
-        if (is24HoursPassed) {
+        if (true) {
             //Update repos for user
             saveNewPrivateRepos(username, token, 1)
         } else {
@@ -256,11 +263,11 @@ object DepotRepository {
         }
         //add user to userlist
         DebugLogger(firebaseAuth.currentUser?.displayName.toString())
-        firebaseDatabase.reference.child("USERLISTS")
+        /*firebaseDatabase.reference.child("USERLISTS")
             .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
-            .setValue(username)
+            .setValue(username)*/
         //Retrieve stored repos
-        return getRepositories(username)
+        return getRepositories(username+"_private")
     }
 
     private fun getRepositories(username: String): MutableLiveData<List<GitRepo.GitRepoItem>> {
@@ -275,7 +282,6 @@ object DepotRepository {
                     val repoList = mutableListOf<GitRepo.GitRepoItem>()
                     snapshot.children.forEach {
                         if (it.key != "lastUpdated") {
-                            DebugLogger(it.value.toString())
                             it.getValue(GitRepo.GitRepoItem::class.java)?.let { repo ->
                                 repoList.add(repo)
                             }
@@ -288,21 +294,20 @@ object DepotRepository {
         return repoUserLiveData
     }
 
-    fun getUserList(): LiveData<List<String>> {
-        val thisUserName = firebaseAuth.currentUser?.displayName.toString()
-        firebaseDatabase.reference.child("USERLISTS")
-            .child(thisUserName).child(thisUserName).setValue(thisUserName)
+    fun getUserList(thisUserName:String): LiveData<List<GitUser>> {
         firebaseDatabase.reference.child("USERLISTS")
             .child(thisUserName)
             .addValueEventListener(
                 object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        val usersList = mutableListOf<String>()
-                        snapshot.children.forEach {
-                            it.getValue(String::class.java).let { user ->
-                                usersList.add(user.toString())
+                        val usersList = mutableListOf<GitUser>()
+                        snapshot.children.forEach{
+                            it.getValue(GitUser::class.java).let { user ->
+                                DebugLogger("getUserList user: "+user.toString())
+                                user?.let { it1 -> usersList.add(it1) }
                             }
                         }
+
                         userListLiveData.value = usersList
                     }
 
@@ -336,7 +341,56 @@ object DepotRepository {
 
     fun addUserToList(userName: String) {
         val thisUserName = firebaseAuth.currentUser?.displayName.toString()
-        firebaseDatabase.reference.child("USERLISTS")
-            .child(thisUserName).child(userName).setValue(userName)
+        val userDisposable = CompositeDisposable()
+        userDisposable.add(
+            gitRetrofit.getUserProfile(userName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    firebaseDatabase.reference.child("USERLISTS")
+                        .child(thisUserName).child(it.login.toString()).setValue(it)
+                }, {
+                    DebugLogger("Error within addUserToList "+it.message)
+                })
+        )
+    }
+
+    fun getUserProfile(userName: String): GitUser {
+        var userDisposable = CompositeDisposable()
+        userDisposable.add(
+            gitRetrofit.getUserProfile(userName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    userProfile = it
+                }, {
+                    DebugLogger("Error " + it.message)
+                })
+        )
+        return userProfile
+    }
+
+    // Search bar query
+    fun searchForUsers(stringSearch: String) {
+
+        if (stringSearch.isEmpty()) {
+            userSearchLiveData.postValue(listOf())
+            return
+        }
+
+        compositeDisposable.add(
+            gitRetrofit.getUserSearchResults(stringSearch)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    it.items?.let { items ->
+                        userSearchLiveData.postValue(items)
+                    }
+                    compositeDisposable.clear()
+                }, {
+                    DebugLogger(".subscribe Error")
+                    DebugLogger(it.localizedMessage)
+                })
+        )
     }
 }

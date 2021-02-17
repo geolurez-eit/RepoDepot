@@ -26,4 +26,14 @@
     <style name="FormButton" parent="Theme.MaterialComponents">
     </style>
 
+    <style name="SearchView" parent="Widget.AppCompat.SearchView" >
+        <!-- Query Text Color -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <!-- Hint Color -->
+        <item name="android:textColorHint">@color/white</item>
+        <!-- Icon Color -->
+        <item name="android:tint">@color/white</item>
+        <item name="android:foregroundTint">@color/white</item>
+    </style>
+
 </resources>
