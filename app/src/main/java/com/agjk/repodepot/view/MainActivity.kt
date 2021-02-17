@@ -387,7 +387,7 @@ class MainActivity : AppCompatActivity(), RepoAdapter.Delegate {
             })
     }
 
-    override fun passDataToDetailsFragment() {
+  /*  override fun passDataToDetailsFragment() {
         //val bundle= Bundle()
         //bundle.putString("message”,repoUrl)
         val transaction = this.supportFragmentManager.beginTransaction()
@@ -396,5 +396,5 @@ class MainActivity : AppCompatActivity(), RepoAdapter.Delegate {
         transaction.replace(R.id.splash_fragment_container, detailsFragment)
         transaction.commit()
 
-    }
+    }*/
 }
