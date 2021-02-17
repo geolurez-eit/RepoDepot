@@ -24,7 +24,7 @@ class MainFragmentAdapter (var userList : List<Users>, mainActivity: MainActivit
     //}
 
     fun addFragmentToList(newUserList: List<Users>) {
-        DebugLogger(newUserList.toString())
+        DebugLogger("MainFragmentAdapter.addFragmentToList: "+newUserList.size.toString())
         userList = newUserList
         notifyDataSetChanged()
         // update nav drawer with new item?
