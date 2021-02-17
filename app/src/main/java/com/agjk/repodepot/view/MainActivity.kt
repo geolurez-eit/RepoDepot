@@ -20,10 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.DepotRepository
-import com.agjk.repodepot.model.data.Commits
-import com.agjk.repodepot.model.data.GitUser
-import com.agjk.repodepot.model.data.Repos
-import com.agjk.repodepot.model.data.Users
+import com.agjk.repodepot.model.data.*
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
@@ -53,9 +50,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainUserRepoFragment: Fragment
 
     private var tokenSaved = ""
-    private var repoList: List<Repos> = listOf()
-    private var repoListPrivate: List<Repos> = listOf()
     private var usersToReturn = mutableListOf<Users>()
+    private var allUserRepos = mutableListOf<MutableList<Repos>>()
+    private var addedUsers = mutableListOf<String>()
 
 
     private var firebaseAuth = FirebaseAuth.getInstance()
@@ -310,6 +307,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun getData(userName: String) {
         //repoViewModel.getProfile(userName)
+        repoViewModel.addUserToList("aormsby")
+        repoViewModel.addUserToList("bladerjam7")
+        repoViewModel.addUserToList("kamelkhbr")
         repoViewModel.getUserList(userName).observe(this, { currentUserList ->
             DebugLogger("userGET SIZE -> ${currentUserList.size}")
             if (currentUserList.isNotEmpty()) {
@@ -325,33 +325,40 @@ class MainActivity : AppCompatActivity() {
         repoViewModel.getStoredReposForUser(user.login.toString(), tokenSaved)
             .observe(this, { gitrepos ->
                 val listToSet = mutableListOf<Repos>()
-                for (repo in gitrepos) {
-                    if (repo.owner?.login == user.login)
-                        listToSet.add(
-                            Repos(
-                                repo.name.toString(),
-                                repo.language.toString(),
-                                repo.stargazers_count.toString(),
-                                repo.url.toString(),
-                                repo.description.toString(),
-                                repo.forks_count.toString()
+                var index = 0
+                if(gitrepos.isNotEmpty() && !addedUsers.contains(user.login) && checkReposOwner(gitrepos,user)) {
+                    allUserRepos.add(listToSet)
+                    index = allUserRepos.indexOf(listToSet)
+                    for (repo in gitrepos) {
+                        if (repo.owner?.login == user.login)
+                            allUserRepos[index].add(
+                                Repos(
+                                    repo.name.toString(),
+                                    repo.language.toString(),
+                                    repo.stargazers_count.toString(),
+                                    repo.url.toString(),
+                                    repo.description.toString(),
+                                    repo.forks_count.toString()
+                                )
+                            )
+                    }
+                    addedUsers.add(user.login.toString())
+                    DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
+                    if (!checkUserListForDupes(usersToReturn, user))
+                        usersToReturn.add(
+                            Users(
+                                user.avatar_url.toString(),
+                                user.login.toString(),
+                                MainUserRepoFragment(
+                                    allUserRepos[index],
+                                    user.avatar_url.toString(),
+                                    user.login.toString(),
+                                    user.bio.toString()
+                                )
                             )
                         )
                 }
-                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
-                if (!checkUserListForDupes(usersToReturn, user))
-                    usersToReturn.add(
-                        Users(
-                            user.avatar_url.toString(),
-                            user.login.toString(),
-                            MainUserRepoFragment(
-                                listToSet,
-                                user.avatar_url.toString(),
-                                user.login.toString(),
-                                user.bio.toString()
-                            )
-                        )
-                    )
+
                 //DebugLogger("usersToReturn: ------> $usersToReturn")
                 //DebugLogger("listToSet: ------> $listToSet")
                 userAdapter.updateUsers(usersToReturn)
@@ -362,6 +369,13 @@ class MainActivity : AppCompatActivity() {
     private fun checkUserListForDupes(list: MutableList<Users>, user: GitUser): Boolean {
         list.forEach {
             if (it.username == user.login)
+                return true
+        }
+        return false
+    }
+    private fun checkReposOwner(list: List<GitRepo.GitRepoItem>, user: GitUser): Boolean {
+        list.forEach {
+            if (it.owner?.login == user.login)
                 return true
         }
         return false
