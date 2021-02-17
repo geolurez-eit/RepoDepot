@@ -1,12 +1,20 @@
 package com.agjk.repodepot.viewmodel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.agjk.repodepot.model.DepotRepository
 import com.agjk.repodepot.model.data.*
 import com.google.firebase.auth.FirebaseAuth
+import java.util.concurrent.atomic.AtomicBoolean
 
 class RepoViewModel : ViewModel() {
+
+    val isMainLoaded: MutableLiveData<Boolean> = MutableLiveData()
+
+    init {
+        isMainLoaded.postValue(false)
+    }
 
     /* getting data from Firebase */
     // public only - common use

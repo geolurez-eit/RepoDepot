@@ -25,7 +25,6 @@ import com.google.android.gms.tasks.Task
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SplashScreenFragment : Fragment() {
@@ -80,8 +79,9 @@ class SplashScreenFragment : Fragment() {
         splashImg = view.findViewById(R.id.img)
         lottieAnimation = view.findViewById(R.id.lottieAnimation)
         splashImg.animate().translationY(-3000F).setDuration(1000).setStartDelay(1500)
-            .alpha(0f).setDuration(750)
+            .alpha(0f)
         lottieAnimation.animate().translationY(1400F).setDuration(1000).setStartDelay(1500)
+            .withEndAction { mainAnimEnded = true }
 
         //// OAUTH
         // Target specific email with login hint.
@@ -105,6 +105,8 @@ class SplashScreenFragment : Fragment() {
 
         websiteText.visibility = View.VISIBLE
         websiteText.startAnimation(animFadeIn)
+
+        repoViewModel.isMainLoaded.observe(viewLifecycleOwner, { isMainFinishedLoading = it })
 
         // Only show login buttons if no 'currentUser'
         firebaseAuth.currentUser?.let {
@@ -138,14 +140,30 @@ class SplashScreenFragment : Fragment() {
 
         // TODO: change artificial loading delay
         lifecycleScope.launch(context = Dispatchers.Default) {
-            delay(SPLASH_TIME)
-            logoImageView.animation?.let {
-                while (!it.hasEnded()) { /* no-op */
-                }
+//            delay(SPLASH_TIME)
+
+            // let animations play out first
+            while (!mainAnimEnded || !logoAnimEnded) {
+                logoImageView.animation?.let { logoAnimEnded = it.hasEnded() }
             }
+
+            // start loading main activity data
+            (context as MainActivity).loadMainInBackground()
+            Log.d("TAG_D", "started main load")
+            
+            // then let progress bar continue until data is loaded
+            while (!isMainFinishedLoading) { /* no-op */ }
+            Log.d("TAG_D", "main loaded")
+
+            // then close the splash
             (context as MainActivity).closeSplash()
+            Log.d("TAG_D", "ran close splash")
         }
     }
+
+    private var mainAnimEnded = false
+    private var logoAnimEnded = false
+    private var isMainFinishedLoading = false
 
     private fun startSignIn() {
 
