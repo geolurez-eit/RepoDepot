@@ -5,19 +5,29 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".view.fragment.UserDetailsFragment"
+    android:id="@+id/constraintLayout1"
     android:focusable="true"
     android:clickable="true">
+
+    <FrameLayout
+        android:id="@+id/details_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
         android:src="@drawable/maxresdefault"
-        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0" />
+
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_user_profile_details"
@@ -38,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="16dp"
-        android:fontFamily="@font/names_font"
+        android:fontFamily="@font/arvoboldttf"
         android:text="Repository name"
         android:textAlignment="center"
         android:textColor="@color/Gray50"
@@ -52,26 +62,30 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="16dp"
+        android:maxLines="2"
         android:fontFamily="@font/names_font"
-        android:text="Description of the repo not the description that comes with the commit"
+        android:text="Description of the repo not the desc escription of the repo not the desc escription of the repo not the desc escription of the repo not the descescription of the repo not the descescription of the repo not the desc"
         android:textColor="@color/Gray50"
         app:layout_constraintTop_toBottomOf="@id/tv_repoName_details"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:autoSizePresetSizes="@values/autisize_text_sizes"
         />
+
     <TextView
         android:id="@+id/tv_repo_link"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="16dp"
-        android:fontFamily="@font/names_font"
+        android:clickable="true"
+        android:focusable="true"
+        android:textSize="12sp"
         android:text="http: //example/bad.com"
-        android:textColor="@color/Gray50"
-        app:layout_constraintTop_toBottomOf="@id/tv_repo_description"
+        android:textColor="#2196F3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintTop_toBottomOf="@id/tv_repo_description" />
 
     <ImageView
         android:id="@+id/iv_star"
