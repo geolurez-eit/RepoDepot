@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.agjk.repodepot.model
 
 import androidx.lifecycle.LiveData
@@ -15,6 +17,12 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.time.LocalDateTime
 
+/**
+ * DepotRepository implements the majority of the logic for handling calls
+ * and the data from those calls to GitHub and Firebase. This singleton communicates primarily to
+ * Firebase Database and Auth using the current instance and utilizes the Retrofit implmentation
+ * to get data fom GitHub.
+ */
 object DepotRepository {
 
     // Firebase variables
@@ -23,7 +31,7 @@ object DepotRepository {
     private val gitRetrofit = GitRetrofit
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
-    //
+    // Lists to aggregate; used to traverse pages in results
     private val resultRepoList: MutableList<GitRepo.GitRepoItem> = mutableListOf()
     private val resultCommitList: MutableList<GitRepoCommits.GitRepoCommitsItem> = mutableListOf()
 
@@ -36,9 +44,6 @@ object DepotRepository {
     private var userProfile: GitUser = GitUser()
     val userSearchLiveData: MutableLiveData<List<UserSearch.Item>> = MutableLiveData()
 
-    // 24 Hour Check
-    private var is24HoursPassed = false
-
     //////////////////////
     // Database Init
     //////////////////////
@@ -50,6 +55,11 @@ object DepotRepository {
     ///////////////////////
     // Repository Functions
     ///////////////////////
+    /**
+     * Get a list of user's repositories
+     * @param username GitHub username
+     * @return List of repositories as LiveData
+     */
     fun getReposForUser(username: String): LiveData<List<GitRepo.GitRepoItem>> {
         DebugLogger("DepotRepository.getReposForUser")
         // Check if it has been 24 hours
@@ -83,20 +93,24 @@ object DepotRepository {
                 }
 
             })
-
-        //add user to userlist
-        DebugLogger(firebaseAuth.currentUser?.displayName.toString())
         //Retrieve stored repos
         return getRepositories(username)
     }
 
+    /**
+     * Get a list of a user's repositories, including private ones
+     * @param username GitHub username
+     * @param token GitHub Oauth token
+     * @return List of repositories as LiveData
+     */
     fun getReposForUserPrivate(
         username: String,
         token: String
     ): LiveData<List<GitRepo.GitRepoItem>> {
         DebugLogger("DepotRepository.getReposForUser")
         // Check if it has been 24 hours
-        firebaseDatabase.reference.child("REPOSITORIES").child(username + "_private").child("lastUpdated")
+        firebaseDatabase.reference.child("REPOSITORIES").child(username + "_private")
+            .child("lastUpdated")
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     snapshot.getValue(String::class.java).runCatching {
@@ -131,6 +145,12 @@ object DepotRepository {
         return getRepositories(username + "_private")
     }
 
+    /**
+     * Make an API call to GitHub and store the list of repositories
+     * into Firebase Database
+     * @param userName GitHub username
+     * @param page The page of results to retrieve
+     */
     private fun saveNewRepos(userName: String, page: Int) {
         DebugLogger("DepotRepository - saveNewRepos")
         DebugLogger("repoDisposable.add")
@@ -157,6 +177,13 @@ object DepotRepository {
         )
     }
 
+    /**
+     * Make an API call to GitHub and store the list of repositories into Firebase Database.
+     * This is the private repository version of the public method.
+     * @param userName GitHub username
+     * @param token GitHub Oath token
+     * @param page The page of results to retrieve
+     */
     private fun saveNewPrivateRepos(userName: String, token: String, page: Int) {
         DebugLogger("DepotRepository - saveNewRepos")
         DebugLogger("compositeDisposable.add")
@@ -183,6 +210,11 @@ object DepotRepository {
         )
     }
 
+    /**
+     * Store list of repositories into Firebase Database
+     * @param userName GitHub username
+     * @param repo List of repositories to store
+     */
     private fun postRepos(userName: String, repo: List<GitRepo.GitRepoItem>) {
         DebugLogger("DepotRepository.postRepos")
         firebaseDatabase.reference.child("REPOSITORIES").child(userName)
@@ -193,6 +225,11 @@ object DepotRepository {
         DebugLogger("Repos for :${userName} added!")
     }
 
+    /**
+     * Retrieve stored list of repositories from Firebase Database
+     * @param username GitHub username
+     * @return List of repositories as LiveData
+     */
     private fun getRepositories(username: String): MutableLiveData<List<GitRepo.GitRepoItem>> {
         firebaseDatabase.reference.child("REPOSITORIES").child(username)
             .addValueEventListener(object : ValueEventListener {
@@ -255,6 +292,13 @@ object DepotRepository {
         return commitLiveData
     }
 
+    /**
+     * Make an API call to GitHub and store the lists of commits for a given user's repository
+     * @param token GitHub Oauth token
+     * @param userName GitHub username
+     * @param repoName GitHub repository name
+     * @param page Page of results to save
+     */
     private fun saveNewCommits(token: String, userName: String, repoName: String, page: Int) {
         DebugLogger("DepotRepository - saveNewCommits")
         DebugLogger("compositeDisposable.add")
@@ -321,6 +365,12 @@ object DepotRepository {
             })
     }
 
+    /**
+     * Store list of commits to Firebase Database
+     * @param commits List of commits to store
+     * @param userName GitHub username
+     * @param repoName GitHub repository name
+     */
     private fun postCommits(
         commits: List<GitRepoCommits.GitRepoCommitsItem>,
         userName: String,
@@ -338,6 +388,11 @@ object DepotRepository {
     //////////////////////
     // Userlist Functions
     //////////////////////
+    /**
+     * Retrieve a userlist from Firebase Database
+     * @param thisUserName The user whose list is being retrieved
+     * @return List of users as LiveData
+     */
     fun getUserList(thisUserName: String): LiveData<List<GitUser>> {
         firebaseDatabase.reference.child("USERLISTS")
             .child(thisUserName)
@@ -362,6 +417,10 @@ object DepotRepository {
         return userListLiveData
     }
 
+    /**
+     * Store GitHub user into a Firebase user's userlist
+     * @param userName User to store into the list
+     */
     fun addUserToList(userName: String) {
         val thisUserName = firebaseAuth.currentUser?.displayName.toString()
         val userDisposable = CompositeDisposable()
@@ -381,12 +440,20 @@ object DepotRepository {
     ////////////////////////
     // Preferences Functions
     ////////////////////////
+    /**
+     * Store preferences for the current user into Firebase Database
+     * @param preferences Preferences to store
+     */
     fun addUserPreferences(preferences: Preferences) {
         firebaseDatabase.reference.child("USER_PREFERENCES")
             .child(firebaseAuth.currentUser?.displayName.toString())
             .setValue(preferences)
     }
 
+    /**
+     * Retrieve stored preferences for the current user from Firebase Database
+     * @return Preferences as LiveData
+     */
     fun getUserPreferences(): LiveData<Preferences> {
         firebaseDatabase.reference.child("USER_PREFERENCES")
             .child(firebaseAuth.currentUser?.displayName.toString())
@@ -402,7 +469,11 @@ object DepotRepository {
         return prefLiveData
     }
 
-    // GitHub User Profile
+    /**
+     * Make an API call to GitHub to get a given user's public profile data
+     * @param userName GitHub username
+     * @return GitUser data
+     */
     fun getUserProfile(userName: String): GitUser {
         val userDisposable = CompositeDisposable()
         userDisposable.add(
@@ -418,7 +489,10 @@ object DepotRepository {
         return userProfile
     }
 
-    // Search bar query
+    /**
+     * Makes an API call to GitHub to local store results into LiveData
+     * @param stringSearch The search query inputted by the current user
+     */
     fun searchForUsers(stringSearch: String) {
 
         if (stringSearch.isEmpty()) {
@@ -442,6 +516,10 @@ object DepotRepository {
         )
     }
 
+    /**
+     * Makes an API call to GitHub to log the current API call rate limits of the current user.
+     * This API call DOES NOT count against said limits.
+     */
     private fun logRateLimit() {
         compositeDisposable.add(
             gitRetrofit.getRateLimit()
