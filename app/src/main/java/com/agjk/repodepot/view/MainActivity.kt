@@ -326,16 +326,17 @@ class MainActivity : AppCompatActivity() {
             .observe(this, { gitrepos ->
                 val listToSet = mutableListOf<Repos>()
                 for (repo in gitrepos) {
-                    listToSet.add(
-                        Repos(
-                            repo.name.toString(),
-                            repo.language.toString(),
-                            repo.stargazers_count.toString(),
-                            repo.url.toString(),
-                            repo.description.toString(),
-                            repo.forks_count.toString()
+                    if (repo.owner?.login == user.login)
+                        listToSet.add(
+                            Repos(
+                                repo.name.toString(),
+                                repo.language.toString(),
+                                repo.stargazers_count.toString(),
+                                repo.url.toString(),
+                                repo.description.toString(),
+                                repo.forks_count.toString()
+                            )
                         )
-                    )
                 }
                 DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
                 if (!checkUserListForDupes(usersToReturn, user))
