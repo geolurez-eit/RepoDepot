@@ -1,18 +1,15 @@
 package com.agjk.repodepot.view.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
-import androidx.annotation.CheckResult
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -43,10 +40,12 @@ class SplashScreenFragment : Fragment() {
     private lateinit var splashImg: ImageView
     private lateinit var lottieAnimation: LottieAnimationView
 
-
     private lateinit var sloganTextView: TextView
     private lateinit var logoImageView: ImageView
+    private lateinit var loadingBar: ProgressBar
     private lateinit var loginbtn: MaterialButton
+    private lateinit var websiteText: TextView
+
 
     //    private lateinit var loginText: TextView
     private lateinit var progressBar: ProgressBar
@@ -75,13 +74,14 @@ class SplashScreenFragment : Fragment() {
         loginbtn = view.findViewById(R.id.sign_in_Button_main)
 //        loginText = view.findViewById(R.id.login_text)
         progressBar = view.findViewById(R.id.progress_bar)
+        websiteText = view.findViewById(R.id.website)
 
         // Lottie  Screen vars
         splashImg = view.findViewById(R.id.img)
         lottieAnimation = view.findViewById(R.id.lottieAnimation)
-        splashImg.animate().translationY(-3000F).setDuration(1000).setStartDelay(2000)
-        lottieAnimation.animate().translationY(1400F).setDuration(1000).setStartDelay(2000)
-
+        splashImg.animate().translationY(-3000F).setDuration(1000).setStartDelay(1500)
+            .alpha(0f).setDuration(750)
+        lottieAnimation.animate().translationY(1400F).setDuration(1000).setStartDelay(1500)
 
         //// OAUTH
         // Target specific email with login hint.
@@ -94,20 +94,17 @@ class SplashScreenFragment : Fragment() {
         ////
 
         // Logo animation
+        val animFadeIn = AnimationUtils.loadAnimation(thisContext, R.anim.medium_fade_in_delay)
+
         logoImageView.visibility = View.VISIBLE
-        val animationRotate = AnimationUtils.loadAnimation(thisContext, R.anim.text_fade_in)
-        logoImageView.startAnimation(animationRotate)
+        logoImageView.startAnimation(animFadeIn)
 
         // Slogan animation
         sloganTextView.visibility = View.VISIBLE
-        val animationZoomIn = AnimationUtils.loadAnimation(thisContext, R.anim.text_fade_in)
-        sloganTextView.startAnimation(animationZoomIn)
+        sloganTextView.startAnimation(animFadeIn)
 
-//        // Login text animation
-//        loginText.visibility = View.VISIBLE
-//        val animationFadeIn = AnimationUtils.loadAnimation(thisContext, R.anim.text_fade_in)
-//        loginText.startAnimation(animationFadeIn)
-
+        websiteText.visibility = View.VISIBLE
+        websiteText.startAnimation(animFadeIn)
 
         // Only show login buttons if no 'currentUser'
         firebaseAuth.currentUser?.let {
@@ -115,8 +112,7 @@ class SplashScreenFragment : Fragment() {
         } ?: {
             // Animation for the login button
             loginbtn.visibility = View.VISIBLE
-            val animationSlideDown = AnimationUtils.loadAnimation(thisContext, R.anim.text_fade_in)
-            loginbtn.startAnimation(animationSlideDown)
+            loginbtn.startAnimation(animFadeIn)
 
             // OAUTH GO!
             loginbtn.setOnClickListener {
