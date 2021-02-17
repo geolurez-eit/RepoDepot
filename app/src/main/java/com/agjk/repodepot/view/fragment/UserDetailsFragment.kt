@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Commits
 import com.agjk.repodepot.model.data.Repos
+import com.agjk.repodepot.view.MainActivity
 import com.agjk.repodepot.view.adapter.DetailsAdapter
 import com.agjk.repodepot.view.adapter.RepoAdapter
 import de.hdodenhof.circleimageview.CircleImageView
@@ -49,8 +50,6 @@ class UserDetailsFragment(var commit: List<Commits>) : Fragment() {
         initalize(view)
 
 
-
-
     }
 
 
@@ -66,6 +65,7 @@ class UserDetailsFragment(var commit: List<Commits>) : Fragment() {
             forksCount=findViewById(R.id.tv_forks_count)
         }
     }
+
 
 
 }

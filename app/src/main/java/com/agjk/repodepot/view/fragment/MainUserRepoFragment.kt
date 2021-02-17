@@ -16,11 +16,12 @@ import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Commits
 import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.util.DebugLogger
+import com.agjk.repodepot.view.MainActivity
 import com.agjk.repodepot.view.adapter.RepoAdapter
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 
-class MainUserRepoFragment(var repo: List<Repos>, var avatarUrl: String, var userName: String, var userBio: String) : Fragment() {
+class MainUserRepoFragment(var repo: List<Repos>, var avatarUrl: String, var userName: String, var userBio: String) : Fragment(), RepoAdapter.Delegate {
 
     private lateinit var profilePicture: CircleImageView
     private lateinit var rvUserRepo: RecyclerView
@@ -33,7 +34,9 @@ class MainUserRepoFragment(var repo: List<Repos>, var avatarUrl: String, var use
     private lateinit var thisContext: Context
 
     //private var repoAdapter = RepoAdapter(mutableListOf())
-    private val repoAdapter = RepoAdapter(repo)
+    private val repoAdapter = RepoAdapter(repo, this )
+
+    private lateinit var mcontext: Context
 
 
     override fun onCreateView(
@@ -59,6 +62,11 @@ class MainUserRepoFragment(var repo: List<Repos>, var avatarUrl: String, var use
 
         rvUserRepo.adapter = repoAdapter
         repoAdapter.updateRepo(repo)
+
+
+
+
+
     }
 
     private fun initalize(view: View) {
@@ -75,6 +83,15 @@ class MainUserRepoFragment(var repo: List<Repos>, var avatarUrl: String, var use
     override fun onAttach(context: Context) {
         super.onAttach(context)
         thisContext = context
+    }
+
+    override fun passToDetails() {
+
+        val userDetailsFragment = UserDetailsFragment(detailList)
+
+        (activity as MainActivity).supportFragmentManager.beginTransaction().replace(R.id.repo_container, userDetailsFragment )
+            .commit()
+
     }
 
 }

@@ -2,6 +2,7 @@ package com.agjk.repodepot.view.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.TouchDelegate
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -18,8 +19,12 @@ import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.util.DebugLogger
 import org.w3c.dom.Text
 
-class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
+class RepoAdapter(var repoList: List<Repos>, val delegate: Delegate) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
 
+
+    interface Delegate {
+        fun passToDetails()
+    }
 
     inner class UserRepoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val repoDetailCard: CardView = itemView.findViewById(R.id.cv_repo_card)
@@ -57,8 +62,7 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
             repoStarCount.text = repo.repoStarGazer
 
             repoDetailCard.setOnClickListener {
-                // TODO: transition to detail fragment
-
+                delegate.passToDetails()
             }
             holder.constraintLayout.visibility = View.VISIBLE
             val animationFadeScale =
