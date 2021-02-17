@@ -285,6 +285,7 @@ object DepotRepository {
                     snapshot.children.forEach {
                         if (it.key != "lastUpdated") {
                             it.getValue(GitRepo.GitRepoItem::class.java)?.let { repo ->
+                                if(repo.owner?.login == username || repo.owner?.login +"_private" == username)
                                 repoList.add(repo)
                             }
                         }
