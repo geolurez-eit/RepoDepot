@@ -7,6 +7,9 @@ data class Users(
     val imageUrl: String = "",
     val username: String = "",
     var userFragment: Fragment = MainUserRepoFragment(
-        listOf()
+        listOf(),
+        "",
+        "",
+        ""
     )
 )

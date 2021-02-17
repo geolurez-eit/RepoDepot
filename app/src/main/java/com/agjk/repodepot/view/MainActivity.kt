@@ -23,6 +23,7 @@ import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.model.data.Users
 import com.agjk.repodepot.model.DepotRepository
+import com.agjk.repodepot.model.data.GitUser
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.MainFragmentAdapter
 import com.agjk.repodepot.view.adapter.UserAdapter
@@ -298,69 +299,76 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getData(userName: String) {
-        //repoViewModel.getProfile(userName)
-        //repoViewModel.addUserToList("bladerjam7")
         repoViewModel.getUserList(userName).observe(this, { userget ->
             DebugLogger("userGET SIZE -> ${userget.size}")
             if (userget.isNotEmpty()) {
                 userget.forEach { user ->
                     if (user.login != firebaseAuth.currentUser?.displayName) {
-                        repoViewModel.getStoredReposForUser(user.login.toString())
-                            .observe(this, { gitrepos ->
-                                val listToSet = mutableListOf<Repos>()
-                                for (repo in gitrepos) {
-                                    listToSet.add(
-                                        Repos(
-                                            repo.name.toString(),
-                                            repo.description.toString(),
-                                            repo.language.toString()
-                                        )
-                                    )
-                                }
-                                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
-                                usersToReturn.add(
-                                    Users(
-                                        user.avatar_url.toString(),
-                                        user.login.toString(),
-                                        MainUserRepoFragment(listToSet)
-                                    )
-                                )
-                                DebugLogger("usersToReturn: ------> $usersToReturn")
-                                DebugLogger("listToSet: ------> $listToSet")
-                                userAdapter.updateUsers(usersToReturn)
-                                mainFragmentAdapter.addFragmentToList(usersToReturn)
-                            })
-
-
-
+                        getReposPublic(user)
                     } else {
-                        repoViewModel.getStoredPrivateReposForUser(userName, tokenSaved)
-                            .observe(this, { gitrepos ->
-                                val listToSet = mutableListOf<Repos>()
-                                for (repo in gitrepos) {
-                                    listToSet.add(
-                                        Repos(
-                                            repo.name.toString(),
-                                            repo.description.toString(),
-                                            repo.language.toString()
-                                        )
-                                    )
-                                }
-                                val usersToReturnTwo: MutableList<Users> = mutableListOf()
-                                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
-                                DebugLogger("userstoRETURN -----> ${usersToReturnTwo}")
-                                usersToReturnTwo.add(Users(user.avatar_url.toString(),
-                                        user.login.toString(),
-                                        MainUserRepoFragment(listToSet)))
-
-                                userAdapter.updateUsers(usersToReturnTwo)
-                                mainFragmentAdapter.addFragmentToList(usersToReturnTwo)
-                            }
-                            )
+                        getReposPrivate(userName, user)
                     }
                 }
             } else
                 repoViewModel.addUserToList(userName)
         })
+    }
+
+    private fun getReposPrivate(userName: String, user: GitUser) {
+        repoViewModel.getStoredPrivateReposForUser(userName, tokenSaved)
+            .observe(this, { gitrepos ->
+                val listToSet = mutableListOf<Repos>()
+                for (repo in gitrepos) {
+                    listToSet.add(
+                        Repos(
+                            repo.name.toString(),
+                            repo.language.toString(),
+                            repo.stargazers_count.toString()
+                        )
+                    )
+                }
+                val usersToReturnTwo: MutableList<Users> = mutableListOf()
+                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
+                DebugLogger("userstoRETURN -----> ${usersToReturnTwo}")
+                usersToReturnTwo.add(
+                    Users(
+                        user.avatar_url.toString(),
+                        user.login.toString(),
+                        MainUserRepoFragment(listToSet, user.avatar_url.toString(), user.login.toString(), user.bio.toString())
+                    )
+                )
+
+                userAdapter.updateUsers(usersToReturnTwo)
+                mainFragmentAdapter.addFragmentToList(usersToReturnTwo)
+            }
+            )
+    }
+
+    private fun getReposPublic(user: GitUser) {
+        repoViewModel.getStoredReposForUser(user.login.toString())
+            .observe(this, { gitrepos ->
+                val listToSet = mutableListOf<Repos>()
+                for (repo in gitrepos) {
+                    listToSet.add(
+                        Repos(
+                            repo.name.toString(),
+                            repo.language.toString(),
+                            repo.stargazers_count.toString()
+                        )
+                    )
+                }
+                DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
+                usersToReturn.add(
+                    Users(
+                        user.avatar_url.toString(),
+                        user.login.toString(),
+                        MainUserRepoFragment(listToSet, user.avatar_url.toString(), user.login.toString(), user.bio.toString())
+                    )
+                )
+                DebugLogger("usersToReturn: ------> $usersToReturn")
+                DebugLogger("listToSet: ------> $listToSet")
+                userAdapter.updateUsers(usersToReturn)
+                mainFragmentAdapter.addFragmentToList(usersToReturn)
+            })
     }
 }
