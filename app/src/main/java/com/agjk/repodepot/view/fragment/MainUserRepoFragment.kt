@@ -16,7 +16,7 @@ import com.agjk.repodepot.view.adapter.RepoAdapter
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 
-class MainUserRepoFragment(var repo: List<Repos>, var avatarUrl: String, var userName: String, var userBio: String) : Fragment() {
+class MainUserRepoFragment(var repo: List<Repos>, val avatarUrl: String, val userName: String, val userBio: String) : Fragment(), RepoAdapter.RepoDelegate {
 
     private lateinit var profilePicture: CircleImageView
     private lateinit var rvUserRepo: RecyclerView
@@ -26,7 +26,7 @@ class MainUserRepoFragment(var repo: List<Repos>, var avatarUrl: String, var use
     private lateinit var thisContext: Context
 
     //private var repoAdapter = RepoAdapter(mutableListOf())
-    private val repoAdapter = RepoAdapter(repo)
+    private val repoAdapter = RepoAdapter(repo, this)
 
 
     override fun onCreateView(
@@ -65,6 +65,16 @@ class MainUserRepoFragment(var repo: List<Repos>, var avatarUrl: String, var use
     override fun onAttach(context: Context) {
         super.onAttach(context)
         thisContext = context
+    }
+
+    override fun openDetailFragment(repoName: String, repoUrl: String, repoStartCount: String, repoDescription: String, repoForkCount: String) {
+        val  userDetailFragment = UserDetailsFragment(avatarUrl, repoName, repoUrl, repoStartCount, repoDescription, repoForkCount)
+        parentFragmentManager.beginTransaction()
+            .setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_in_bottom,
+            R.anim.slide_out_bottom, R.anim.slide_out_bottom)
+            .add(R.id.detail_fragment_container, userDetailFragment)
+            .addToBackStack(userDetailFragment.tag)
+            .commit()
     }
 
 }

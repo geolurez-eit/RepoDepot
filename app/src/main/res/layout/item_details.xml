@@ -38,17 +38,15 @@
             android:id="@+id/tv_author_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
             android:fontFamily="@font/french_standard"
-            android:padding="8dp"
             android:text="author_name"
             android:textSize="15dp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/repo_user_profil"
             app:layout_constraintStart_toEndOf="@+id/repo_user_profil"
-            app:layout_constraintTop_toBottomOf="@+id/tv_repo_details" />
+            app:layout_constraintTop_toTopOf="@+id/repo_user_profil" />
 
         <TextView
             android:id="@+id/tv_repo_details"
@@ -66,9 +64,7 @@
             android:id="@+id/tv_commit_hashcode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:padding="2dp"
             android:text="9462836"
             app:layout_constraintBottom_toBottomOf="parent"
