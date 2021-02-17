@@ -62,6 +62,7 @@ object DepotRepository {
                         resultRepoList.addAll(it)
                         postRepos(userName, resultRepoList)
                         repoDisposable.clear()
+                        resultRepoList.clear()
                     } else {
                         resultRepoList.addAll(it)
                         saveNewRepos(userName, page + 1)
@@ -98,6 +99,7 @@ object DepotRepository {
                         resultRepoList.addAll(it)
                         postRepos(userName + "_private", resultRepoList)
                         repoDisposable.clear()
+                        resultRepoList.clear()
                     } else {
                         resultRepoList.addAll(it)
                         saveNewPrivateRepos(userName, token, page + 1)
