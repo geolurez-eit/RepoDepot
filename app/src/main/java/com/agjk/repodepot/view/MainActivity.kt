@@ -307,9 +307,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun getData(userName: String) {
         //repoViewModel.getProfile(userName)
-        repoViewModel.addUserToList("aormsby")
-        repoViewModel.addUserToList("bladerjam7")
-        repoViewModel.addUserToList("kamelkhbr")
         repoViewModel.getUserList(userName).observe(this, { currentUserList ->
             DebugLogger("userGET SIZE -> ${currentUserList.size}")
             if (currentUserList.isNotEmpty()) {
