@@ -4,19 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".view.fragment.UserDetailsFragment">
+    tools:context=".view.fragment.UserDetailsFragment"
+    android:focusable="true"
+    android:clickable="true">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:src="@drawable/maxresdefault"
-        app:layout_constraintHeight_percent="0.50"
         android:scaleType="centerCrop"
-        app:layout_constraintVertical_bias="0"
+        android:src="@drawable/maxresdefault"
+        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        app:layout_constraintVertical_bias="0" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_user_profile_details"
@@ -98,7 +99,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="28dp"
+        android:layout_marginEnd="16dp"
         android:background="@color/Gray50"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -123,13 +124,10 @@
         android:id="@+id/arrow"
         android:layout_width="46dp"
         android:layout_height="29dp"
-        android:layout_marginStart="72dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
         android:background="@color/white"
-        app:layout_constraintEnd_toStartOf="@id/tv_forks_count"
-        app:layout_constraintHorizontal_bias="0.079"
-        app:layout_constraintStart_toEndOf="@id/tv_rating_count"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_commits"
         app:srcCompat="@drawable/ic_down_arrow_icon_icons_com_64915" />
 
@@ -137,36 +135,34 @@
         android:id="@+id/tv_commits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
         android:fontFamily="@font/login_font"
         android:text="COMMITS"
         android:textColor="@color/Gray50"
         android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.451"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_repo_link" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.60"
+        android:background="@drawable/cornerview"
         android:elevation="4dp"
-        app:layout_constraintVertical_bias="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/cornerview" >
+        app:layout_constraintTop_toBottomOf="@+id/arrow"
+        app:layout_constraintVertical_bias="1">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_user_details"
-            android:layout_width="361dp"
-            android:layout_height="280dp"
-            android:layout_margin="16dp"
-            android:layout_marginTop="100dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:elevation="5dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -174,7 +170,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/item_details" />
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -16,7 +16,11 @@ import com.agjk.repodepot.model.data.Repos
 import com.agjk.repodepot.util.DebugLogger
 import org.w3c.dom.Text
 
-class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
+class RepoAdapter(var repoList: List<Repos>, val repoDelegate:RepoDelegate) : RecyclerView.Adapter<RepoAdapter.UserRepoViewHolder>() {
+
+    interface RepoDelegate{
+        fun openDetailFragment(repoName: String, repoUrl: String, repoStar: String)
+    }
 
 
     inner class UserRepoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -24,6 +28,7 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
         val repoTitle: TextView = itemView.findViewById(R.id.tv_repo_name)
         val repoLanguage: TextView = itemView.findViewById(R.id.tv_repo_language)
         val repoStarCount: TextView = itemView.findViewById(R.id.tv_rating)
+
 
         // animation container
         val constraintLayout: ConstraintLayout = itemView.findViewById(R.id.constraint_container)
@@ -40,13 +45,14 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
     }
 
     override fun getItemCount(): Int {
-        DebugLogger("RepoList Size: ------------>   ${repoList.size}")
-        DebugLogger("RepoList -------------->: ${repoList}")
         return repoList.size
     }
 
     override fun onBindViewHolder(holder: UserRepoViewHolder, position: Int) {
         val repo = repoList[position]
+
+
+
 
         holder.apply {
             repoTitle.text = repo.repoName
@@ -55,8 +61,9 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
 
             repoDetailCard.setOnClickListener {
                 // TODO: transition to detail fragment
-
+                repoDelegate.openDetailFragment(repo.repoName, repo.repoUrl, repo.repoStarGazer)
             }
+
             holder.constraintLayout.visibility = View.VISIBLE
             val animationFadeScale =
                 AnimationUtils.loadAnimation(mycontext, R.anim.fade_scale_repo_recycler)
@@ -66,7 +73,6 @@ class RepoAdapter(var repoList: List<Repos>) : RecyclerView.Adapter<RepoAdapter.
     }
 
     fun updateRepo(newRepoList: List<Repos>) {
-        DebugLogger("RepoList Size Update -------> ${newRepoList.size}")
         repoList = newRepoList
         notifyDataSetChanged()
     }
