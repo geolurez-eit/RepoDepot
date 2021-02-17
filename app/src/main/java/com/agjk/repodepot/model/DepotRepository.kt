@@ -53,19 +53,39 @@ object DepotRepository {
     fun getReposForUser(username: String): LiveData<List<GitRepo.GitRepoItem>> {
         DebugLogger("DepotRepository.getReposForUser")
         // Check if it has been 24 hours
-        checkIf24Hours(username)
-        if (true) {
-            //Update repos for user
-            DebugLogger("Updating repos")
-            saveNewRepos(username, 1)
-        } else {
-            DebugLogger("Unable to update repos")
-        }
+        firebaseDatabase.reference.child("REPOSITORIES").child(username).child("lastUpdated")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.getValue(String::class.java).runCatching {
+                        DebugLogger("Last Updated: $this")
+                        DebugLogger(
+                            "Last Updated + 24: " + LocalDateTime.parse(this).plusDays(1L)
+                        )
+                        DebugLogger("Now: " + LocalDateTime.now())
+                        if (LocalDateTime.parse(this).plusDays(1L) < LocalDateTime.now()) {
+                            DebugLogger("It has been 24 hours")
+                            //Update repos for user
+                            DebugLogger("Updating repos")
+                            saveNewRepos(username, 1)
+                        } else {
+                            DebugLogger("Still has not been 24 hours \nUnable to update repos")
+                        }
+
+                    }.getOrElse {
+                        //Update repos for user
+                        DebugLogger("No timestamp\nUpdating repos")
+                        saveNewRepos(username, 1)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    DebugLogger("24 Hour Check on Cancelled: " + error.message)
+                }
+
+            })
+
         //add user to userlist
         DebugLogger(firebaseAuth.currentUser?.displayName.toString())
-        /*firebaseDatabase.reference.child("USERLISTS")
-            .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
-            .setValue(username)*/
         //Retrieve stored repos
         return getRepositories(username)
     }
@@ -76,18 +96,37 @@ object DepotRepository {
     ): LiveData<List<GitRepo.GitRepoItem>> {
         DebugLogger("DepotRepository.getReposForUser")
         // Check if it has been 24 hours
-        checkIf24Hours(username + "_private")
-        if (true) {
-            //Update repos for user
-            saveNewPrivateRepos(username, token, 1)
-        } else {
-            DebugLogger("Unable to update repos")
-        }
+        firebaseDatabase.reference.child("REPOSITORIES").child(username + "_private").child("lastUpdated")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.getValue(String::class.java).runCatching {
+                        DebugLogger("Last Updated: $this")
+                        DebugLogger(
+                            "Last Updated + 24: " + LocalDateTime.parse(this).plusDays(1L)
+                        )
+                        DebugLogger("Now: " + LocalDateTime.now())
+                        if (LocalDateTime.parse(this).plusDays(1L) < LocalDateTime.now()) {
+                            DebugLogger("It has been 24 hours")
+                            //Update repos for user
+                            DebugLogger("Updating repos")
+                            saveNewPrivateRepos(username, token, 1)
+                        } else {
+                            DebugLogger("Still has not been 24 hours \nUnable to update repos")
+                        }
+
+                    }.getOrElse {
+                        //Update repos for user
+                        DebugLogger("No timestamp\nUpdating repos")
+                        saveNewPrivateRepos(username, token, 1)
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    DebugLogger("24 Hour Check on Cancelled: " + error.message)
+                }
+            })
         //add user to userlist
         DebugLogger(firebaseAuth.currentUser?.displayName.toString())
-        /*firebaseDatabase.reference.child("USERLISTS")
-            .child(firebaseAuth.currentUser?.displayName.toString()).child(username)
-            .setValue(username)*/
         //Retrieve stored repos
         return getRepositories(username + "_private")
     }
@@ -102,7 +141,6 @@ object DepotRepository {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     //DebugLogger(".subscribe - it: $it")
-                    DebugLogger(it.size.toString())
                     if (it.size < 100) {
                         resultRepoList.addAll(it)
                         postRepos(userName, resultRepoList)
@@ -152,7 +190,7 @@ object DepotRepository {
         DebugLogger(LocalDateTime.now().toString())
         firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
             .setValue(LocalDateTime.now().toString())
-        DebugLogger("Repos for :${repo.first().owner?.login} added!")
+        DebugLogger("Repos for :${userName} added!")
     }
 
     private fun getRepositories(username: String): MutableLiveData<List<GitRepo.GitRepoItem>> {
@@ -163,7 +201,6 @@ object DepotRepository {
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    DebugLogger("onDataChange")
                     val repoList = mutableListOf<GitRepo.GitRepoItem>()
                     snapshot.children.forEach {
                         if (it.key != "lastUpdated") {
@@ -180,40 +217,6 @@ object DepotRepository {
         return repoUserLiveData
     }
 
-    private fun checkIf24Hours(userName: String) {
-        DebugLogger("24 Hour Check")
-        firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    snapshot.getValue(String::class.java).runCatching {
-                        DebugLogger("Last Updated: $this")
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                            DebugLogger(
-                                "Last Updated + 24: " + LocalDateTime.parse(this).plusDays(1L)
-                            )
-                            DebugLogger("Now: " + LocalDateTime.now())
-                            if (LocalDateTime.parse(this).plusDays(1L) < LocalDateTime.now()) {
-                                DebugLogger("It has been 24 hours")
-                                is24HoursPassed = true
-                            } else {
-                                DebugLogger("Still has not been 24 hours")
-                            }
-                        } else {
-                            DebugLogger("Pre Oreo")
-                            TODO("VERSION.SDK_INT < O")
-                        }
-                    }.getOrElse {
-                        is24HoursPassed = true
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    DebugLogger("24 Hour Check on Cancelled: " + error.message)
-                }
-
-            })
-    }
-
     //////////////////////
     // Commit Functions
     //////////////////////
@@ -228,14 +231,14 @@ object DepotRepository {
         saveNewCommits(token, username, repoName, 1)
 
         //Retrieve stored commits
-        firebaseDatabase.reference.child("COMMITS").child(username).child(repoName.replace(".","_"))
+        firebaseDatabase.reference.child("COMMITS").child(username)
+            .child(repoName.replace(".", "_"))
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
                     DebugLogger("Error ${error.message}")
                 }
 
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    DebugLogger("onDataChange")
                     val commitList = mutableListOf<GitRepoCommits.GitRepoCommitsItem>()
                     snapshot.children.forEach {
                         if (it.key != "lastUpdated") {
