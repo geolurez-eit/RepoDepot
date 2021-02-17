@@ -127,12 +127,20 @@ class MainActivity : AppCompatActivity() {
         repoViewModel.searchUsers(stringSearch)
     }
 
-    fun closeSplash() {
+    fun loadMainInBackground() {
         runOnUiThread {
-            supportFragmentManager.popBackStack()
             initFirebase()
             getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
             initMainActivity()
+        }
+    }
+
+    fun closeSplash() {
+        runOnUiThread {
+            supportFragmentManager.popBackStack()
+//            initFirebase()
+//            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
+//            initMainActivity()
         }
     }
 
@@ -163,6 +171,10 @@ class MainActivity : AppCompatActivity() {
         //mainFragmentAdapter.addFragmentToList(//)
 
         viewPager.adapter = mainFragmentAdapter
+
+        val animFadeIn = AnimationUtils.loadAnimation(this, R.anim.text_fade_in)
+        viewPager.startAnimation(animFadeIn)
+        viewPager.visibility = View.VISIBLE
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -198,7 +210,6 @@ class MainActivity : AppCompatActivity() {
             visibility = View.VISIBLE
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
             setOnQueryTextFocusChangeListener { v, hasFocus ->
-                Log.d("TAG_A", "on focus change, $hasFocus")
                 if (hasFocus) {
                     searchResultsContainer.visibility = View.VISIBLE
                     val animFadeScale =
@@ -219,7 +230,6 @@ class MainActivity : AppCompatActivity() {
             }
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    Log.d("TAG_B", "query -> $query")
                     query?.let { performUserSearch(query) }
                     return true
                 }
@@ -231,7 +241,6 @@ class MainActivity : AppCompatActivity() {
 
                     searchTimer.schedule(object : TimerTask() {
                         override fun run() {
-                            Log.d("TAG_B", "$newText")
                             newText?.let { performUserSearch(newText) }
 
                             // HACK for timing - maybe okay, maybe not.
@@ -349,6 +358,8 @@ class MainActivity : AppCompatActivity() {
                                 )
                             )
                         )
+
+                    repoViewModel.isMainLoaded.value = true
                 }
 
                 //DebugLogger("usersToReturn: ------> $usersToReturn")

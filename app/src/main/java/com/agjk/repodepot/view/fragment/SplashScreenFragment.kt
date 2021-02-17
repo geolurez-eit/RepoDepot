@@ -11,14 +11,13 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Preferences
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.MainActivity
 import com.agjk.repodepot.viewmodel.RepoViewModel
-import com.agjk.repodepot.viewmodel.RepoViewModelFactory
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
@@ -45,13 +44,14 @@ class SplashScreenFragment : Fragment() {
     private lateinit var loginbtn: MaterialButton
     private lateinit var websiteText: TextView
 
-
     //    private lateinit var loginText: TextView
     private lateinit var progressBar: ProgressBar
 
-    private val repoViewModel: RepoViewModel by viewModels(
-        factoryProducer = { RepoViewModelFactory }
-    )
+    private val repoViewModel: RepoViewModel by activityViewModels()
+
+    private var mainAnimEnded = false
+    private var logoAnimEnded = false
+    private var isMainFinishedLoading = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -106,7 +106,9 @@ class SplashScreenFragment : Fragment() {
         websiteText.visibility = View.VISIBLE
         websiteText.startAnimation(animFadeIn)
 
-        repoViewModel.isMainLoaded.observe(viewLifecycleOwner, { isMainFinishedLoading = it })
+        repoViewModel.isMainLoaded.observe(viewLifecycleOwner, {
+            isMainFinishedLoading = it
+        })
 
         // Only show login buttons if no 'currentUser'
         firebaseAuth.currentUser?.let {
@@ -140,7 +142,6 @@ class SplashScreenFragment : Fragment() {
 
         // TODO: change artificial loading delay
         lifecycleScope.launch(context = Dispatchers.Default) {
-//            delay(SPLASH_TIME)
 
             // let animations play out first
             while (!mainAnimEnded || !logoAnimEnded) {
@@ -149,21 +150,14 @@ class SplashScreenFragment : Fragment() {
 
             // start loading main activity data
             (context as MainActivity).loadMainInBackground()
-            Log.d("TAG_D", "started main load")
-            
+
             // then let progress bar continue until data is loaded
             while (!isMainFinishedLoading) { /* no-op */ }
-            Log.d("TAG_D", "main loaded")
 
             // then close the splash
             (context as MainActivity).closeSplash()
-            Log.d("TAG_D", "ran close splash")
         }
     }
-
-    private var mainAnimEnded = false
-    private var logoAnimEnded = false
-    private var isMainFinishedLoading = false
 
     private fun startSignIn() {
 
@@ -179,13 +173,11 @@ class SplashScreenFragment : Fragment() {
                 firebaseAuth.currentUser?.updateProfile(profileUpdate)
                 //Store github token in firebase
                 repoViewModel.addUserPreferences(Preferences(gitHubAccessToken = (it.credential as OAuthCredential).accessToken))
-                Log.d("TAG_A", "sign in success")
                 closeSplashToMainActivity()
             }
             .addOnFailureListener {
                 // Handle failure.
                 DebugLogger(it.localizedMessage)
-                Log.d("TAG_A", "sign in failure -> ${it.localizedMessage}")
             }
     }
 
@@ -204,17 +196,14 @@ class SplashScreenFragment : Fragment() {
                             //Store github token in firebase
                         repoViewModel.addUserPreferences(Preferences(gitHubAccessToken = (it.credential as OAuthCredential).accessToken))
 
-                        Log.d("TAG_A", "pending result success")
                         closeSplashToMainActivity()
                     })
                 .addOnFailureListener {
                     // Handle failure.
-                    Log.d("TAG_A", "pending result failure")
                 }
         } else {
             // There's no pending result so you need to start the sign-in flow.
             // See below.
-            Log.d("TAG_A", "pending result is null, start sign in")
             startSignIn()
         }
     }

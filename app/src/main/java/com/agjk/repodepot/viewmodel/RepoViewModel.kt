@@ -4,9 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.agjk.repodepot.model.DepotRepository
-import com.agjk.repodepot.model.data.*
+import com.agjk.repodepot.model.data.GitRepo
+import com.agjk.repodepot.model.data.GitRepoCommits
+import com.agjk.repodepot.model.data.GitUser
+import com.agjk.repodepot.model.data.Preferences
 import com.google.firebase.auth.FirebaseAuth
-import java.util.concurrent.atomic.AtomicBoolean
 
 class RepoViewModel : ViewModel() {
 

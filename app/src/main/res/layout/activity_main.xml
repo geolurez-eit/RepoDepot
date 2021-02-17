@@ -14,7 +14,7 @@
 
     <FrameLayout
         android:id="@+id/detail_fragment_container"
-        android:elevation="15dp"
+        android:elevation="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
@@ -32,7 +32,8 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/main_view_pager_2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:visibility="invisible"/>
 
             <ImageButton
                 android:id="@+id/nav_drawer_menu_button"
@@ -107,8 +108,7 @@
             android:layout_gravity="start|bottom"
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/nav_header"
-            app:menu="@menu/nav_drawer_menu"
-            tools:visibility="gone">
+            app:menu="@menu/nav_drawer_menu">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
