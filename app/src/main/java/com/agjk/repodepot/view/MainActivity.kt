@@ -130,8 +130,9 @@ class MainActivity : AppCompatActivity() {
         runOnUiThread {
             supportFragmentManager.popBackStack()
             initFirebase()
-            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
             initMainActivity()
+            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
+           // repoViewModel.addUserToList("kamelkhbr")
 
 
         }

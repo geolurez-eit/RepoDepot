@@ -15,7 +15,7 @@ class SearchAdapter(var suggestionList: List<UserSearch.Item>, val delegate: res
     : RecyclerView.Adapter<SearchAdapter.SuggestionViewHolder>() {
 
     interface resultClickDelegate {
-        fun displayUserResult()
+        fun displayUserResult(userToAdd: String)
         // TODO: pass the user login? or the url for all their repos?
     }
 
@@ -34,7 +34,7 @@ class SearchAdapter(var suggestionList: List<UserSearch.Item>, val delegate: res
         holder.apply {
             result.text = user
             itemView.setOnClickListener{
-                delegate.displayUserResult()
+                delegate.displayUserResult(user)
             }
         }
     }
