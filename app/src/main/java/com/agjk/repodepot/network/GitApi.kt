@@ -23,8 +23,6 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GitApi {
-    @GET(URL_PATH_REPOS)
-    fun getGitRepos(@Path(USER_NAME_PATH) username: String): Observable<List<GitRepo.GitRepoItem>>
     @GET(URL_PATH_USERS)
     fun getUserProfile(@Path(USER_NAME_PATH) username: String): Observable<GitUser>
 
@@ -37,6 +35,7 @@ interface GitApi {
 
     @GET(URL_PATH_COMMITS)
     fun getGitRepoCommits(
+        @Header("Authorization") authHeader: String,
         @Path(USER_NAME_PATH) username: String,
         @Path(REPO_PATH) repo: String,@Query(PAGE_QUERY) page: Int, @Query(
             PAGE_SIZE_QUERY

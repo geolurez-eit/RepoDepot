@@ -51,11 +51,12 @@ object GitRetrofit {
     }
 
     fun getRepositoryCommits(
+        token: String,
         username: String,
         repo: String,
         page:Int
     ): Observable<List<GitRepoCommits.GitRepoCommitsItem>> =
-        gitApi.getGitRepoCommits(username, repo,page,100)
+        gitApi.getGitRepoCommits("token $token",username, repo,page,100)
 
     fun getUserProfile(username:String): Observable<GitUser> = gitApi.getUserProfile(username)
     fun getUserSearchResults(stringSearch: String): Observable<UserSearch> =

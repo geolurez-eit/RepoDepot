@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
 
-    private var tokenSaved = ""
+    var tokenSaved = ""
     private var usersToReturn = mutableListOf<Users>()
     private var allUserRepos = mutableListOf<MutableList<Repos>>()
     private var addedUsers = mutableListOf<String>()

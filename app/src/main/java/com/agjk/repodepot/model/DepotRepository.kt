@@ -218,17 +218,17 @@ object DepotRepository {
     // Commit Functions
     //////////////////////
     fun getCommitsForUser(
+        token: String,
         username: String,
         repoName: String
     ): LiveData<List<GitRepoCommits.GitRepoCommitsItem>> {
         DebugLogger("DepotRepository.getCommitsForUser")
         // Check if it has been 24 hours
-        if (true) {
-            //Update commits for repo
-            saveNewCommits(username, repoName, 1)
-        }
+        //Update commits for repo
+        saveNewCommits(token, username, repoName, 1)
+
         //Retrieve stored commits
-        firebaseDatabase.reference.child("COMMITS").child(username).child(repoName)
+        firebaseDatabase.reference.child("COMMITS").child(username).child(repoName.replace(".","_"))
             .addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(error: DatabaseError) {
                     DebugLogger("Error ${error.message}")
@@ -238,8 +238,11 @@ object DepotRepository {
                     DebugLogger("onDataChange")
                     val commitList = mutableListOf<GitRepoCommits.GitRepoCommitsItem>()
                     snapshot.children.forEach {
-                        it.getValue(GitRepoCommits.GitRepoCommitsItem::class.java)?.let { commit ->
-                            commitList.add(commit)
+                        if (it.key != "lastUpdated") {
+                            it.getValue(GitRepoCommits.GitRepoCommitsItem::class.java)
+                                ?.let { commit ->
+                                    commitList.add(commit)
+                                }
                         }
                     }
                     commitLiveData.value = commitList
@@ -249,28 +252,70 @@ object DepotRepository {
         return commitLiveData
     }
 
-    private fun saveNewCommits(userName: String, repoName: String, page: Int) {
+    private fun saveNewCommits(token: String, userName: String, repoName: String, page: Int) {
         DebugLogger("DepotRepository - saveNewCommits")
         DebugLogger("compositeDisposable.add")
         val commitDisposable = CompositeDisposable()
-        commitDisposable.add(
-            gitRetrofit.getRepositoryCommits(userName, repoName, page)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    if (it.size < 100) {
-                        resultCommitList.addAll(it)
-                        postCommits(it, userName, repoName)
-                        commitDisposable.clear()
-                    } else {
-                        resultCommitList.addAll(it)
-                        saveNewCommits(userName, repoName, page + 1)
+        val repoNameClean = repoName.replace(".", "_")
+        DebugLogger("DepotRepository.saveNewCommits repoNameClean: $repoNameClean")
+        firebaseDatabase.reference.child("COMMITS").child(userName).child(repoNameClean)
+            .child("lastUpdated")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    snapshot.getValue(String::class.java).runCatching {
+                        DebugLogger("Last Updated: $this")
+                        DebugLogger(
+                            "Last Updated + 24: " + LocalDateTime.parse(this).plusDays(1L)
+                        )
+                        DebugLogger("Now: " + LocalDateTime.now())
+                        if (LocalDateTime.parse(this).plusDays(1L) < LocalDateTime.now()) {
+                            DebugLogger("It has been 24 hours")
+                            commitDisposable.add(
+                                gitRetrofit.getRepositoryCommits(token, userName, repoName, page)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe({
+                                        if (it.size < 100) {
+                                            resultCommitList.addAll(it)
+                                            postCommits(it, userName, repoName)
+                                            commitDisposable.clear()
+                                        } else {
+                                            resultCommitList.addAll(it)
+                                            saveNewCommits(token, userName, repoName, page + 1)
+                                        }
+                                    }, {
+                                        DebugLogger("DepotRepository.saveNewCommits $userName $repoName .subscribe Error: " + it.localizedMessage + "\n" + it.stackTrace)
+                                    })
+                            )
+                        } else {
+                            DebugLogger("Still has not been 24 hours")
+                        }
+                    }.getOrElse {
+                        DebugLogger("DepotRepository.saveNewCommits Error: " + it.localizedMessage + "\n" + it.stackTrace)
+                        commitDisposable.add(
+                            gitRetrofit.getRepositoryCommits(token, userName, repoName, page)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe({ commitList ->
+                                    if (commitList.size < 100) {
+                                        resultCommitList.addAll(commitList)
+                                        postCommits(commitList, userName, repoNameClean)
+                                        commitDisposable.clear()
+                                    } else {
+                                        resultCommitList.addAll(commitList)
+                                        saveNewCommits(token, userName, repoName, page + 1)
+                                    }
+                                }, { subscribeThrowable ->
+                                    DebugLogger("DepotRepository.saveNewCommits getOrElse.subscribe Error: " + subscribeThrowable.localizedMessage + "\n" + subscribeThrowable.stackTrace)
+                                })
+                        )
                     }
-                }, {
-                    DebugLogger(".subscribe Error")
-                    DebugLogger(it.localizedMessage)
-                })
-        )
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    DebugLogger("24 Hour Check on Cancelled: " + error.message)
+                }
+            })
     }
 
     private fun postCommits(
@@ -281,6 +326,9 @@ object DepotRepository {
         DebugLogger("DepotRepository.postCommits")
         firebaseDatabase.reference.child("COMMITS").child(userName).child(repoName)
             .setValue(commits)
+        firebaseDatabase.reference.child("COMMITS").child(userName).child(repoName)
+            .child("lastUpdated")
+            .setValue(LocalDateTime.now().toString())
         DebugLogger("Commits for :${repoName} added!")
     }
 
@@ -296,7 +344,7 @@ object DepotRepository {
                         val usersList = mutableListOf<GitUser>()
                         snapshot.children.forEach {
                             it.getValue(GitUser::class.java).let { user ->
-                                DebugLogger("getUserList user: " + user.toString())
+                                //DebugLogger("getUserList user: " + user.toString())
                                 user?.let { it1 -> usersList.add(it1) }
                             }
                         }

@@ -87,7 +87,7 @@ class UserAdapter(var userList: List<Users>, val activity: MainActivity): Recycl
     fun updateUsers(newUserList: List<Users>){
         userList = newUserList
 
-        DebugLogger("UserAdapter.updateUsers: ${userList.size}")
+        //DebugLogger("UserAdapter.updateUsers: ${userList.size}")
         notifyDataSetChanged()
     }
 }

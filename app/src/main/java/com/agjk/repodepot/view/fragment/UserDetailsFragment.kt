@@ -1,23 +1,20 @@
 package com.agjk.repodepot.view.fragment
 
 import android.content.Intent
-import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Commits
 import com.agjk.repodepot.util.DebugLogger
+import com.agjk.repodepot.view.MainActivity
 import com.agjk.repodepot.view.adapter.CommitAdapter
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.agjk.repodepot.viewmodel.RepoViewModelFactory
@@ -115,15 +112,16 @@ class UserDetailsFragment(val owner: String,
 
     private fun initCommitData() {
 
+        DebugLogger("UserDetailsFragment.initCommitData tokenSave: "+(activity as (MainActivity)).tokenSaved)
         //DebugLogger("CHECKING USERNAME _____>   ${owner}")
-        repoViewModel.getStoredCommitsForUser(owner, repoName).observe(viewLifecycleOwner, {
+        repoViewModel.getStoredCommitsForUser((activity as (MainActivity)).tokenSaved,owner, repoName).observe(viewLifecycleOwner, {
             val commitList: MutableList<Commits> = mutableListOf()
             it.forEach { commit ->
                 val authorImageUrl = commit.author?.avatar_url
                 val authorName = commit.author?.login
-                val commintMessage = commit.commit?.message
+                val commitMessage = commit.commit?.message
                 val commitHashCode = commit.hashCode()
-                commitList.add(Commits(authorImageUrl, authorName, commintMessage, commitHashCode.toString()))
+                commitList.add(Commits(authorImageUrl, authorName, commitMessage, commitHashCode.toString()))
             }
 
             commitAdapter.updateDetails(commitList)
