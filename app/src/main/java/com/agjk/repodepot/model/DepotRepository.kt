@@ -14,7 +14,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import java.time.LocalDateTime
-import java.util.*
 
 object DepotRepository {
 
@@ -150,15 +149,9 @@ object DepotRepository {
         DebugLogger("DepotRepository.postRepos")
         firebaseDatabase.reference.child("REPOSITORIES").child(userName)
             .setValue(repo)
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            DebugLogger(LocalDateTime.now().toString())
-            firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
-                .setValue(LocalDateTime.now().toString())
-        } else {
-            DebugLogger(Calendar.getInstance().time.toString())
-            firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
-                .setValue(Calendar.getInstance().time.toString())
-        }
+        DebugLogger(LocalDateTime.now().toString())
+        firebaseDatabase.reference.child("REPOSITORIES").child(userName).child("lastUpdated")
+            .setValue(LocalDateTime.now().toString())
         DebugLogger("Repos for :${repo.first().owner?.login} added!")
     }
 
