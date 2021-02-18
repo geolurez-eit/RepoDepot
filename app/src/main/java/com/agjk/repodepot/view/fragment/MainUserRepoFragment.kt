@@ -43,7 +43,7 @@ class MainUserRepoFragment(var repo: List<Repos>, val avatarUrl: String, val use
 
         Glide.with(thisContext)
             .load(avatarUrl)
-            .placeholder(R.drawable.portrait)
+            .placeholder(R.drawable.ic_logo_white_cat)
             .into(profilePicture)
 
         tvUsername.text = userName

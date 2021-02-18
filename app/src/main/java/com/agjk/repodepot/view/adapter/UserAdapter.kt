@@ -49,7 +49,7 @@ class UserAdapter(var userList: List<Users>, val activity: MainActivity): Recycl
        holder.apply {
            Glide.with(itemView.context)
                .load(user.imageUrl)
-               .placeholder(R.drawable.github_logo)
+               .placeholder(R.drawable.ic_logo_dark_cat)
                .into(ivProfile)
 
            tvUsers.text = user.username

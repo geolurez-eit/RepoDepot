@@ -52,7 +52,7 @@ class CommitAdapter(var commitList: List<Commits>) : RecyclerView.Adapter<Commit
         holder.apply {
             Glide.with(itemView.context)
                 .load(commit.imageUrl)
-                .placeholder(R.drawable.github_logo)
+                .placeholder(R.drawable.ic_logo_white_cat)
                 .into(userImage)
             authorName.text = commit.authorName
             commitMessage.text = commit.commitMessage
