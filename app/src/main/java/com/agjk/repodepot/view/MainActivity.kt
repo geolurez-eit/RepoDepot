@@ -145,21 +145,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loadMainInBackground() {
+//        Log.d("TAG_Q", "load in main background")
         runOnUiThread {
             initFirebase()
-            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
             initMainActivity()
+            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
         }
     }
 
     fun closeSplash() {
+//        Log.d("TAG_Q", "close splash")
         runOnUiThread {
             supportFragmentManager.popBackStack()
         }
     }
 
     private fun initMainActivity() {
-        Log.d("TAG_D", "init main activity")
+//        Log.d("TAG_D", "init main activity")
 
         searchViewSetup()
         viewPagerSetup()

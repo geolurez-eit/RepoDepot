@@ -93,6 +93,7 @@ class SplashScreenFragment : Fragment() {
         } else {
             splashImg.visibility = View.GONE
             lottieAnimation.visibility = View.GONE
+            mainAnimEnded = true
         }
 
         //// OAUTH
@@ -157,17 +158,23 @@ class SplashScreenFragment : Fragment() {
 
         // TODO: change artificial loading delay
         lifecycleScope.launch(context = Dispatchers.Default) {
+//            Log.d("TAG_Q", "start coroutine")
+//            Log.d("TAG_Q", "main anim ended -> $mainAnimEnded, logo anim ended -> $logoAnimEnded")
 
             // let animations play out first
             while (!mainAnimEnded || !logoAnimEnded) {
+//                Log.d("TAG_Q", "in anim loop check")
                 logoImageView.animation?.let { logoAnimEnded = it.hasEnded() }
+                    ?: { logoAnimEnded = true }()
             }
 
+//            Log.d("TAG_Q", "post anim loop check")
             // start loading main activity data
             (context as MainActivity).loadMainInBackground()
 
             // then let progress bar continue until data is loaded
             while (!isMainFinishedLoading) { /* no-op */ }
+//            Log.d("TAG_Q", "main finished loading")
 
             // then close the splash
             (context as MainActivity).closeSplash()
