@@ -12,6 +12,7 @@ import android.widget.ImageButton
 import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity() {
 
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
+    private val splashScreenFragment = SplashScreenFragment()
 
     var tokenSaved = ""
     private var usersToReturn = mutableListOf<Users>()
@@ -75,6 +77,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val inSignOut = intent.getBooleanExtra("signout", false)
+
         findViewById<MaterialButton>(R.id.log_out_button).setOnClickListener {
             MaterialAlertDialogBuilder(this, R.style.AlertDialog)
                 .setTitle(getString(R.string.sign_out_alert))
@@ -88,8 +92,8 @@ class MainActivity : AppCompatActivity() {
 
                         // start this activity fresh to unload data and display splash screen
                         startActivity(Intent(this, MainActivity::class.java).also { intent ->
-                            intent.flags =
-                                Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                            intent.putExtra("signout", true)
                         })
 
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
@@ -103,12 +107,25 @@ class MainActivity : AppCompatActivity() {
 
         // Show splash on launch
         if (isFreshLaunch) {
+
+//            Bundle bundle = new Bundle();
+//            bundle.putString("name", name);
+//            bundle.putInt("age", age);
+//
+//            MyFragment fragment = new MyFragment();
+//            fragment.setArguments(bundle);
+
+            val bundle = Bundle().also {
+                it.putBoolean("signout", inSignOut)
+            }
+            splashScreenFragment.arguments = bundle
+
             supportFragmentManager.beginTransaction()
                 .setCustomAnimations(
                     android.R.anim.fade_in, android.R.anim.fade_out,
                     android.R.anim.fade_in, android.R.anim.fade_out
                 )
-                .add(R.id.splash_fragment_container, SplashScreenFragment())
+                .add(R.id.splash_fragment_container, splashScreenFragment)
                 .addToBackStack(null)
                 .commit()
 

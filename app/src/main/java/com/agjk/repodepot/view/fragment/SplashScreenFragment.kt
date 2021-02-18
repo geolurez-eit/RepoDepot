@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 class SplashScreenFragment : Fragment() {
 
     private lateinit var thisContext: Context
+    private var inSignOut = true
 
     private val firebaseAuth = FirebaseAuth.getInstance()
     private var provider = OAuthProvider.newBuilder("github.com")
@@ -78,10 +79,21 @@ class SplashScreenFragment : Fragment() {
         // Lottie  Screen vars
         splashImg = view.findViewById(R.id.img)
         lottieAnimation = view.findViewById(R.id.lottieAnimation)
-        splashImg.animate().translationY(-3000F).setDuration(1000).setStartDelay(1500)
-            .alpha(0f)
-        lottieAnimation.animate().translationY(1400F).setDuration(1000).setStartDelay(1500)
-            .withEndAction { mainAnimEnded = true }
+
+        inSignOut = arguments?.getBoolean("signout", false) ?: false
+
+        if (!inSignOut) {
+            splashImg.visibility = View.VISIBLE
+            lottieAnimation.visibility = View.VISIBLE
+
+            splashImg.animate().translationY(-3000F).setDuration(1000).setStartDelay(1500)
+                .alpha(0f)
+            lottieAnimation.animate().translationY(1400F).setDuration(1000).setStartDelay(1500)
+                .withEndAction { mainAnimEnded = true }
+        } else {
+            splashImg.visibility = View.GONE
+            lottieAnimation.visibility = View.GONE
+        }
 
         //// OAUTH
         // Target specific email with login hint.
@@ -94,7 +106,10 @@ class SplashScreenFragment : Fragment() {
         ////
 
         // Logo animation
-        val animFadeIn = AnimationUtils.loadAnimation(thisContext, R.anim.medium_fade_in_delay)
+        var animFadeIn = AnimationUtils.loadAnimation(thisContext, R.anim.medium_fade_in_delay)
+        if (inSignOut) {
+            animFadeIn = AnimationUtils.loadAnimation(thisContext, R.anim.fast_fade_in)
+        }
 
         logoImageView.visibility = View.VISIBLE
         logoImageView.startAnimation(animFadeIn)
