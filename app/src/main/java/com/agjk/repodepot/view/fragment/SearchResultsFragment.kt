@@ -1,6 +1,8 @@
 package com.agjk.repodepot.view.fragment
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.DepotRepository
 import com.agjk.repodepot.model.data.UserSearch
+import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.MainActivity
 import com.agjk.repodepot.view.adapter.SearchAdapter
 import com.agjk.repodepot.viewmodel.RepoViewModel
@@ -40,10 +43,20 @@ class SearchResultsFragment : Fragment(), SearchAdapter.resultClickDelegate {
         })
     }
 
-    override fun displayUserResult(userToAdd: String) {
+    override fun displayUserResult(username: String) {
         (activity as MainActivity).closeSearch()
 
-        repoViewModel.addUserToList(userToAdd)
+        val profileFragment = ProfileFragment(username)
+
+        DebugLogger("Username--------------------------> $username")
+
+
+        parentFragmentManager.beginTransaction()
+            .setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_in_bottom, R.anim.slide_out_bottom, R.anim.slide_out_bottom)
+            .add(R.id.fragment_container, profileFragment)
+            .addToBackStack(profileFragment.tag)
+            .commit()
+
 
 
         // TODO: Step 1 - add user to 'following' list, no display, just prove it out

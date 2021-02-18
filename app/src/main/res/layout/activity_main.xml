@@ -13,7 +13,7 @@
         android:elevation="32dp" />
 
     <FrameLayout
-        android:id="@+id/detail_fragment_container"
+        android:id="@+id/fragment_container"
         android:elevation="16dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
