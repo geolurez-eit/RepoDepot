@@ -20,7 +20,7 @@
         android:layout_below="@id/RepotDepotLogo"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/app_name_font"
-        android:text="Repot Depot"
+        android:text="@string/app_name"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="30sp" />
@@ -45,7 +45,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="20dp"
-        android:text="www.repotTheDepot.com"
+        android:text="@string/www_repothedepot_com"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="12sp" />

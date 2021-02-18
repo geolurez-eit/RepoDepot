@@ -5,14 +5,12 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.widget.ImageButton
 import android.widget.SearchView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
@@ -81,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<MaterialButton>(R.id.log_out_button).setOnClickListener {
             MaterialAlertDialogBuilder(this, R.style.AlertDialog)
-                .setTitle(getString(R.string.sign_out_alert))
+                .setTitle(getString(R.string.sign_out))
                 .setMessage(getString(R.string.sign_out_message))
                 .setPositiveButton(getString(R.string.sign_out_alert_positive),
                     DialogInterface.OnClickListener() { dialog: DialogInterface, _ ->

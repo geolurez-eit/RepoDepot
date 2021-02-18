@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RepoDepot</string>
+    <string name="app_name">Repo Depot</string>
 
     <!--Navigation Drawer-->
     <string name="navigation_drawer_open">Open navigation</string>
@@ -7,7 +7,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="log_out_button">Log out</string>
-    <string name="sign_out_alert">Sign Out</string>
+    <string name="sign_out">Sign out</string>
     <string name="sign_out_message">Do you want to sign out?</string>
     <string name="sign_out_alert_positive">Sign out</string>
     <string name="cancel">Cancel</string>
@@ -19,4 +19,9 @@
     <string name="no_username">No username</string>
     <string name="no_link">No link</string>
     <string name="no_description">No description</string>
+    <string name="username">User name</string>
+    <string name="details">Details</string>
+    <string name="repository_name">Repository name</string>
+    <string name="commits">COMMITS</string>
+    <string name="www_repothedepot_com">www.RepoTheDepot.com</string>
 </resources>

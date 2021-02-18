@@ -48,7 +48,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/arvoboldttf"
-        android:text="Username"
+        android:text="@string/username"
         android:textColor="@color/Gray50"
         android:textSize="25sp"
 
@@ -63,7 +63,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/names_font"
-        android:text="Details"
+        android:text="@string/details"
         android:maxLength="300"
         android:textColor="@color/Gray50"
         app:layout_constraintBottom_toBottomOf="@+id/iv_user_image"

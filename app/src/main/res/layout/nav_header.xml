@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/login_font"
-        android:text="RepoDepo"
+        android:text="@string/app_name"
         android:textColor="@color/Gray50"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
