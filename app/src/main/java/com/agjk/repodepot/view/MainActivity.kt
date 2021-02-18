@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         findViewById<MaterialButton>(R.id.log_out_button).setOnClickListener {
-            MaterialAlertDialogBuilder(this)
+            MaterialAlertDialogBuilder(this, R.style.AlertDialog)
                 .setTitle(getString(R.string.sign_out_alert))
                 .setMessage(getString(R.string.sign_out_message))
                 .setPositiveButton(getString(R.string.sign_out_alert_positive),
