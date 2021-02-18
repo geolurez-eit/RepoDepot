@@ -327,29 +327,54 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    /**
+     * Gets the repository data for all users in the given user's userlist.
+     * @param userName User whose userlist will be populated
+     */
     private fun getData(userName: String) {
-        //repoViewModel.getProfile(userName)
+        // Get the userlist of the given user and observe it
         repoViewModel.getUserList(userName).observe(this, { currentUserList ->
             DebugLogger("userGET SIZE -> ${currentUserList.size}")
+            // Check if the userlist is not empty
             if (currentUserList.isNotEmpty()) {
+                // For each user in the user list, get their repositories
                 currentUserList.forEach { user ->
                     getRepos(user)
                 }
             } else
+                // If the userlist is empty, add the given user to thee current user's list
                 repoViewModel.addUserToList(userName)
         })
     }
 
+    /**
+     * Gets the repositories for a given user
+     * @param user GitUser whose repositories are being pulled
+     */
     private fun getRepos(user: GitUser) {
+        // Get the repositories from Firebase for the given user and observe it
         repoViewModel.getStoredReposForUser(user.login.toString(), tokenSaved)
             .observe(this, { gitrepos ->
+                // Initialize list of repos; this will be necessary as the observer iterates
                 val listToSet = mutableListOf<Repos>()
                 var index = 0
+                /**
+                 *  Check if the current data from the observable is not empty,
+                 *  and if the user has not already has been populated with data,
+                 *  and if the list of repositories belong to the given user.
+                 */
                 if(gitrepos.isNotEmpty() && !addedUsers.contains(user.login) && checkReposOwner(gitrepos,user)) {
+                    // Add the empty list to the list of repo lists;
+                    // there should be a list for every user in the userlist
                     allUserRepos.add(listToSet)
+                    // Temporarily store the index of the given user's list of repos
                     index = allUserRepos.indexOf(listToSet)
+                    // For every repository in the given user's repository list,
+                    // check if the user is the owner.
+                    // This is necessary to avoid repos where the given user is a collaborator.
                     for (repo in gitrepos) {
                         if (repo.owner?.login == user.login)
+                            // Add the repo to the list
                             allUserRepos[index].add(
                                 Repos(
                                     repo.name.toString(),
@@ -361,9 +386,15 @@ class MainActivity : AppCompatActivity() {
                                 )
                             )
                     }
+                    // Since the list has been populated, add the given user to the list of
+                    // users that have had their repos populated
                     addedUsers.add(user.login.toString())
                     DebugLogger("listToSet SIZE ______> : ${listToSet.size}")
+                    // Keep track of the userlist and its size by
+                    // check if the given user is already in the userlist being
+                    // sent to the fragment displaying it.
                     if (!checkUserListForDupes(usersToReturn, user))
+                        // Add the user to the list that will be returned
                         usersToReturn.add(
                             Users(
                                 user.avatar_url.toString(),
@@ -376,14 +407,23 @@ class MainActivity : AppCompatActivity() {
                                 )
                             )
                         )
-
                     repoViewModel.isMainLoaded.value = true
                 }
+                // Send list of users to the userAdapter
                 userAdapter.updateUsers(usersToReturn)
+                // Send list of users to mainFragmentAdapter
                 mainFragmentAdapter.addFragmentToList(usersToReturn)
             })
     }
 
+    /**
+     *  Keep track of the userlist and its size b
+     *  check if the given user is already in the userlist being
+     *  sent to the adapter displaying it.
+     *  @param list List being checked
+     *  @param user User to check if exists in the list
+     *  @return True if the user is in the lsit
+     */
     private fun checkUserListForDupes(list: MutableList<Users>, user: GitUser): Boolean {
         list.forEach {
             if (it.username == user.login)
@@ -391,6 +431,13 @@ class MainActivity : AppCompatActivity() {
         }
         return false
     }
+
+    /**
+     * Checks if the list of repositories belong to the given user
+     * @param list List of repositories to check
+     * @param user User to compare repo owners against
+     * @return True if given user is owner of any of the repos in the list
+     */
     private fun checkReposOwner(list: List<GitRepo.GitRepoItem>, user: GitUser): Boolean {
         list.forEach {
             if (it.owner?.login == user.login)
