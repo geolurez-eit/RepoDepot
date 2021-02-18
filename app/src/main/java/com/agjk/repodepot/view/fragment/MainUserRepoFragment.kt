@@ -6,12 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Repos
-import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.adapter.RepoAdapter
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
@@ -55,7 +53,7 @@ class MainUserRepoFragment(var repo: List<Repos>, val avatarUrl: String, val use
 
     private fun initalize(view: View) {
         view.apply {
-            profilePicture = findViewById(R.id.repo_user_profil)
+            profilePicture = findViewById(R.id.iv_user_image)
             rvUserRepo = findViewById(R.id.repo_recycler_view)
             tvUsername = findViewById(R.id.repo_user_userName)
             tvDetail = findViewById(R.id.repo_bio)
