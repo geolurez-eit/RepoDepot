@@ -415,7 +415,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     *  Keep track of the userlist and its size b
+     *  Keep track of the userlist and its size and
      *  check if the given user is already in the userlist being
      *  sent to the adapter displaying it.
      *  @param list List being checked
