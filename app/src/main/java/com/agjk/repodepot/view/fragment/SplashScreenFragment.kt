@@ -2,7 +2,6 @@ package com.agjk.repodepot.view.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +41,7 @@ class SplashScreenFragment : Fragment() {
     private lateinit var sloganTextView: TextView
     private lateinit var logoImageView: ImageView
     private lateinit var loadingBar: ProgressBar
-    private lateinit var loginbtn: MaterialButton
+    private lateinit var loginbutton: MaterialButton
     private lateinit var websiteText: TextView
 
     //    private lateinit var loginText: TextView
@@ -70,8 +69,8 @@ class SplashScreenFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         sloganTextView = view.findViewById(R.id.slogan)
-        logoImageView = view.findViewById(R.id.RepotDepotLogo)
-        loginbtn = view.findViewById(R.id.sign_in_Button_main)
+        logoImageView = view.findViewById(R.id.RepoDepotLogo)
+        loginbutton = view.findViewById(R.id.sign_in_Button_main)
 //        loginText = view.findViewById(R.id.login_text)
         progressBar = view.findViewById(R.id.progress_bar)
         websiteText = view.findViewById(R.id.website)
@@ -102,7 +101,7 @@ class SplashScreenFragment : Fragment() {
 
         // Request read access to a user's email addresses.
         // This must be preconfigured in the app's API permissions.
-        val scopes: List<String> = listOf("user", "repo:status")
+        val scopes: List<String> = listOf("user", "repo")
         provider.scopes = scopes
         ////
 
@@ -131,11 +130,11 @@ class SplashScreenFragment : Fragment() {
             closeSplashToMainActivity()
         } ?: {
             // Animation for the login button
-            loginbtn.visibility = View.VISIBLE
-            loginbtn.startAnimation(animFadeIn)
+            loginbutton.visibility = View.VISIBLE
+            loginbutton.startAnimation(animFadeIn)
 
             // OAUTH GO!
-            loginbtn.setOnClickListener {
+            loginbutton.setOnClickListener {
                 //Check if login is pending, sign in if not
                 checkPendingResult()
             }
@@ -146,8 +145,8 @@ class SplashScreenFragment : Fragment() {
         //(thisContext as MainActivity).saveUsername(username)
 
         val animFadeOut = AnimationUtils.loadAnimation(thisContext, R.anim.fast_fade_out)
-        loginbtn.visibility = View.INVISIBLE
-        loginbtn.startAnimation(animFadeOut)
+        loginbutton.visibility = View.INVISIBLE
+        loginbutton.startAnimation(animFadeOut)
 
 //        loginText.visibility = View.INVISIBLE
 //        loginText.startAnimation(animFadeOut)

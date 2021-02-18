@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -33,7 +31,7 @@
         android:fontFamily="@font/arvoboldttf"
 
         android:padding="8dp"
-        android:text="Name"
+        android:text="@string/name"
         android:textAlignment="center"
         android:textColor="@color/Gray50"
         app:layout_constraintEnd_toEndOf="parent"
@@ -61,7 +59,8 @@
         android:layout_marginTop="8dp"
         android:src="@drawable/location_icon"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_html_url" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_html_url"
+        android:contentDescription="@string/location" />
 
     <TextView
         android:id="@+id/tv_location"
@@ -69,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:fontFamily="@font/french_standard"
-        android:text="Atlanta, Georgia"
+        android:text="@string/LocationDummy"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.055"
@@ -86,7 +85,7 @@
         android:layout_marginBottom="8dp"
         android:fontFamily="@font/description_font"
         android:padding="4dp"
-        android:text="Bio"
+        android:text="@string/BioDummy"
         android:textColor="@color/Gray50"
         app:layout_constraintBottom_toTopOf="@+id/repo_text"
         app:layout_constraintEnd_toEndOf="parent"
@@ -102,7 +101,7 @@
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/french_standard"
         android:padding="8dp"
-        android:text="user name"
+        android:text="@string/username"
         android:textColor="@color/Gray50"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -119,7 +118,7 @@
         android:focusable="true"
         android:fontFamily="@font/french_standard"
         android:padding="8dp"
-        android:text="https://example.com/test"
+        android:text="@string/ProfileUrlDummy"
         android:textColor="#2196F3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -131,7 +130,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:padding="8dp"
-        android:text="12"
+        android:text="@string/FollowerCountDummy"
         android:textColor="@color/Gray50"
         app:layout_constraintBottom_toBottomOf="@+id/imageView4"
         app:layout_constraintStart_toEndOf="@+id/imageView4"
@@ -147,7 +146,8 @@
         android:src="@drawable/ic_baseline_person_outline_24"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/triangle_view" />
+        app:layout_constraintTop_toBottomOf="@+id/triangle_view"
+        android:contentDescription="@string/followers" />
 
     <TextView
         android:id="@+id/followers"
@@ -155,7 +155,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:padding="8dp"
-        android:text="followers"
+        android:text="@string/followers"
         android:textColor="@color/Gray50"
         app:layout_constraintBottom_toBottomOf="@+id/imageView4"
         app:layout_constraintStart_toEndOf="@+id/tv_followers"
@@ -168,7 +168,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:padding="8dp"
-        android:text="following"
+        android:text="@string/following"
         android:textColor="@color/Gray50"
         app:layout_constraintBottom_toBottomOf="@+id/tv_following"
         app:layout_constraintEnd_toStartOf="@+id/tv_following"
@@ -181,7 +181,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="8dp"
         android:padding="8dp"
-        android:text="24"
+        android:text="@string/FollowingCountDummy"
         android:textColor="@color/Gray50"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toStartOf="@+id/imageView5"
@@ -195,7 +195,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginBottom="8dp"
         android:padding="8dp"
-        android:text="Repositories"
+        android:text="@string/repositories"
         android:textColor="@color/Gray50"
         app:layout_constraintBottom_toTopOf="@+id/tv_followers"
         app:layout_constraintStart_toEndOf="@+id/imageView3" />
@@ -208,7 +208,8 @@
         android:layout_marginBottom="8dp"
         android:src="@drawable/repo_icon"
         app:layout_constraintBottom_toTopOf="@+id/imageView4"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="@string/repositories" />
 
     <TextView
         android:id="@+id/tv_num_repo"
@@ -216,7 +217,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:padding="8dp"
-        android:text="12"
+        android:text="@string/RepositoryCountDummy"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/repo_text"
         app:layout_constraintStart_toEndOf="@+id/repo_text" />
@@ -227,7 +228,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:text="Back"
+        android:text="@string/back"
         android:textColor="@color/Gray50"
         app:cornerRadius="12dp"
         app:icon="@drawable/ic_baseline_add_24"
@@ -245,7 +246,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
-        android:text="Add"
+        android:text="@string/add"
         android:textColor="@color/Gray50"
         app:cornerRadius="12dp"
         app:icon="@drawable/ic_baseline_add_24"
@@ -268,7 +269,8 @@
         android:src="@drawable/ic_baseline_person_outline_24"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.39" />
+        app:layout_constraintVertical_bias="0.39"
+        android:contentDescription="@string/following" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

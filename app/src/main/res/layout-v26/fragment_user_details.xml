@@ -70,6 +70,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_repoName_details"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:autoSizePresetSizes="@values/autosize_text_sizes"
         />
 
     <TextView

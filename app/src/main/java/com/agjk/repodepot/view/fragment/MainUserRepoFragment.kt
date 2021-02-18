@@ -37,7 +37,7 @@ class MainUserRepoFragment(var repo: List<Repos>, val avatarUrl: String, val use
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initalize(view)
+        initialize(view)
 
         Glide.with(thisContext)
             .load(avatarUrl)
@@ -51,7 +51,7 @@ class MainUserRepoFragment(var repo: List<Repos>, val avatarUrl: String, val use
         repoAdapter.updateRepo(repo)
     }
 
-    private fun initalize(view: View) {
+    private fun initialize(view: View) {
         view.apply {
             profilePicture = findViewById(R.id.iv_user_image)
             rvUserRepo = findViewById(R.id.repo_recycler_view)

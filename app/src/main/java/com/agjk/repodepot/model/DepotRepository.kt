@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 /**
  * DepotRepository implements the majority of the logic for handling calls
  * and the data from those calls to GitHub and Firebase. This singleton communicates primarily to
- * Firebase Database and Auth using the current instance and utilizes the Retrofit implmentation
+ * Firebase Database and Auth using the current instance and utilizes the Retrofit implementation
  * to get data fom GitHub.
  */
 object DepotRepository {
@@ -107,7 +107,7 @@ object DepotRepository {
         username: String,
         token: String
     ): LiveData<List<GitRepo.GitRepoItem>> {
-        DebugLogger("DepotRepository.getReposForUser")
+        DebugLogger("DepotRepository.getReposForUserPrivate")
         // Check if it has been 24 hours
         firebaseDatabase.reference.child("REPOSITORIES").child(username + "_private")
             .child("lastUpdated")

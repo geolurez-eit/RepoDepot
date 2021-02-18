@@ -24,4 +24,19 @@
     <string name="repository_name">Repository name</string>
     <string name="commits">COMMITS</string>
     <string name="www_repothedepot_com">www.RepoTheDepot.com</string>
+    <string name="name">Name</string>
+    <string name="userlist_menu">Userlist Menu</string>
+    <string name="location">Location</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="FollowingCountDummy">24</string>
+    <string name="repositories">Repositories</string>
+    <string name="add">Add</string>
+    <string name="back">Back</string>
+    <string name="RepositoryCountDummy">12</string>
+    <string name="FollowerCountDummy">12</string>
+    <string name="ProfileUrlDummy">https://example.com/test</string>
+    <string name="BioDummy">Bio</string>
+    <string name="LocationDummy">Atlanta, Georgia</string>
+    <string name="background">Background</string>
 </resources>

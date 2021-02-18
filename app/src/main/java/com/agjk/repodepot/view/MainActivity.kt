@@ -130,12 +130,6 @@ class MainActivity : AppCompatActivity() {
             isFreshLaunch = false
         }
 
-
-        // List of dummy vars to be passed to details fragment
-
-        //commit.add(Commits("", "kamel khbr",  "testing the commit fragment","49495"))
-
-
     }
 
     private fun performUserSearch(stringSearch: String) {
@@ -420,7 +414,7 @@ class MainActivity : AppCompatActivity() {
      *  sent to the adapter displaying it.
      *  @param list List being checked
      *  @param user User to check if exists in the list
-     *  @return True if the user is in the lsit
+     *  @return True if the user is in the list
      */
     private fun checkUserListForDupes(list: MutableList<Users>, user: GitUser): Boolean {
         list.forEach {

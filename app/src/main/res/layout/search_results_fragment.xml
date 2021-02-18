@@ -33,7 +33,7 @@
         android:indeterminate="true"
         app:indicatorSize="112dp"
         android:elevation="2dp"
-        app:indicatorColor="@color/MeduimGray50"
+        app:indicatorColor="@color/MediumGray50"
         app:trackCornerRadius="4dp"
         app:showAnimationBehavior="outward"
         app:hideAnimationBehavior="inward"

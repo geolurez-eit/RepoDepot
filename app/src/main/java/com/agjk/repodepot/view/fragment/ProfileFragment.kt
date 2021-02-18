@@ -81,8 +81,6 @@ class ProfileFragment(val username: String) : Fragment(){
             btnAdd = findViewById(R.id.btn_add_profile)
             btnExit = findViewById(R.id.btn_back)
         }
-
-        DebugLogger("HERHEHREHREHEHEHREHR")
     }
 
     private fun getProfileData() {

@@ -9,7 +9,7 @@
     <color name = "white">#FFFFFFFF</color>
 
     <color name="Gray50">#FAFAFA</color>
-    <color name="MeduimGray50">#9E9E9E</color>
+    <color name="MediumGray50">#9E9E9E</color>
     <color name="DarkGray50">#212121</color>
     <color name="fui_bgGitHub">#24292E</color>
 </resources>

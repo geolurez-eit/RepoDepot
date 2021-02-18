@@ -35,7 +35,7 @@
 
 
     <ImageView
-        android:id="@+id/RepotDepotLogo"
+        android:id="@+id/RepoDepotLogo"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_centerHorizontal="true"
@@ -50,7 +50,7 @@
         android:id="@+id/slogan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/RepotDepotLogo"
+        android:layout_below="@id/RepoDepotLogo"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/app_name_font"
         android:text="@string/app_name"

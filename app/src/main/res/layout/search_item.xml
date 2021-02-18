@@ -40,7 +40,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/iv_search_image"
             app:layout_constraintStart_toEndOf="@+id/iv_search_image"
             app:layout_constraintTop_toTopOf="@+id/iv_search_image"
-            tools:text="Dalo_chikwanga" />
+            tools:text="@string/username" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
