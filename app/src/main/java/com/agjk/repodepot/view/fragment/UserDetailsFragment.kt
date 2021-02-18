@@ -4,11 +4,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
@@ -17,7 +18,6 @@ import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.view.MainActivity
 import com.agjk.repodepot.view.adapter.CommitAdapter
 import com.agjk.repodepot.viewmodel.RepoViewModel
-import com.agjk.repodepot.viewmodel.RepoViewModelFactory
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -41,9 +41,7 @@ class UserDetailsFragment(val owner: String,
 
     private val commitAdapter = CommitAdapter(mutableListOf())
 
-    private val repoViewModel: RepoViewModel by viewModels(
-        factoryProducer = { RepoViewModelFactory }
-    )
+    private val repoViewModel: RepoViewModel by activityViewModels()
 
     private val stringSize = 60
 
