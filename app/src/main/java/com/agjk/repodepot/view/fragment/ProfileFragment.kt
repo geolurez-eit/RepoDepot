@@ -63,7 +63,7 @@ class ProfileFragment(val username: String) : Fragment(){
             tvFollowing = findViewById(R.id.tv_followers)
             tvHtmlUrl = findViewById(R.id.tv_html_url)
             tvNumRepo = findViewById(R.id.tv_num_repo)
-            btnAdd = findViewById(R.id.btn_add_profil)
+            btnAdd = findViewById(R.id.btn_add_profile)
             btnExit = findViewById(R.id.btn_back)
         }
 

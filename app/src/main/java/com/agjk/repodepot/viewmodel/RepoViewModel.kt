@@ -40,6 +40,9 @@ class RepoViewModel : ViewModel() {
     fun addUserToList(userName: String) {
         DepotRepository.addUserToList(userName)
     }
+    fun removeUserFromList(userName: String){
+        DepotRepository.removeUserFromList(userName)
+    }
 
     fun getProfile(userName: String): LiveData<GitUser> = DepotRepository.getUserProfile(userName)
 
