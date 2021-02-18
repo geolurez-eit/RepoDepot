@@ -1,6 +1,8 @@
 package com.agjk.repodepot.view.fragment
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -51,7 +53,15 @@ class ProfileFragment(val username: String) : Fragment(){
         btnExit.setOnClickListener{
             parentFragmentManager.popBackStack()
         }
+        tvHtmlUrl.setOnClickListener {
+            gotoUrl(tvHtmlUrl.text.toString())
+        }
 
+    }
+
+    private fun gotoUrl(s: String) {
+        val uri: Uri = Uri.parse(s)
+        startActivity(Intent(Intent.ACTION_VIEW, uri))
     }
 
     private fun firstInit(view: View) {
@@ -60,7 +70,7 @@ class ProfileFragment(val username: String) : Fragment(){
             tvUserName = findViewById(R.id.tv_user_name)
             ivUserImage = findViewById(R.id.iv_user_image)
             tvFollowers = findViewById(R.id.tv_followers)
-            tvFollowing = findViewById(R.id.tv_followers)
+            tvFollowing = findViewById(R.id.tv_following)
             tvHtmlUrl = findViewById(R.id.tv_html_url)
             tvNumRepo = findViewById(R.id.tv_num_repo)
             btnAdd = findViewById(R.id.btn_add_profil)
