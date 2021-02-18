@@ -27,12 +27,12 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:cropToPadding="true"
-            android:src="@drawable/portrait"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_logo_dark_cat"
             app:civ_border_color="@color/DarkGray50"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_repo_details"
-            app:layout_constraintVertical_bias="0.4" />
+            app:layout_constraintTop_toBottomOf="@+id/tv_repo_details" />
 
         <TextView
             android:id="@+id/tv_author_details"

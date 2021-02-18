@@ -130,8 +130,8 @@ class MainActivity : AppCompatActivity() {
     fun loadMainInBackground() {
         runOnUiThread {
             initFirebase()
-            initMainActivity()
             getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
+            initMainActivity()
         }
     }
 
@@ -142,6 +142,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initMainActivity() {
+        Log.d("TAG_D", "init main activity")
+
         searchViewSetup()
         viewPagerSetup()
 
@@ -388,4 +390,8 @@ class MainActivity : AppCompatActivity() {
           transaction.commit()
 
       }*/
+
+    fun popDetails() {
+        supportFragmentManager.popBackStack()
+    }
 }
