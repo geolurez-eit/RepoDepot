@@ -169,8 +169,8 @@ class MainActivity : AppCompatActivity() {
 
         viewPager.adapter = mainFragmentAdapter
 
-        val animFadeIn = AnimationUtils.loadAnimation(this, R.anim.text_fade_in)
-        viewPager.startAnimation(animFadeIn)
+//        val animFadeIn = AnimationUtils.loadAnimation(this, R.anim.fast_fade_in)
+//        viewPager.startAnimation(animFadeIn)
         viewPager.visibility = View.VISIBLE
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
