@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.DepotRepository
 import com.agjk.repodepot.model.data.UserSearch
+import com.bumptech.glide.Glide
+import de.hdodenhof.circleimageview.CircleImageView
 
 class SearchAdapter(var suggestionList: List<UserSearch.Item>, val delegate: resultClickDelegate)
     : RecyclerView.Adapter<SearchAdapter.SuggestionViewHolder>() {
@@ -30,8 +32,15 @@ class SearchAdapter(var suggestionList: List<UserSearch.Item>, val delegate: res
 
     override fun onBindViewHolder(holder: SuggestionViewHolder, position: Int) {
         val user = suggestionList[position].login ?: ""
+        val userImage = suggestionList[position].avatar_url
+
 
         holder.apply {
+            Glide.with(itemView.context)
+                .load(userImage)
+                .placeholder(R.drawable.ic_brand_curious_cat_icon_158943)
+                .into(profileUrl)
+
             result.text = user
             itemView.setOnClickListener{
                 delegate.displayUserResult(user)
@@ -43,5 +52,6 @@ class SearchAdapter(var suggestionList: List<UserSearch.Item>, val delegate: res
 
     inner class SuggestionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val result: TextView = itemView.findViewById(R.id.search_suggestion)
+        val profileUrl: CircleImageView = itemView.findViewById(R.id.iv_search_image)
     }
 }
