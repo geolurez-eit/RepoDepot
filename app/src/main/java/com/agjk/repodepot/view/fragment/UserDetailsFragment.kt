@@ -7,6 +7,7 @@ import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -23,13 +24,15 @@ import de.hdodenhof.circleimageview.CircleImageView
 
 
 // This fragment will show  details about repos
-class UserDetailsFragment(val owner: String,
-                          val avatarUrl: String,
-                          val repoName: String,
-                          val repoUrl: String,
-                          val repoStartCount: String,
-                          val repoDescription: String,
-                          val repoForkCount: String) : Fragment() {
+class UserDetailsFragment(
+    val owner: String,
+    val avatarUrl: String,
+    val repoName: String,
+    val repoUrl: String,
+    val repoStartCount: String,
+    val repoDescription: String,
+    val repoForkCount: String
+) : Fragment() {
 
     private lateinit var ivAvatarUrl: CircleImageView
     private lateinit var tvRepoName: TextView
@@ -38,6 +41,7 @@ class UserDetailsFragment(val owner: String,
     private lateinit var tvStarCount: TextView
     private lateinit var tvForkCount: TextView
     private lateinit var commitRV: RecyclerView
+    private lateinit var arrowButton: ImageButton
 
     private val commitAdapter = CommitAdapter(mutableListOf())
 
@@ -68,11 +72,16 @@ class UserDetailsFragment(val owner: String,
             tvStarCount = findViewById(R.id.tv_rating_count)
             tvForkCount = findViewById(R.id.tv_forks_count)
             commitRV = findViewById(R.id.rv_user_details)
+            arrowButton = findViewById(R.id.arrow)
 
             commitRV.adapter = commitAdapter
 
             initCommitData()
             initRepoDetails(view)
+        }
+
+        arrowButton.setOnClickListener {
+            activity?.let { (it as MainActivity).popDetails() }
         }
 
         //val italicSpan= UnderlineSpan()
@@ -110,16 +119,27 @@ class UserDetailsFragment(val owner: String,
 
     private fun initCommitData() {
 
-        DebugLogger("UserDetailsFragment.initCommitData tokenSave: "+(activity as (MainActivity)).tokenSaved)
+        DebugLogger("UserDetailsFragment.initCommitData tokenSave: " + (activity as (MainActivity)).tokenSaved)
         //DebugLogger("CHECKING USERNAME _____>   ${owner}")
-        repoViewModel.getStoredCommitsForUser((activity as (MainActivity)).tokenSaved,owner, repoName).observe(viewLifecycleOwner, {
+        repoViewModel.getStoredCommitsForUser(
+            (activity as (MainActivity)).tokenSaved,
+            owner,
+            repoName
+        ).observe(viewLifecycleOwner, {
             val commitList: MutableList<Commits> = mutableListOf()
             it.forEach { commit ->
                 val authorImageUrl = commit.author?.avatar_url
                 val authorName = commit.author?.login
                 val commitMessage = commit.commit?.message
                 val commitHashCode = commit.hashCode()
-                commitList.add(Commits(authorImageUrl, authorName, commitMessage, commitHashCode.toString()))
+                commitList.add(
+                    Commits(
+                        authorImageUrl,
+                        authorName,
+                        commitMessage,
+                        commitHashCode.toString()
+                    )
+                )
             }
 
             commitAdapter.updateDetails(commitList)

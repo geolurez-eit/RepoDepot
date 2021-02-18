@@ -130,8 +130,8 @@ class MainActivity : AppCompatActivity() {
     fun loadMainInBackground() {
         runOnUiThread {
             initFirebase()
-            initMainActivity()
             getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
+            initMainActivity()
         }
     }
 
@@ -142,6 +142,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initMainActivity() {
+        Log.d("TAG_D", "init main activity")
+
         searchViewSetup()
         viewPagerSetup()
 
@@ -169,8 +171,8 @@ class MainActivity : AppCompatActivity() {
 
         viewPager.adapter = mainFragmentAdapter
 
-        val animFadeIn = AnimationUtils.loadAnimation(this, R.anim.text_fade_in)
-        viewPager.startAnimation(animFadeIn)
+//        val animFadeIn = AnimationUtils.loadAnimation(this, R.anim.text_fade_in)
+//        viewPager.startAnimation(animFadeIn)
         viewPager.visibility = View.VISIBLE
 
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -388,4 +390,8 @@ class MainActivity : AppCompatActivity() {
           transaction.commit()
 
       }*/
+
+    fun popDetails() {
+        supportFragmentManager.popBackStack()
+    }
 }

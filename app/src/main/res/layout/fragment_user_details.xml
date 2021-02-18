@@ -115,7 +115,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        android:background="@color/Gray50"
+        android:background="@null"
         android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_repo_link"
@@ -135,12 +135,13 @@
         app:layout_constraintTop_toBottomOf="@id/tv_repo_link" />
 
 
-    <ImageView
+    <ImageButton
         android:id="@+id/arrow"
-        android:layout_width="46dp"
-        android:layout_height="29dp"
+        android:layout_width="48dp"
+        android:layout_height="32dp"
         android:layout_marginTop="8dp"
-        android:background="@color/white"
+        android:scaleType="fitCenter"
+        android:background="@null"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_commits"
