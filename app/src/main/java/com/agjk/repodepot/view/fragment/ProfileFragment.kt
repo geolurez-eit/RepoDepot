@@ -51,6 +51,8 @@ class ProfileFragment(val username: String) : Fragment(){
 
         btnAdd.setOnClickListener {
             repoViewModel.addUserToList(username)
+            parentFragmentManager.popBackStack()
+
         }
         btnExit.setOnClickListener{
             parentFragmentManager.popBackStack()

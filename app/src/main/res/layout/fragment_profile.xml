@@ -22,86 +22,86 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/triangle_view"
-        android:layout_width="0dp"
-        android:layout_height="375dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/trianglewhite"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_user_image" />
-
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="32dp"
         android:fontFamily="@font/arvoboldttf"
+
         android:padding="8dp"
         android:text="Name"
         android:textAlignment="center"
-        app:layout_constraintTop_toTopOf="@id/triangle_view"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:textColor="@color/Gray50"
-       />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_user_image" />
 
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="10dp"
+        android:layout_marginBottom="90dp"
         android:background="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/triangle_view" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 
     <ImageView
         android:id="@+id/location_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:src="@drawable/location_icon"
-        android:layout_marginStart="12dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_html_url"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/tv_html_url" />
 
     <TextView
         android:id="@+id/tv_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
         android:fontFamily="@font/french_standard"
+        android:text="Atlanta, Georgia"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@+id/location_icon"
-        app:layout_constraintStart_toEndOf="@id/location_icon"
-        app:layout_constraintTop_toTopOf="@+id/location_icon"
-        android:text="Atlanta, Georgia" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.055"
+        app:layout_constraintStart_toEndOf="@+id/location_icon"
+        app:layout_constraintTop_toBottomOf="@+id/tv_html_url" />
 
     <TextView
         android:id="@+id/tv_bio"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="16dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:fontFamily="@font/description_font"
-        android:padding="8dp"
+        android:padding="4dp"
         android:text="Bio"
-        android:textColor="@color/MeduimGray50"
+        android:textColor="@color/Gray50"
+        app:layout_constraintBottom_toTopOf="@+id/repo_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/location_icon" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_location" />
+
     <TextView
         android:id="@+id/tv_user_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="8dp"
         android:fontFamily="@font/french_standard"
         android:padding="8dp"
-        android:layout_marginStart="12dp"
         android:text="user name"
         android:textColor="@color/Gray50"
         app:layout_constraintEnd_toEndOf="parent"
@@ -111,14 +111,16 @@
     <TextView
         android:id="@+id/tv_html_url"
         android:layout_width="0dp"
-        android:layout_height="33dp"
-        android:fontFamily="@font/french_standard"
-        android:padding="8dp"
-        android:layout_marginStart="12dp"
-        android:text="https://example.com/test"
-        android:textColor="#2196F3"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:clickable="true"
         android:focusable="true"
+        android:fontFamily="@font/french_standard"
+        android:padding="8dp"
+        android:text="https://example.com/test"
+        android:textColor="#2196F3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_user_name" />
@@ -139,6 +141,8 @@
         android:id="@+id/imageView4"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
         android:padding="8dp"
         android:src="@drawable/ic_baseline_person_outline_24"
         app:layout_constraintBottom_toTopOf="@+id/view"
@@ -175,6 +179,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
         android:padding="8dp"
         android:text="24"
         android:textColor="@color/Gray50"
@@ -185,45 +190,39 @@
 
     <TextView
         android:id="@+id/repo_text"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="8dp"
         android:padding="8dp"
         android:text="Repositories"
         android:textColor="@color/Gray50"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.126"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imageView3"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintBottom_toTopOf="@+id/tv_followers"
+        app:layout_constraintStart_toEndOf="@+id/imageView3" />
 
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
         android:src="@drawable/repo_icon"
-        app:layout_constraintBottom_toBottomOf="@id/triangle_view"
+        app:layout_constraintBottom_toTopOf="@+id/imageView4"
         app:layout_constraintStart_toStartOf="parent" />
-
 
     <TextView
         android:id="@+id/tv_num_repo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginStart="4dp"
         android:padding="8dp"
         android:text="12"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@+id/repo_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@id/repo_text"
-        app:layout_constraintTop_toTopOf="@+id/repo_text"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintStart_toEndOf="@+id/repo_text" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_add_profile"
+        android:id="@+id/btn_back"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -232,16 +231,16 @@
         android:textColor="@color/Gray50"
         app:cornerRadius="12dp"
         app:icon="@drawable/ic_baseline_add_24"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_back"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_add_profile"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btn_back"
+        app:layout_constraintTop_toTopOf="@+id/btn_add_profile"
         app:layout_constraintVertical_bias="0.0"
         app:rippleColor="@color/Gray50"
         app:strokeColor="@color/Gray50"
         app:strokeWidth="1dp" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_back"
+        android:id="@+id/btn_add_profile"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -253,7 +252,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.833"
-        app:layout_constraintStart_toEndOf="@+id/btn_add_profile"
+        app:layout_constraintStart_toEndOf="@+id/btn_back"
+        app:layout_constraintTop_toBottomOf="@+id/view"
         app:rippleColor="@color/Gray50"
         app:strokeColor="@color/Gray50"
         app:strokeWidth="1dp" />
@@ -262,11 +262,13 @@
         android:id="@+id/imageView5"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:padding="8dp"
         android:src="@drawable/ic_baseline_person_outline_24"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/triangle_view" />
+        app:layout_constraintVertical_bias="0.39" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
