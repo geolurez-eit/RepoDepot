@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity() {
 //        Log.d("TAG_Q", "load in main background")
         runOnUiThread {
             initFirebase()
-            initMainActivity()
+            initMainActivity()      // correct order, do not change
             getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
         }
     }
