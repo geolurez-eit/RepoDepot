@@ -1,4 +1,3 @@
-/*
 package com.agjk.repodepot.view.fragment
 
 import android.content.Context
@@ -12,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.agjk.repodepot.R
+import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.bumptech.glide.Glide
 
@@ -24,7 +24,6 @@ class ProfileFragment(val username: String) : Fragment(){
     private lateinit var tvFollowing: TextView
     private lateinit var tvHtmlUrl: TextView
     private lateinit var tvNumRepo: TextView
-    private lateinit var tvEmail: TextView
     private lateinit var btnAdd: Button
     private lateinit var btnExit: Button
 
@@ -46,24 +45,33 @@ class ProfileFragment(val username: String) : Fragment(){
         firstInit(view)
         getProfileData()
 
+        btnAdd.setOnClickListener {
+            repoViewModel.addUserToList(username)
+        }
+        btnExit.setOnClickListener{
+            parentFragmentManager.popBackStack()
+        }
+
     }
 
     private fun firstInit(view: View) {
         view.apply {
             tvName = findViewById(R.id.tv_name)
-            tvUserName = findViewById(R.id.tv_username)
+            tvUserName = findViewById(R.id.tv_user_name)
             ivUserImage = findViewById(R.id.iv_user_image)
             tvFollowers = findViewById(R.id.tv_followers)
-            tvFollowing = findViewById(R.id.tv_following)
+            tvFollowing = findViewById(R.id.tv_followers)
             tvHtmlUrl = findViewById(R.id.tv_html_url)
             tvNumRepo = findViewById(R.id.tv_num_repo)
-            btnAdd = findViewById(R.id.btn_add)
-            btnExit = findViewById(R.id.btn_exit)
+            btnAdd = findViewById(R.id.btn_add_profil)
+            btnExit = findViewById(R.id.btn_back)
         }
+
+        DebugLogger("HERHEHREHREHEHEHREHR")
     }
 
     private fun getProfileData() {
-        repoViewModel.getProfile(username).let {
+        repoViewModel.getProfile(username).observe(viewLifecycleOwner, {
             Glide.with(thisContext)
                 .load(it.avatar_url)
                 .placeholder(R.drawable.portrait)
@@ -74,7 +82,9 @@ class ProfileFragment(val username: String) : Fragment(){
             tvFollowing.text = (it.following?: 0).toString()
             tvHtmlUrl.text = it.html_url ?: "No HTML"
             tvNumRepo.text = (it.public_repos?: 0).toString()
-        }
+
+            DebugLogger("Result -------------------------------> $it")
+        })
     }
 
     override fun onAttach(context: Context) {
@@ -82,4 +92,3 @@ class ProfileFragment(val username: String) : Fragment(){
         thisContext = context
     }
 }
-*/

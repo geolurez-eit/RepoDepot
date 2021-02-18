@@ -70,7 +70,7 @@ class MainUserRepoFragment(var repo: List<Repos>, val avatarUrl: String, val use
         parentFragmentManager.beginTransaction()
             .setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_in_bottom,
             R.anim.slide_out_bottom, R.anim.slide_out_bottom)
-            .add(R.id.detail_fragment_container, userDetailFragment)
+            .add(R.id.fragment_container, userDetailFragment)
             .addToBackStack(userDetailFragment.tag)
             .commit()
     }

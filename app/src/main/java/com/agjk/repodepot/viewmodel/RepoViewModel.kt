@@ -41,7 +41,7 @@ class RepoViewModel : ViewModel() {
         DepotRepository.addUserToList(userName)
     }
 
-    fun getProfile(userName: String): GitUser = DepotRepository.getUserProfile(userName)
+    fun getProfile(userName: String): LiveData<GitUser> = DepotRepository.getUserProfile(userName)
 
     fun searchUsers(stringSearch: String) = DepotRepository.searchForUsers(stringSearch)
 

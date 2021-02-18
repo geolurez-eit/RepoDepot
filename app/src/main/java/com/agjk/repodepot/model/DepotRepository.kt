@@ -2,6 +2,7 @@
 
 package com.agjk.repodepot.model
 
+import android.database.Observable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.agjk.repodepot.model.data.*
@@ -41,7 +42,7 @@ object DepotRepository {
     private val commitLiveData: MutableLiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
         MutableLiveData()
     var prefLiveData: MutableLiveData<Preferences> = MutableLiveData()
-    private var userProfile: GitUser = GitUser()
+    private var userProfile: MutableLiveData<GitUser> = MutableLiveData()
     val userSearchLiveData: MutableLiveData<List<UserSearch.Item>> = MutableLiveData()
 
     //////////////////////
@@ -474,14 +475,14 @@ object DepotRepository {
      * @param userName GitHub username
      * @return GitUser data
      */
-    fun getUserProfile(userName: String): GitUser {
+    fun getUserProfile(userName: String): LiveData<GitUser> {
         val userDisposable = CompositeDisposable()
         userDisposable.add(
             gitRetrofit.getUserProfile(userName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    userProfile = it
+                    userProfile.value = it
                 }, {
                     DebugLogger("Error " + it.message)
                 })
