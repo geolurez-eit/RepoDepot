@@ -10,7 +10,7 @@ class MainFragmentAdapter (var userList : List<Users>, mainActivity: MainActivit
 
 
     override fun getItemCount():Int {
-        DebugLogger("USERLIST SIZE ---> ${userList.size}")
+        //DebugLogger("USERLIST SIZE ---> ${userList.size}")
         return userList.size
     }
 
@@ -24,7 +24,7 @@ class MainFragmentAdapter (var userList : List<Users>, mainActivity: MainActivit
     //}
 
     fun addFragmentToList(newUserList: List<Users>) {
-        DebugLogger("MainFragmentAdapter.addFragmentToList: "+newUserList.size.toString())
+        //DebugLogger("MainFragmentAdapter.addFragmentToList: "+newUserList.size.toString())
         userList = newUserList
         notifyDataSetChanged()
         // update nav drawer with new item?

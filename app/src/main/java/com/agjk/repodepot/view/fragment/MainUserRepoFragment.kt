@@ -68,7 +68,7 @@ class MainUserRepoFragment(var repo: List<Repos>, val avatarUrl: String, val use
     }
 
     override fun openDetailFragment(repoName: String, repoUrl: String, repoStartCount: String, repoDescription: String, repoForkCount: String) {
-        val  userDetailFragment = UserDetailsFragment(avatarUrl, repoName, repoUrl, repoStartCount, repoDescription, repoForkCount)
+        val  userDetailFragment = UserDetailsFragment(userName, avatarUrl, repoName, repoUrl, repoStartCount, repoDescription, repoForkCount)
         parentFragmentManager.beginTransaction()
             .setCustomAnimations(R.anim.slide_in_bottom, R.anim.slide_in_bottom,
             R.anim.slide_out_bottom, R.anim.slide_out_bottom)

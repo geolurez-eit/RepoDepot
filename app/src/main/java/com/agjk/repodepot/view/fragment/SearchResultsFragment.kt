@@ -40,8 +40,11 @@ class SearchResultsFragment : Fragment(), SearchAdapter.resultClickDelegate {
         })
     }
 
-    override fun displayUserResult() {
+    override fun displayUserResult(userToAdd: String) {
         (activity as MainActivity).closeSearch()
+
+        repoViewModel.addUserToList(userToAdd)
+
 
         // TODO: Step 1 - add user to 'following' list, no display, just prove it out
         // TODO: Step 2 - display user, allow add... whatever you want, just make Step 1 work *first*

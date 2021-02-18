@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
 
-    private var tokenSaved = ""
+    var tokenSaved = ""
     private var usersToReturn = mutableListOf<Users>()
     private var allUserRepos = mutableListOf<MutableList<Repos>>()
     private var addedUsers = mutableListOf<String>()
@@ -130,17 +130,14 @@ class MainActivity : AppCompatActivity() {
     fun loadMainInBackground() {
         runOnUiThread {
             initFirebase()
-            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
             initMainActivity()
+            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
         }
     }
 
     fun closeSplash() {
         runOnUiThread {
             supportFragmentManager.popBackStack()
-//            initFirebase()
-//            getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
-//            initMainActivity()
         }
     }
 
@@ -337,7 +334,7 @@ class MainActivity : AppCompatActivity() {
                                     repo.name.toString(),
                                     repo.language.toString(),
                                     repo.stargazers_count.toString(),
-                                    repo.url.toString(),
+                                    repo.html_url.toString(),
                                     repo.description.toString(),
                                     repo.forks_count.toString()
                                 )
@@ -361,9 +358,6 @@ class MainActivity : AppCompatActivity() {
 
                     repoViewModel.isMainLoaded.value = true
                 }
-
-                //DebugLogger("usersToReturn: ------> $usersToReturn")
-                //DebugLogger("listToSet: ------> $listToSet")
                 userAdapter.updateUsers(usersToReturn)
                 mainFragmentAdapter.addFragmentToList(usersToReturn)
             })

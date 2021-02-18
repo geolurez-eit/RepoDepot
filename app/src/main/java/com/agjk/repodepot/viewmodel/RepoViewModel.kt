@@ -28,10 +28,11 @@ class RepoViewModel : ViewModel() {
     }
 
     fun getStoredCommitsForUser(
+        token:String,
         username: String,
         repoName: String
     ): LiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
-        DepotRepository.getCommitsForUser(username, repoName)
+        DepotRepository.getCommitsForUser(token,username, repoName)
 
     fun getUserList(userName: String): LiveData<List<GitUser>> =
         DepotRepository.getUserList(userName)

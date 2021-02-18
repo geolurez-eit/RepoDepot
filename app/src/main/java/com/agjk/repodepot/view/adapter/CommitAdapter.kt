@@ -11,14 +11,11 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
 import com.agjk.repodepot.model.data.Commits
-import com.agjk.repodepot.model.data.Repos
-import com.agjk.repodepot.model.data.Users
 import com.agjk.repodepot.util.DebugLogger
-import com.agjk.repodepot.view.MainActivity
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 
-class DetailsAdapter(var commitList: List<Commits>) : RecyclerView.Adapter<DetailsAdapter.UserDetailsViewHolder>() {
+class CommitAdapter(var commitList: List<Commits>) : RecyclerView.Adapter<CommitAdapter.UserDetailsViewHolder>() {
 
 
     inner class UserDetailsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
@@ -59,7 +56,7 @@ class DetailsAdapter(var commitList: List<Commits>) : RecyclerView.Adapter<Detai
                 .into(userImage)
             authorName.text = commit.authorName
             commitMessage.text = commit.commitMessage
-            commitCode.text = commit.commitCode
+            commitCode.text = commit.commitHashCode
         }
 
 

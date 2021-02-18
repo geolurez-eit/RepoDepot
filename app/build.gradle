@@ -45,6 +45,9 @@ android {
         }
     }
     compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -114,6 +117,9 @@ dependencies {
 
     // Expandable textview library
     implementation 'com.ms-square:expandableTextView:0.1.4'
+
+    //Java 8+ API desugaring support
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.1'
 
 
 

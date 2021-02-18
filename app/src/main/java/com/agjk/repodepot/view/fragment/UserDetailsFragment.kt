@@ -1,25 +1,30 @@
 package com.agjk.repodepot.view.fragment
 
 import android.content.Intent
-import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
-import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.RecyclerView
 import com.agjk.repodepot.R
+import com.agjk.repodepot.model.data.Commits
+import com.agjk.repodepot.util.DebugLogger
+import com.agjk.repodepot.view.MainActivity
+import com.agjk.repodepot.view.adapter.CommitAdapter
+import com.agjk.repodepot.viewmodel.RepoViewModel
+import com.agjk.repodepot.viewmodel.RepoViewModelFactory
 import com.bumptech.glide.Glide
 import de.hdodenhof.circleimageview.CircleImageView
 
 
 // This fragment will show  details about repos
-class UserDetailsFragment(val avatarUrl: String,
+class UserDetailsFragment(val owner: String,
+                          val avatarUrl: String,
                           val repoName: String,
                           val repoUrl: String,
                           val repoStartCount: String,
@@ -32,6 +37,13 @@ class UserDetailsFragment(val avatarUrl: String,
     private lateinit var tvRepoLink: TextView
     private lateinit var tvStarCount: TextView
     private lateinit var tvForkCount: TextView
+    private lateinit var commitRV: RecyclerView
+
+    private val commitAdapter = CommitAdapter(mutableListOf())
+
+    private val repoViewModel: RepoViewModel by viewModels(
+        factoryProducer = { RepoViewModelFactory }
+    )
 
     private val stringSize = 60
 
@@ -57,40 +69,64 @@ class UserDetailsFragment(val avatarUrl: String,
             tvRepoLink = findViewById(R.id.tv_repo_link)
             tvStarCount = findViewById(R.id.tv_rating_count)
             tvForkCount = findViewById(R.id.tv_forks_count)
+            commitRV = findViewById(R.id.rv_user_details)
 
+            commitRV.adapter = commitAdapter
 
-
-            Glide.with(view.context)
-                .load(avatarUrl)
-                .placeholder(R.drawable.portrait)
-                .into(ivAvatarUrl)
-
-            tvRepoName.text = repoName
-            if(repoDescription.length == 0){
-                tvRepoBio.text = "No Description"
-            } else {
-                tvRepoBio.text = repoDescription
-            }
-
-            if(repoUrl.length > stringSize) {
-                val s = "${repoUrl.substring(0, stringSize)}\n${repoUrl.substring(stringSize)}"
-                tvRepoLink.text = s
-            }else{
-                tvRepoLink.text = repoUrl
-            }
-
-            tvStarCount.text = repoStartCount
-            tvForkCount.text = repoForkCount
+            initCommitData()
+            initRepoDetails(view)
         }
 
         //val italicSpan= UnderlineSpan()
-
 
         tvRepoLink.setOnClickListener {
             gotoUrl(repoUrl)
         }
 
         tvRepoBio.movementMethod = ScrollingMovementMethod()
+    }
+
+    private fun initRepoDetails(view: View) {
+        Glide.with(view.context)
+            .load(avatarUrl)
+            .placeholder(R.drawable.portrait)
+            .into(ivAvatarUrl)
+
+        tvRepoName.text = repoName
+        if (repoDescription.length == 0) {
+            tvRepoBio.text = "No Description"
+        } else {
+            tvRepoBio.text = repoDescription
+        }
+
+        if (repoUrl.length > stringSize) {
+            val s = "${repoUrl.substring(0, stringSize)}\n${repoUrl.substring(stringSize)}"
+            tvRepoLink.text = s
+        } else {
+            tvRepoLink.text = repoUrl
+        }
+
+        tvStarCount.text = repoStartCount
+        tvForkCount.text = repoForkCount
+    }
+
+    private fun initCommitData() {
+
+        DebugLogger("UserDetailsFragment.initCommitData tokenSave: "+(activity as (MainActivity)).tokenSaved)
+        //DebugLogger("CHECKING USERNAME _____>   ${owner}")
+        repoViewModel.getStoredCommitsForUser((activity as (MainActivity)).tokenSaved,owner, repoName).observe(viewLifecycleOwner, {
+            val commitList: MutableList<Commits> = mutableListOf()
+            it.forEach { commit ->
+                val authorImageUrl = commit.author?.avatar_url
+                val authorName = commit.author?.login
+                val commitMessage = commit.commit?.message
+                val commitHashCode = commit.hashCode()
+                commitList.add(Commits(authorImageUrl, authorName, commitMessage, commitHashCode.toString()))
+            }
+
+            commitAdapter.updateDetails(commitList)
+        })
+
 
     }
 
