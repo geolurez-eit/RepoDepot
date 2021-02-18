@@ -189,7 +189,7 @@ object DepotRepository {
         DebugLogger("compositeDisposable.add")
         val repoDisposable = CompositeDisposable()
         repoDisposable.add(
-            gitRetrofit.getUserAllRepositories(token, page)
+            gitRetrofit.getUserPrivateRepositories(token, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
