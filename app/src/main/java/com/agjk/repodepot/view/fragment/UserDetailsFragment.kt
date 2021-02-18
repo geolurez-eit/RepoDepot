@@ -121,9 +121,9 @@ class UserDetailsFragment(val owner: String,
             it.forEach { commit ->
                 val authorImageUrl = commit.author?.avatar_url
                 val authorName = commit.author?.login
-                val commintMessage = commit.commit?.message
+                val commitMessage = commit.commit?.message
                 val commitHashCode = commit.hashCode()
-                commitList.add(Commits(authorImageUrl, authorName, commintMessage, commitHashCode.toString()))
+                commitList.add(Commits(authorImageUrl, authorName, commitMessage, commitHashCode.toString()))
             }
 
             commitAdapter.updateDetails(commitList)
