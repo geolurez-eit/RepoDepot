@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     private var viewPagePosition = 0
     private lateinit var mainUserRepoFragment: Fragment
 
-    private var tokenSaved = ""
+    var tokenSaved = ""
     private var usersToReturn = mutableListOf<Users>()
     private var allUserRepos = mutableListOf<MutableList<Repos>>()
     private var addedUsers = mutableListOf<String>()
@@ -67,6 +67,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchView: SearchView
     private lateinit var searchResultsContainer: FragmentContainerView
     private lateinit var loadingSpinner: CircularProgressIndicator
+    private lateinit var blankView: View
     private var searchTimer: Timer = Timer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,15 +127,17 @@ class MainActivity : AppCompatActivity() {
         repoViewModel.searchUsers(stringSearch)
     }
 
-    fun closeSplash() {
+    fun loadMainInBackground() {
         runOnUiThread {
-            supportFragmentManager.popBackStack()
             initFirebase()
             initMainActivity()
             getData(FirebaseAuth.getInstance().currentUser?.displayName.toString())
-           // repoViewModel.addUserToList("kamelkhbr")
+        }
+    }
 
-
+    fun closeSplash() {
+        runOnUiThread {
+            supportFragmentManager.popBackStack()
         }
     }
 
@@ -166,6 +169,10 @@ class MainActivity : AppCompatActivity() {
 
         viewPager.adapter = mainFragmentAdapter
 
+        val animFadeIn = AnimationUtils.loadAnimation(this, R.anim.text_fade_in)
+        viewPager.startAnimation(animFadeIn)
+        viewPager.visibility = View.VISIBLE
+
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -181,14 +188,17 @@ class MainActivity : AppCompatActivity() {
         viewPager.currentItem = i
     }
 
-    private lateinit var blankView: View
-
     private fun searchViewSetup() {
         // Search bar
         searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         searchView = findViewById(R.id.search_view)
         searchResultsContainer = findViewById(R.id.search_results_fragment_container)
         blankView = findViewById(R.id.blank_view)
+
+        // search view fade in
+        val animFadeIn = AnimationUtils.loadAnimation(this, R.anim.fast_fade_in)
+        searchView.visibility = View.VISIBLE
+        searchView.startAnimation(animFadeIn)
 
         loadingSpinner = findViewById(R.id.results_loading_spinner)
         loadingSpinner.hide()
@@ -197,7 +207,6 @@ class MainActivity : AppCompatActivity() {
             visibility = View.VISIBLE
             setSearchableInfo(searchManager.getSearchableInfo(componentName))
             setOnQueryTextFocusChangeListener { v, hasFocus ->
-                Log.d("TAG_A", "on focus change, $hasFocus")
                 if (hasFocus) {
                     searchResultsContainer.visibility = View.VISIBLE
                     val animFadeScale =
@@ -218,7 +227,6 @@ class MainActivity : AppCompatActivity() {
             }
             setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    Log.d("TAG_B", "query -> $query")
                     query?.let { performUserSearch(query) }
                     return true
                 }
@@ -230,7 +238,6 @@ class MainActivity : AppCompatActivity() {
 
                     searchTimer.schedule(object : TimerTask() {
                         override fun run() {
-                            Log.d("TAG_B", "$newText")
                             newText?.let { performUserSearch(newText) }
 
                             // HACK for timing - maybe okay, maybe not.
@@ -263,16 +270,9 @@ class MainActivity : AppCompatActivity() {
             closeSearch()
         }
 
-//        // Toggle is used to attach the toolbar and navigation drawer
-//        val toggle = ActionBarDrawerToggle(
-//            this,
-//            navigationDrawer,
-//            R.string.navigation_drawer_open,
-//            R.string.navigation_drawer_close
-//        )
-//
-//        navigationDrawer.addDrawerListener(toggle)
-//        toggle.syncState() // Menu button default animation when drawer is open and closed
+        // menu button fade in
+        navMenuButton.visibility = View.VISIBLE
+        navMenuButton.startAnimation(animFadeIn)
     }
 
     override fun onBackPressed() {
@@ -355,6 +355,8 @@ class MainActivity : AppCompatActivity() {
                                 )
                             )
                         )
+
+                    repoViewModel.isMainLoaded.value = true
                 }
                 userAdapter.updateUsers(usersToReturn)
                 mainFragmentAdapter.addFragmentToList(usersToReturn)

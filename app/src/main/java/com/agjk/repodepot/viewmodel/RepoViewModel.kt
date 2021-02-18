@@ -1,12 +1,22 @@
 package com.agjk.repodepot.viewmodel
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.agjk.repodepot.model.DepotRepository
-import com.agjk.repodepot.model.data.*
+import com.agjk.repodepot.model.data.GitRepo
+import com.agjk.repodepot.model.data.GitRepoCommits
+import com.agjk.repodepot.model.data.GitUser
+import com.agjk.repodepot.model.data.Preferences
 import com.google.firebase.auth.FirebaseAuth
 
 class RepoViewModel : ViewModel() {
+
+    val isMainLoaded: MutableLiveData<Boolean> = MutableLiveData()
+
+    init {
+        isMainLoaded.postValue(false)
+    }
 
     /* getting data from Firebase */
     // public only - common use
@@ -18,10 +28,11 @@ class RepoViewModel : ViewModel() {
     }
 
     fun getStoredCommitsForUser(
+        token:String,
         username: String,
         repoName: String
     ): LiveData<List<GitRepoCommits.GitRepoCommitsItem>> =
-        DepotRepository.getCommitsForUser(username, repoName)
+        DepotRepository.getCommitsForUser(token,username, repoName)
 
     fun getUserList(userName: String): LiveData<List<GitUser>> =
         DepotRepository.getUserList(userName)
