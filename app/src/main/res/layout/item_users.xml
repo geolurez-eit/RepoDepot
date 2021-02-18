@@ -20,7 +20,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:src="@drawable/github_logo"
+            android:src="@drawable/ic_logo_dark_cat"
             app:civ_border_color="@color/white"
             app:civ_border_width="1dp"
             app:layout_constraintBottom_toBottomOf="parent"
