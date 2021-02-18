@@ -14,4 +14,9 @@
     <string name="sign_in_with_github">Sign in with GitHub</string>
     <string name="search_hint">Search GitHub users</string>
     <string name="search_title">Search</string>
+    <string name="SIGNOUT_KEY">signout</string>
+    <string name="no_name">No name</string>
+    <string name="no_username">No username</string>
+    <string name="no_link">No link</string>
+    <string name="no_description">No description</string>
 </resources>

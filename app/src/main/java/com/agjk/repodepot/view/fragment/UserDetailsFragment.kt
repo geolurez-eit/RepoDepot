@@ -101,7 +101,7 @@ class UserDetailsFragment(
 
         tvRepoName.text = repoName
         if (repoDescription.length == 0) {
-            tvRepoBio.text = "No Description"
+            tvRepoBio.text = getString(R.string.no_description)
         } else {
             tvRepoBio.text = repoDescription
         }

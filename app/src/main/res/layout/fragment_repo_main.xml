@@ -34,7 +34,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="50dp"
         android:cropToPadding="true"
-        android:src="@drawable/ic_logo_white_cat"
+        android:src="@drawable/ic_cat_simple_white"
         android:scaleType="centerCrop"
         app:civ_border_color="@color/DarkGray50"
         app:civ_border_width="1dp"

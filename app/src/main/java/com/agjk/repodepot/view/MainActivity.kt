@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val inSignOut = intent.getBooleanExtra("signout", false)
+        val inSignOut = intent.getBooleanExtra(getString(R.string.SIGNOUT_KEY), false)
 
         findViewById<MaterialButton>(R.id.log_out_button).setOnClickListener {
             MaterialAlertDialogBuilder(this, R.style.AlertDialog)
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                         // start this activity fresh to unload data and display splash screen
                         startActivity(Intent(this, MainActivity::class.java).also { intent ->
                             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                            intent.putExtra("signout", true)
+                            intent.putExtra(getString(R.string.SIGNOUT_KEY), true)
                         })
 
                         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity() {
 //            fragment.setArguments(bundle);
 
             val bundle = Bundle().also {
-                it.putBoolean("signout", inSignOut)
+                it.putBoolean(getString(R.string.SIGNOUT_KEY), inSignOut)
             }
             splashScreenFragment.arguments = bundle
 

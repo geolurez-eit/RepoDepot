@@ -89,12 +89,12 @@ class ProfileFragment(val username: String) : Fragment(){
                 .load(it.avatar_url)
                 .placeholder(R.drawable.portrait)
                 .into(ivUserImage)
-            tvName.text = it.name ?: "No Name"
-            tvUserName.text = it.login ?: "No Username"
+            tvName.text = it.name ?: getString(R.string.no_name)
+            tvUserName.text = it.login ?: getString(R.string.no_username)
             tvBio.text = it.bio.toString()
             tvFollowers.text = (it.followers?: 0).toString()
             tvFollowing.text = (it.following?: 0).toString()
-            tvHtmlUrl.text = it.html_url ?: "No HTML"
+            tvHtmlUrl.text = it.html_url ?: getString(R.string.no_link)
             tvNumRepo.text = (it.public_repos?: 0).toString()
 
             DebugLogger("Result -------------------------------> $it")

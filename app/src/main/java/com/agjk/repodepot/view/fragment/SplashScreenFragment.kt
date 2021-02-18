@@ -80,7 +80,7 @@ class SplashScreenFragment : Fragment() {
         splashImg = view.findViewById(R.id.img)
         lottieAnimation = view.findViewById(R.id.lottieAnimation)
 
-        inSignOut = arguments?.getBoolean("signout", false) ?: false
+        inSignOut = arguments?.getBoolean(getString(R.string.SIGNOUT_KEY), false) ?: false
 
         if (!inSignOut) {
             splashImg.visibility = View.VISIBLE
