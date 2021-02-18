@@ -20,7 +20,7 @@ class CommitAdapter(var commitList: List<Commits>) : RecyclerView.Adapter<Commit
 
     inner class UserDetailsViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         val detailsCard: CardView = itemView.findViewById(R.id.cv_repo_detail_card)
-        val userImage : CircleImageView = itemView.findViewById(R.id.repo_user_profil)
+        val userImage : CircleImageView = itemView.findViewById(R.id.iv_user_image)
         val authorName : TextView = itemView.findViewById(R.id.tv_author_details)
         val commitMessage : TextView= itemView.findViewById(R.id.tv_repo_details)
         val commitCode: TextView = itemView.findViewById(R.id.tv_commit_hashcode) // (this is the sha in the api

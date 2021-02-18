@@ -17,6 +17,8 @@
     <style name="Theme.RepoDepot.NoActionBar" parent="Theme.RepoDepot">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/white</item>
     </style>
 
     <style name="LogoFont" parent="@style/TextAppearance.AppCompat.Title">

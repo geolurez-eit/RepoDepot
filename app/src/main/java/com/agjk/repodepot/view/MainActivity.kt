@@ -171,7 +171,7 @@ class MainActivity : AppCompatActivity() {
 
         viewPager.adapter = mainFragmentAdapter
 
-//        val animFadeIn = AnimationUtils.loadAnimation(this, R.anim.text_fade_in)
+//        val animFadeIn = AnimationUtils.loadAnimation(this, R.anim.fast_fade_in)
 //        viewPager.startAnimation(animFadeIn)
         viewPager.visibility = View.VISIBLE
 
