@@ -2,7 +2,6 @@
 
 package com.agjk.repodepot.model
 
-import android.database.Observable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.agjk.repodepot.model.data.*
@@ -190,7 +189,7 @@ object DepotRepository {
         DebugLogger("compositeDisposable.add")
         val repoDisposable = CompositeDisposable()
         repoDisposable.add(
-            gitRetrofit.getUserAllRepositories(token, page)
+            gitRetrofit.getUserPrivateRepositories(token, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
@@ -438,6 +437,15 @@ object DepotRepository {
         )
     }
 
+    /**
+     * Removes GitHub user from a Firebase user's userlist
+     * @param userName GitHub username of the removed user
+     */
+    fun removeUserFromList(userName: String){
+        firebaseDatabase.reference.child("USERLISTS")
+            .child(firebaseAuth.currentUser?.displayName.toString())
+            .child(userName).removeValue()
+    }
     ////////////////////////
     // Preferences Functions
     ////////////////////////

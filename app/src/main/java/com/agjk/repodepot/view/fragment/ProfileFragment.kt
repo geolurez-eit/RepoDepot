@@ -14,11 +14,13 @@ import com.agjk.repodepot.R
 import com.agjk.repodepot.util.DebugLogger
 import com.agjk.repodepot.viewmodel.RepoViewModel
 import com.bumptech.glide.Glide
+import org.w3c.dom.Text
 
 class ProfileFragment(val username: String) : Fragment(){
 
     private lateinit var tvName: TextView
     private lateinit var tvUserName: TextView
+    private lateinit var tvBio: TextView
     private lateinit var ivUserImage: ImageView
     private lateinit var tvFollowers: TextView
     private lateinit var tvFollowing: TextView
@@ -58,12 +60,13 @@ class ProfileFragment(val username: String) : Fragment(){
         view.apply {
             tvName = findViewById(R.id.tv_name)
             tvUserName = findViewById(R.id.tv_user_name)
+            tvBio = findViewById(R.id.tv_bio)
             ivUserImage = findViewById(R.id.iv_user_image)
             tvFollowers = findViewById(R.id.tv_followers)
             tvFollowing = findViewById(R.id.tv_followers)
             tvHtmlUrl = findViewById(R.id.tv_html_url)
             tvNumRepo = findViewById(R.id.tv_num_repo)
-            btnAdd = findViewById(R.id.btn_add_profil)
+            btnAdd = findViewById(R.id.btn_add_profile)
             btnExit = findViewById(R.id.btn_back)
         }
 
@@ -78,6 +81,7 @@ class ProfileFragment(val username: String) : Fragment(){
                 .into(ivUserImage)
             tvName.text = it.name ?: "No Name"
             tvUserName.text = it.login ?: "No Username"
+            tvBio.text = it.bio.toString()
             tvFollowers.text = (it.followers?: 0).toString()
             tvFollowing.text = (it.following?: 0).toString()
             tvHtmlUrl.text = it.html_url ?: "No HTML"

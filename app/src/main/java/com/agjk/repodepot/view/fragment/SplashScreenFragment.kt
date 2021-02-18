@@ -29,6 +29,7 @@ import kotlinx.coroutines.launch
 class SplashScreenFragment : Fragment() {
 
     private lateinit var thisContext: Context
+    private var inSignOut = true
 
     private val firebaseAuth = FirebaseAuth.getInstance()
     private var provider = OAuthProvider.newBuilder("github.com")
@@ -78,10 +79,22 @@ class SplashScreenFragment : Fragment() {
         // Lottie  Screen vars
         splashImg = view.findViewById(R.id.img)
         lottieAnimation = view.findViewById(R.id.lottieAnimation)
-        splashImg.animate().translationY(-3000F).setDuration(1000).setStartDelay(1500)
-            .alpha(0f)
-        lottieAnimation.animate().translationY(1400F).setDuration(1000).setStartDelay(1500)
-            .withEndAction { mainAnimEnded = true }
+
+        inSignOut = arguments?.getBoolean("signout", false) ?: false
+
+        if (!inSignOut) {
+            splashImg.visibility = View.VISIBLE
+            lottieAnimation.visibility = View.VISIBLE
+
+            splashImg.animate().translationY(-3000F).setDuration(1000).setStartDelay(1500)
+                .alpha(0f)
+            lottieAnimation.animate().translationY(1400F).setDuration(1000).setStartDelay(1500)
+                .withEndAction { mainAnimEnded = true }
+        } else {
+            splashImg.visibility = View.GONE
+            lottieAnimation.visibility = View.GONE
+            mainAnimEnded = true
+        }
 
         //// OAUTH
         // Target specific email with login hint.
@@ -94,7 +107,10 @@ class SplashScreenFragment : Fragment() {
         ////
 
         // Logo animation
-        val animFadeIn = AnimationUtils.loadAnimation(thisContext, R.anim.medium_fade_in_delay)
+        var animFadeIn = AnimationUtils.loadAnimation(thisContext, R.anim.medium_fade_in_delay)
+        if (inSignOut) {
+            animFadeIn = AnimationUtils.loadAnimation(thisContext, R.anim.fast_fade_in)
+        }
 
         logoImageView.visibility = View.VISIBLE
         logoImageView.startAnimation(animFadeIn)
@@ -142,17 +158,23 @@ class SplashScreenFragment : Fragment() {
 
         // TODO: change artificial loading delay
         lifecycleScope.launch(context = Dispatchers.Default) {
+//            Log.d("TAG_Q", "start coroutine")
+//            Log.d("TAG_Q", "main anim ended -> $mainAnimEnded, logo anim ended -> $logoAnimEnded")
 
             // let animations play out first
             while (!mainAnimEnded || !logoAnimEnded) {
+//                Log.d("TAG_Q", "in anim loop check")
                 logoImageView.animation?.let { logoAnimEnded = it.hasEnded() }
+                    ?: { logoAnimEnded = true }()
             }
 
+//            Log.d("TAG_Q", "post anim loop check")
             // start loading main activity data
             (context as MainActivity).loadMainInBackground()
 
             // then let progress bar continue until data is loaded
             while (!isMainFinishedLoading) { /* no-op */ }
+//            Log.d("TAG_Q", "main finished loading")
 
             // then close the splash
             (context as MainActivity).closeSplash()
