@@ -1,26 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cv_repo_detail_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:focusable="true">
+    app:cardCornerRadius="2dp"
+    app:cardElevation="3dp"
+    app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_search_image"
+            android:layout_width="33dp"
+            android:layout_height="27dp"
+            android:layout_margin="5dp"
+            android:cropToPadding="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_brand_curious_cat_icon_158943"
+            app:civ_border_color="@color/DarkGray50"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/search_suggestion"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="8dp"
+            android:layout_margin="8dp"
+            android:layout_marginStart="8dp"
+            android:fontFamily="@font/french_standard"
             android:textColor="@color/DarkGray50"
-            android:textSize="24sp"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Dalo-Chinkhwangwa-Prof" />
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_search_image"
+            app:layout_constraintStart_toEndOf="@+id/iv_search_image"
+            app:layout_constraintTop_toTopOf="@+id/iv_search_image"
+            tools:text="Dalo_chikwanga" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>
