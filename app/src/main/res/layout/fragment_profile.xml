@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,84 +16,110 @@
         android:src="@drawable/portrait"
         app:civ_border_color="@color/DarkGray50"
         app:civ_border_width="1dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/triangle_view"
+        android:layout_width="0dp"
+        android:layout_height="375dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/trianglewhite"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_user_image" />
+
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
         android:fontFamily="@font/arvoboldttf"
         android:padding="8dp"
         android:text="Name"
-        android:textColor="@color/Gray50"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.465"
-        app:layout_constraintStart_toEndOf="@id/iv_user_image"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <ImageView
-        android:id="@+id/triangle_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/trianglewhite"
-        app:layout_constraintBottom_toTopOf="@+id/imageView4"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:textAlignment="center"
+        app:layout_constraintTop_toTopOf="@id/triangle_view"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_bio" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/Gray50"
+       />
 
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="10dp"
-        android:layout_marginBottom="8dp"
         android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/btn_back"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/triangle_view" />
+
+    <ImageView
+        android:id="@+id/location_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/location_icon"
+        android:layout_marginStart="12dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_html_url"
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <TextView
-        android:id="@+id/tv_user_name"
-        android:layout_width="0dp"
+        android:id="@+id/tv_location"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:fontFamily="@font/french_standard"
-        android:padding="8dp"
-        android:text="user name"
-        android:textColor="@color/Gray50"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_user_image"
-        app:layout_constraintTop_toBottomOf="@id/tv_name" />
-
-    <TextView
-        android:id="@+id/tv_html_url"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/french_standard"
-        android:padding="8dp"
-        android:text="https://example.com/test"
-        android:textColor="@color/Gray50"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_user_image"
-        app:layout_constraintTop_toBottomOf="@id/tv_user_name" />
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/location_icon"
+        app:layout_constraintStart_toEndOf="@id/location_icon"
+        app:layout_constraintTop_toTopOf="@+id/location_icon"
+        android:text="Atlanta, Georgia" />
 
 
     <TextView
         android:id="@+id/tv_bio"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/description_font"
         android:padding="8dp"
         android:text="Bio"
-        android:textColor="@color/Gray50"
-        app:layout_constraintEnd_toStartOf="@+id/guideline4"
+        android:textColor="@color/MeduimGray50"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_user_image" />
+        app:layout_constraintTop_toBottomOf="@id/location_icon" />
+    <TextView
+        android:id="@+id/tv_html_url"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/french_standard"
+        android:padding="8dp"
+        android:layout_marginStart="12dp"
+        android:text="user name"
+        android:textColor="@color/Gray50"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name" />
+
+    <TextView
+        android:id="@+id/tv_html_url"
+        android:layout_width="0dp"
+        android:layout_height="33dp"
+        android:fontFamily="@font/french_standard"
+        android:padding="8dp"
+        android:layout_marginStart="12dp"
+        android:text="https://example.com/test"
+        android:textColor="#2196F3"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_user_name" />
 
     <TextView
         android:id="@+id/tv_followers"
@@ -115,7 +140,8 @@
         android:padding="8dp"
         android:src="@drawable/ic_baseline_person_outline_24"
         app:layout_constraintBottom_toTopOf="@+id/view"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/triangle_view" />
 
     <TextView
         android:id="@+id/followers"
@@ -138,12 +164,12 @@
         android:padding="8dp"
         android:text="following"
         android:textColor="@color/Gray50"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_num_repo"
-        app:layout_constraintEnd_toStartOf="@+id/tv_num_repo"
-        app:layout_constraintTop_toTopOf="@+id/tv_num_repo" />
+        app:layout_constraintBottom_toBottomOf="@+id/tv_following"
+        app:layout_constraintEnd_toStartOf="@+id/tv_following"
+        app:layout_constraintTop_toTopOf="@+id/tv_following" />
 
     <TextView
-        android:id="@+id/tv_num_repo"
+        android:id="@+id/tv_following"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
@@ -152,7 +178,47 @@
         android:textColor="@color/Gray50"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toStartOf="@+id/imageView5"
-        app:layout_constraintTop_toTopOf="@+id/imageView5" />
+        app:layout_constraintTop_toBottomOf="@+id/triangle_view" />
+
+
+    <TextView
+        android:id="@+id/repo_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Repositories"
+        android:textColor="@color/Gray50"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.126"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView3"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:src="@drawable/repo_icon"
+        app:layout_constraintBottom_toBottomOf="@id/triangle_view"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+    <TextView
+        android:id="@+id/tv_num_repo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:padding="8dp"
+        android:text="12"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@+id/repo_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@id/repo_text"
+        app:layout_constraintTop_toTopOf="@+id/repo_text"
+        app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_add_profil"
@@ -197,14 +263,8 @@
         android:padding="8dp"
         android:src="@drawable/ic_baseline_person_outline_24"
         app:layout_constraintBottom_toTopOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/triangle_view" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
