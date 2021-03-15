@@ -1,7 +1,4 @@
 # RepoDepot
-Project Requirements
-To be presented: 02/18
-
 Git application
 - Create an android application that pulls all repositories from all group members’(4) git users(should include private repositories) with the possibility of adding more users
 - When user clicks on a repository the user app should display all the commits made on that repository
